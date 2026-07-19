@@ -1,0 +1,2 @@
+# Pinned generator toolchain for `make generate` and CI drift checks.
+openapi-python-client==0.29.0

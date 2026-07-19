@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.venv/
+venv/
+.ruff_cache/
+# generator scratch (make generate cleans this, but ignore just in case)
+/busbar-admin/

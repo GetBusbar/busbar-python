@@ -1,0 +1,6 @@
+# openapi-python-client generator config (pinned recipe)
+# Regenerate with: make generate
+project_name_override: "busbar-admin"
+package_name_override: "busbar_admin"
+# SDK has its own semver, independent of the OpenAPI info.version.
+package_version_override: "0.1.0"

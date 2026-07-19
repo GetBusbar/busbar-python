@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install generator (pinned) + build backend
+        run: |
+          pip install -r requirements-dev.txt
+          pip install build
+
+      - name: Regenerate client from openapi.json
+        run: make generate
+
+      - name: Fail if the committed client is stale
+        run: git diff --exit-code -- busbar_admin setup.py
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      # Publish is gated on the PyPI token secret. Without it, the build above
+      # still runs and the job succeeds without publishing.
+      - name: Publish to PyPI
+        if: ${{ env.PYPI_API_TOKEN != '' }}
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Note when token is absent
+        if: ${{ env.PYPI_API_TOKEN == '' }}
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: echo "::notice::PYPI_API_TOKEN not set — built artifacts but skipped publish."
