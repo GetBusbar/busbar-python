@@ -14,7 +14,9 @@ so every response is a real dataclass (`InfoView`, `TopologyInfo`, ...) — not
 ## Versioning
 
 The SDK carries its **own** semantic version, independent of the busbar server /
-OpenAPI `info.version` (currently `1.4.0`). This first cut is **`0.1.0`**. A given
+OpenAPI `info.version` (currently `1.5.0`). The current release is **`0.2.0`**
+(the `1.5.0` spec added `operationId`s, which renamed every generated function —
+a breaking change from `0.1.0`). A given
 SDK release targets the frozen, additive-only `/api/v1/admin` surface and will
 keep working across server versions on that surface.
 
