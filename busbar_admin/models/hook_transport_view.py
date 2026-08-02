@@ -11,12 +11,14 @@ T = TypeVar("T", bound="HookTransportView")
 
 @_attrs_define
 class HookTransportView:
-    """The transport half of a `HookView`: which wire the hook speaks and its target (socket path or
-    webhook URL — operator config, not a secret). Exactly one of `socket`/`webhook` is set.
+    """The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in kind (no
+    transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
+    socket path or URL) — the retired 1.4.x socket/webhook sidecar transports are gone.
 
         Attributes:
-            kind (str): `"socket"` or `"webhook"` (or `"none"` for a misconfigured entry with neither).
-            target (None | str): The socket path or webhook URL. `None` only if the definition set neither transport.
+            kind (str): `"plugin"` for a signed dlopen'd hook plugin, or `"none"` for a hook with no plugin
+                transport (compiled-in kinds, or a misconfigured entry).
+            target (None | str): The plugin's NAME (not a path or URL). `None` when `kind` is `"none"`.
     """
 
     kind: str

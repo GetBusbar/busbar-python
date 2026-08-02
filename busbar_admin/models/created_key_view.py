@@ -1,76 +1,91 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
+if TYPE_CHECKING:
+    from ..models.created_key_view_labels import CreatedKeyViewLabels
+
+
 T = TypeVar("T", bound="CreatedKeyView")
 
 
 @_attrs_define
 class CreatedKeyView:
-    """`POST /keys` (mint) — the key metadata plus the ONCE-shown secret, and (when an AWS SigV4
+    """`POST /keys` (mint) — the key metadata plus the ONCE-shown signed token, and (when an AWS SigV4
     credential was requested) the AccessKeyId + secret access key. The AWS fields are absent on a
     bearer-only mint.
 
         Attributes:
-            allowed_pools (list[str]):
-            budget_period (str):
+            allowed_pools (list[str] | None):
             created_at (int):
             enabled (bool):
+            expires_at (int): Unix-seconds expiry of the signed token.
+            group (None | str):
+            group_provisioned (bool): Whether this mint AUTO-PROVISIONED its bound group leaf (self-service D2) — lets a
+                portal
+                distinguish "bound to an existing bucket" from "created your personal bucket + bound".
             id (str):
-            max_budget_cents (int | None):
+            labels (CreatedKeyViewLabels):
             name (str):
-            rpm_limit (int | None):
-            secret (str): The bearer secret — shown EXACTLY once, never returned by any read.
-            tpm_limit (int | None):
+            state (str): E-007: same field as `KeyView.state` — a fresh mint is always `"active"` (enabled, not
+                revoked, not deleted).
+            token (str): The busbar-SIGNED token — the key credential (1.5.0, S1), shown EXACTLY once and never
+                returned by any read. (This is the field a client must capture to authenticate.)
             aws_access_key_id (None | str | Unset): AWS AccessKeyId (present only when `issue_aws_credential` was set). Not
                 secret.
             aws_secret_access_key (None | str | Unset): AWS SigV4 secret access key — shown once (present only with an AWS
                 credential).
     """
 
-    allowed_pools: list[str]
-    budget_period: str
+    allowed_pools: list[str] | None
     created_at: int
     enabled: bool
+    expires_at: int
+    group: None | str
+    group_provisioned: bool
     id: str
-    max_budget_cents: int | None
+    labels: CreatedKeyViewLabels
     name: str
-    rpm_limit: int | None
-    secret: str
-    tpm_limit: int | None
+    state: str
+    token: str
     aws_access_key_id: None | str | Unset = UNSET
     aws_secret_access_key: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        allowed_pools = self.allowed_pools
+        allowed_pools: list[str] | None
+        if isinstance(self.allowed_pools, list):
+            allowed_pools = self.allowed_pools
 
-        budget_period = self.budget_period
+        else:
+            allowed_pools = self.allowed_pools
 
         created_at = self.created_at
 
         enabled = self.enabled
 
+        expires_at = self.expires_at
+
+        group: None | str
+        group = self.group
+
+        group_provisioned = self.group_provisioned
+
         id = self.id
 
-        max_budget_cents: int | None
-        max_budget_cents = self.max_budget_cents
+        labels = self.labels.to_dict()
 
         name = self.name
 
-        rpm_limit: int | None
-        rpm_limit = self.rpm_limit
+        state = self.state
 
-        secret = self.secret
-
-        tpm_limit: int | None
-        tpm_limit = self.tpm_limit
+        token = self.token
 
         aws_access_key_id: None | str | Unset
         if isinstance(self.aws_access_key_id, Unset):
@@ -89,15 +104,16 @@ class CreatedKeyView:
         field_dict.update(
             {
                 "allowed_pools": allowed_pools,
-                "budget_period": budget_period,
                 "created_at": created_at,
                 "enabled": enabled,
+                "expires_at": expires_at,
+                "group": group,
+                "group_provisioned": group_provisioned,
                 "id": id,
-                "max_budget_cents": max_budget_cents,
+                "labels": labels,
                 "name": name,
-                "rpm_limit": rpm_limit,
-                "secret": secret,
-                "tpm_limit": tpm_limit,
+                "state": state,
+                "token": token,
             }
         )
         if aws_access_key_id is not UNSET:
@@ -109,41 +125,49 @@ class CreatedKeyView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        allowed_pools = cast(list[str], d.pop("allowed_pools"))
+        from ..models.created_key_view_labels import CreatedKeyViewLabels
 
-        budget_period = d.pop("budget_period")
+        d = dict(src_dict)
+
+        def _parse_allowed_pools(data: object) -> list[str] | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                allowed_pools_type_0 = cast(list[str], data)
+
+                return allowed_pools_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(list[str] | None, data)
+
+        allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 
         created_at = d.pop("created_at")
 
         enabled = d.pop("enabled")
 
-        id = d.pop("id")
+        expires_at = d.pop("expires_at")
 
-        def _parse_max_budget_cents(data: object) -> int | None:
+        def _parse_group(data: object) -> None | str:
             if data is None:
                 return data
-            return cast(int | None, data)
+            return cast(None | str, data)
 
-        max_budget_cents = _parse_max_budget_cents(d.pop("max_budget_cents"))
+        group = _parse_group(d.pop("group"))
+
+        group_provisioned = d.pop("group_provisioned")
+
+        id = d.pop("id")
+
+        labels = CreatedKeyViewLabels.from_dict(d.pop("labels"))
 
         name = d.pop("name")
 
-        def _parse_rpm_limit(data: object) -> int | None:
-            if data is None:
-                return data
-            return cast(int | None, data)
+        state = d.pop("state")
 
-        rpm_limit = _parse_rpm_limit(d.pop("rpm_limit"))
-
-        secret = d.pop("secret")
-
-        def _parse_tpm_limit(data: object) -> int | None:
-            if data is None:
-                return data
-            return cast(int | None, data)
-
-        tpm_limit = _parse_tpm_limit(d.pop("tpm_limit"))
+        token = d.pop("token")
 
         def _parse_aws_access_key_id(data: object) -> None | str | Unset:
             if data is None:
@@ -165,15 +189,16 @@ class CreatedKeyView:
 
         created_key_view = cls(
             allowed_pools=allowed_pools,
-            budget_period=budget_period,
             created_at=created_at,
             enabled=enabled,
+            expires_at=expires_at,
+            group=group,
+            group_provisioned=group_provisioned,
             id=id,
-            max_budget_cents=max_budget_cents,
+            labels=labels,
             name=name,
-            rpm_limit=rpm_limit,
-            secret=secret,
-            tpm_limit=tpm_limit,
+            state=state,
+            token=token,
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
         )

@@ -20,46 +20,27 @@ T = TypeVar("T", bound="UsageView")
 
 @_attrs_define
 class UsageView:
-    """Fleet METERING read (`GET /api/v1/admin/usage`) — the FinOps surface. Design principle:
-    busbar exposes the RAW INPUTS of cost, not just its own number. Every row carries the full token
-    SPLIT (input / output / cache-read / cache-creation — each prices differently), so a consumer
-    with its own (special/negotiated) price catalog reconstructs cost independently; `spend_micros`
-    is busbar's DERIVED estimate from the operator's configured global prices, computed at read time
-    (raw counts are what's stored — a price change re-prices history consistently).
-
-    Time base — THE PINNED SHAPE RULING (external review R3 #1): a usage response is ALWAYS exactly
-    ONE fixed UTC-day metering bucket (`window`). `?window=<bucket-start-epoch>` selects a PAST
-    bucket (default: the current one); a multi-window series is the CLIENT fetching N buckets — or
-    a future additive `?from=&to=` returning an ARRAY OF THIS SAME PER-BUCKET SHAPE, never a
-    differently-shaped merged view. Billing periods aggregate client-side from day buckets (raw
-    counts are stored, so the math is exact). Deliberately decoupled from per-key budget windows so
-    per-model aggregation across keys is well-defined; budget ENFORCEMENT state lives on
-    `GET /keys/{id}/usage`, not here. Empty aggregations when governance is disabled. No secrets —
-    key ids/names only, never a token.
-
-    LEDGER RULE (one loud contract sentence): `spend_micros` is a MUTABLE ESTIMATE — derived at
-    read time from the operator's CURRENT prices, so a price change re-prices history. Never store
-    it as a ledger charge; bill from the raw token split.
-
-        Attributes:
-            as_of (int): Freshness marker: the epoch this read was computed at (counters accumulate live).
-            by_key (list[KeyUsageView]): Per-key aggregation (same raw-split shape). CAPPED at the top 1000 rows by spend
-                (the
-                FinOps-relevant ordering); `by_key_truncated` says the cap fired — never a silent cut.
-            by_key_truncated (bool): True when `by_key` was truncated to the cap (a deployment with more active keys than
-                the
-                cap). `by_model` is never capped (bounded by the configured model fleet).
-            by_model (list[ModelUsageView]): Per-(model, provider) aggregation — cost attribution by model (the FinOps
-                unit).
-            currency (str): The denomination of every `spend_micros` in this response (`USAGE_CURRENCY`).
-            total (UsageBreakdown): The raw consumption counts + the derived spend estimate — the one shape shared by
-                `total`,
-                `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
-            window (UsageWindow): A metering window: `[start, end)` epoch seconds.
-            others (None | Unset | UsageBreakdown): The summed remainder BEYOND the `by_key` cap — present exactly when
-                `by_key_truncated`, so
-                every unit of consumption is attributable at least to "others" (FinOps completeness:
-                `total == sum(by_key) + others`).
+    """
+    Attributes:
+        as_of (int): Freshness marker: the epoch this read was computed at (counters accumulate live).
+        by_key (list[KeyUsageView]): Per-key aggregation (same raw-split shape). CAPPED at the top 1000 rows by spend
+            (the
+            FinOps-relevant ordering); `by_key_truncated` says the cap fired — never a silent cut.
+        by_key_truncated (bool): True when `by_key` was truncated to the cap (a deployment with more active keys than
+            the
+            cap). `by_model` is never capped (bounded by the configured model fleet).
+        by_model (list[ModelUsageView]): Per-(model, provider) aggregation — cost attribution by model (the FinOps
+            unit).
+        currency (str): The denomination of every `spend_micros` in this response (`USAGE_CURRENCY`, currently
+            `"USD"`). A single-const source of truth so removal is one line. Emitted only here.
+        total (UsageBreakdown): The raw consumption counts + the derived spend estimate — the one shape shared by
+            `total`,
+            `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
+        window (UsageWindow): A metering window: `[start, end)` epoch seconds.
+        others (None | Unset | UsageBreakdown): The summed remainder BEYOND the `by_key` cap — present exactly when
+            `by_key_truncated`, so
+            every unit of consumption is attributable at least to "others" (FinOps completeness:
+            `total == sum(by_key) + others`).
     """
 
     as_of: int

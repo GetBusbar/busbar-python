@@ -33,7 +33,7 @@ install-generator:
 # Editable install + import smoke test.
 verify:
 	pip install -e .
-	python -c "from busbar_admin.api.default import get_api_v1_admin_info; from busbar_admin.models import InfoView; print('import OK; typed InfoView =', InfoView)"
+	python -c "from busbar_admin.api.default import get_info; from busbar_admin.models import InfoView; print('import OK; typed InfoView =', InfoView)"
 
 clean:
 	rm -rf build dist *.egg-info

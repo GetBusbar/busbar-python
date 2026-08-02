@@ -32,7 +32,7 @@ prefix):
 
 ```python
 from busbar_admin import AuthenticatedClient
-from busbar_admin.api.default import get_api_v1_admin_info
+from busbar_admin.api.default import get_info
 from busbar_admin.models import InfoView
 
 client = AuthenticatedClient(
@@ -44,7 +44,7 @@ client = AuthenticatedClient(
 )
 
 with client as client:
-    info: InfoView = get_api_v1_admin_info.sync(client=client)
+    info: InfoView = get_info.sync(client=client)
     # `info` is TYPED — your editor autocompletes .version, .topology, .build, ...
     print("busbar version:", info.version)                 # -> "1.4.0"
     print("pools:", info.topology.pools)
@@ -55,7 +55,7 @@ with client as client:
 > the default `AuthenticatedClient` sends `Authorization: Bearer <token>`, which
 > the admin API also accepts.
 
-Async is available too (`get_api_v1_admin_info.asyncio` / `.asyncio_detailed`).
+Async is available too (`get_info.asyncio` / `.asyncio_detailed`).
 
 ## Regenerating the client
 

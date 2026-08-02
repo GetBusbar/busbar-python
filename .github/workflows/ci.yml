@@ -29,4 +29,4 @@ jobs:
       - name: Editable install + typed import smoke test
         run: |
           pip install -e .
-          python -c "from busbar_admin.api.default import get_api_v1_admin_info; from busbar_admin.models import InfoView; import attrs; print('typed InfoView fields:', [f.name for f in attrs.fields(InfoView)])"
+          python -c "from busbar_admin.api.default import get_info; from busbar_admin.models import InfoView; import attrs; print('typed InfoView fields:', [f.name for f in attrs.fields(InfoView)])"

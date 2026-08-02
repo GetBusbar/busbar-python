@@ -37,9 +37,10 @@ class HookView:
                 Never
                 interpreted by busbar; never a secret by contract (hook settings are operator config).
             timeout_ms (int): Gate decision deadline in milliseconds.
-            transport (HookTransportView): The transport half of a `HookView`: which wire the hook speaks and its target
-                (socket path or
-                webhook URL — operator config, not a secret). Exactly one of `socket`/`webhook` is set.
+            transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
+                kind (no
+                transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
+                socket path or URL) — the retired 1.4.x socket/webhook sidecar transports are gone.
             user (str): Caller-identity access grant: `"no"` | `"ro"`.
     """
 
