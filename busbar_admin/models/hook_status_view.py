@@ -32,6 +32,18 @@ class HookStatusView:
                 when
                 the hook sent them, optional `labels`/`quantiles`/`estimated`/`ci_low`/`ci_high`/`help`/
                 `label`/`unit`/`viz`/`max` members.
+
+                E-004 (busbar-ui/docs/ENGINE-BUGS.md): schemars' blanket `JsonSchema` impl for
+                `serde_json::Value` renders as the JSON-Schema-2020-12 boolean `true` (`schemars-1.2.1`'s
+                `json_schema_impls/serdejson.rs`), which is legal 2020-12 but — nested here as this array's
+                `items` — is a boolean SUB-schema, and `kin-openapi` (the parser under `oapi-codegen`, which
+                every published SDK generates through) cannot represent one at all: the parse aborts, taking
+                out Python/TS/Go SDK regeneration simultaneously. `#[schemars(schema_with)]` overrides just
+                this field's schema to `{"type": "array", "items": {}}` — `{}` is the equivalent "accepts
+                anything" schema every generator DOES understand, and is what busbar-ui's own
+                `openapi-prep.py` already rewrites `items: true` into client-side. This is the only
+                `items: true` in the document; every other `additionalProperties: true` schemars emits
+                elsewhere is a boolean in a position `kin-openapi` handles fine and is deliberately untouched.
             name (str):
             reported (HookReportedStatus | None):
             source (str): Always `"live"` (the read is a live transport query).

@@ -11,36 +11,40 @@ T = TypeVar("T", bound="KeyMeteringView")
 
 @_attrs_define
 class KeyMeteringView:
-    """`GET /keys/{id}/usage` — the current budget-window counters for one key, plus the fraction of the
-    tightest RPM/TPM cap remaining (`null` = uncapped). `budget_period`/`window_start` are `null`
-    when the key record could not be read.
+    """`GET /keys/{id}/usage`: the key's all-time attribution counters (a 1.5.0 key bucket accrues in
+    the `total` window; limits live on the bound group's own windows) plus the fraction of the
+    tightest `requests`/`tokens` limit across the group chain remaining (`null` = no such limit).
 
         Attributes:
             as_of (int):
-            budget_period (None | str):
+            budget_period (str): Always `"total"` (the key attribution window).
+            group (None | str): The bound `groups:` entry (`null` = unlimited key).
             id (str):
             rate_headroom (float | None):
             requests (int):
             spend_cents (int):
             tokens (int):
-            window_start (int | None):
+            window_start (int): Always `0` (the all-time window start).
     """
 
     as_of: int
-    budget_period: None | str
+    budget_period: str
+    group: None | str
     id: str
     rate_headroom: float | None
     requests: int
     spend_cents: int
     tokens: int
-    window_start: int | None
+    window_start: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         as_of = self.as_of
 
-        budget_period: None | str
         budget_period = self.budget_period
+
+        group: None | str
+        group = self.group
 
         id = self.id
 
@@ -53,7 +57,6 @@ class KeyMeteringView:
 
         tokens = self.tokens
 
-        window_start: int | None
         window_start = self.window_start
 
         field_dict: dict[str, Any] = {}
@@ -62,6 +65,7 @@ class KeyMeteringView:
             {
                 "as_of": as_of,
                 "budget_period": budget_period,
+                "group": group,
                 "id": id,
                 "rate_headroom": rate_headroom,
                 "requests": requests,
@@ -78,12 +82,14 @@ class KeyMeteringView:
         d = dict(src_dict)
         as_of = d.pop("as_of")
 
-        def _parse_budget_period(data: object) -> None | str:
+        budget_period = d.pop("budget_period")
+
+        def _parse_group(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        budget_period = _parse_budget_period(d.pop("budget_period"))
+        group = _parse_group(d.pop("group"))
 
         id = d.pop("id")
 
@@ -100,16 +106,12 @@ class KeyMeteringView:
 
         tokens = d.pop("tokens")
 
-        def _parse_window_start(data: object) -> int | None:
-            if data is None:
-                return data
-            return cast(int | None, data)
-
-        window_start = _parse_window_start(d.pop("window_start"))
+        window_start = d.pop("window_start")
 
         key_metering_view = cls(
             as_of=as_of,
             budget_period=budget_period,
+            group=group,
             id=id,
             rate_headroom=rate_headroom,
             requests=requests,

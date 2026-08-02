@@ -15,20 +15,24 @@ T = TypeVar("T", bound="HookHealthView")
 
 @_attrs_define
 class HookHealthView:
-    """The live health of one hook's transport (`GET /api/v1/admin/hooks/{name}/health`). BEST-EFFORT: for a
-    socket transport `reachable` is `Some(true/false)` from a short-timeout connect probe; for a webhook
-    (or on a non-unix host) it is `None` (probed on demand, not here) with a `detail` note. Never fires
-    the hook — just checks whether the endpoint accepts a connection. Additive-only.
+    """The live health of one hook's transport (`GET /api/v1/admin/hooks/{name}/health`). Checks
+    whether the hook resolves to a LOADED `kind: hook` plugin in the process's plugin registry —
+    this is a plugin-LOAD status check, not a network reachability probe: it never opens a
+    connection, and it cannot tell you whether a `kind: hook` plugin's own configured external
+    endpoint (e.g. `busbar-webrequest-hook`'s `settings.url`) is actually reachable, only that the
+    plugin itself is loaded. Never fires the hook. Additive-only.
 
         Attributes:
-            detail (None | str): A short human note on the probe (why `None`, or the connect error class). Never a secret.
+            detail (None | str): A short human note on the resolution (why `false`, or the resolved plugin's kind). Never a
+                secret.
             name (str):
-            reachable (bool | None): `Some(true)` = the transport accepted a connection; `Some(false)` = it did not; `None`
-                = not
-                probed here (webhook / non-unix).
-            transport (HookTransportView): The transport half of a `HookView`: which wire the hook speaks and its target
-                (socket path or
-                webhook URL — operator config, not a secret). Exactly one of `socket`/`webhook` is set.
+            reachable (bool | None): `Some(true)` = resolves to a loaded `kind: hook` plugin; `Some(false)` = it does not
+                (wrong kind, or not installed/loaded) — always `Some`, never `None`, as of 1.5.0's
+                in-process plugin model.
+            transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
+                kind (no
+                transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
+                socket path or URL) — the retired 1.4.x socket/webhook sidecar transports are gone.
     """
 
     detail: None | str

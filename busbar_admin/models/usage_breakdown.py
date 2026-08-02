@@ -16,9 +16,12 @@ class UsageBreakdown:
 
         Attributes:
             requests (int):
-            spend_micros (int): Busbar's derived cost estimate in MICRO-units of `currency` (1e-6 USD — integer math,
-                sub-cent precise, no float drift), from the operator's configured global prices. A consumer
-                with its own per-model catalog recomputes from the raw token split instead.
+            spend_micros (int): Busbar's derived cost estimate in MICRO-units of the ABSTRACT cost unit (1e-6 unit -
+                integer math, sub-cent precise, no float drift), recomputed at read time from the raw token
+                split x the operator's CURRENT per-model rate card. Busbar attaches no currency - the rate
+                card's numbers are whatever unit the operator priced in; display/denomination is entirely
+                the consumer's concern. A consumer with its own per-model catalog recomputes from the raw
+                token split instead.
             tokens_cache_creation (int):
             tokens_cache_read (int):
             tokens_input (int): Uncached input tokens (normalized additive-cache convention).

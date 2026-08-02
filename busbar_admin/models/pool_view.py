@@ -17,7 +17,7 @@ T = TypeVar("T", bound="PoolView")
 class PoolView:
     """A pool in the topology read (`GET /api/v1/admin/pools`). Summary shape today: name + the member
     models and their weights. LIVE per-member status (breaker state, available concurrency, latency
-    EWMA, budget/rate headroom — design-admin-api-v1 §6.9) is an additive follow-up; the field set
+    EWMA, budget/rate headroom — design-admin-api-v1) is an additive follow-up; the field set
     only grows.
 
         Attributes:

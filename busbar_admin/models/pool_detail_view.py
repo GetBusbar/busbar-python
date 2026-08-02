@@ -16,7 +16,7 @@ T = TypeVar("T", bound="PoolDetailView")
 @_attrs_define
 class PoolDetailView:
     """The LIVE per-pool detail read (`GET /api/v1/admin/pools/{name}`) — the reliability/capacity dashboard
-    data (design-admin-api-v1 §6.9): each member's breaker state, concurrency headroom, in-flight
+    data: each member's breaker state, concurrency headroom, in-flight
     count, latency EWMA, and success/error tallies, read from the SAME store signals the routing seam
     ranks on. No LLM content, no credentials.
 

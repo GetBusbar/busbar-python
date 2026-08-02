@@ -15,8 +15,8 @@ T = TypeVar("T", bound="PagePoolView")
 
 @_attrs_define
 class PagePoolView:
-    """A cursor-paginated list envelope. `items` is this page; `next_cursor` is `Some` when more remain
-    (design-admin-api-v1 §0.4). Generic over the item view so every list endpoint shares one shape.
+    """A cursor-paginated list envelope. `items` is this page; `next_cursor` is `Some` when more remain.
+    Generic over the item view so every list endpoint shares one shape.
 
         Attributes:
             items (list[PoolView]):
