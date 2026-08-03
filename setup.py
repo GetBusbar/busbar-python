@@ -7,7 +7,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="busbar-admin",
-    version="0.2.0",
+    version="0.3.0",
     description="A client library for accessing Busbar Admin API",
     long_description=long_description,
     long_description_content_type="text/markdown",

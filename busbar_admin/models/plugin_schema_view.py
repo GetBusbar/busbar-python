@@ -6,6 +6,8 @@ from typing import Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="PluginSchemaView")
 
 
@@ -33,6 +35,19 @@ class PluginSchemaView:
                 correction).
             trust (str): `"trusted" | "unverified" | "rejected"` — the same vocabulary the plugin catalog already
                 uses (never `"verified"`; question #8, round-4 correction).
+            kind (None | str | Unset): The plugin's `kind` (`hook` | `secret` | …) from its manifest. Both `GET
+                /plugins/{file}/schema`
+                and `POST /plugins/inspect` emit it (`null` only when the plugin cannot be resolved to a
+                manifest). Declared so codegen'd clients keep it.
+            restart_required_default (bool | None | Unset): The kind-derived restart-scoping default
+                (`busbar_plugin_sign::kind_restart_default`), so
+                busbar-ui need not hardcode the kind→default table. Emitted by both schema endpoints (`null`
+                only when the plugin has no resolvable manifest/kind). Declared so codegen'd clients keep it.
+            version (None | str | Unset): The plugin's semantic version from its manifest. Present on `POST
+                /plugins/inspect` (which
+                previews an on-disk candidate's manifest); `null`/absent on `GET /plugins/{file}/schema`, which
+                does not surface the version. Declared here so a codegen'd client keeps the field the inspect
+                handler always sends, rather than silently dropping it.
     """
 
     name: str
@@ -40,6 +55,9 @@ class PluginSchemaView:
     schema_error: None | str
     source: str
     trust: str
+    kind: None | str | Unset = UNSET
+    restart_required_default: bool | None | Unset = UNSET
+    version: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -54,6 +72,24 @@ class PluginSchemaView:
 
         trust = self.trust
 
+        kind: None | str | Unset
+        if isinstance(self.kind, Unset):
+            kind = UNSET
+        else:
+            kind = self.kind
+
+        restart_required_default: bool | None | Unset
+        if isinstance(self.restart_required_default, Unset):
+            restart_required_default = UNSET
+        else:
+            restart_required_default = self.restart_required_default
+
+        version: None | str | Unset
+        if isinstance(self.version, Unset):
+            version = UNSET
+        else:
+            version = self.version
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -65,6 +101,12 @@ class PluginSchemaView:
                 "trust": trust,
             }
         )
+        if kind is not UNSET:
+            field_dict["kind"] = kind
+        if restart_required_default is not UNSET:
+            field_dict["restart_required_default"] = restart_required_default
+        if version is not UNSET:
+            field_dict["version"] = version
 
         return field_dict
 
@@ -86,12 +128,42 @@ class PluginSchemaView:
 
         trust = d.pop("trust")
 
+        def _parse_kind(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        kind = _parse_kind(d.pop("kind", UNSET))
+
+        def _parse_restart_required_default(data: object) -> bool | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(bool | None | Unset, data)
+
+        restart_required_default = _parse_restart_required_default(d.pop("restart_required_default", UNSET))
+
+        def _parse_version(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        version = _parse_version(d.pop("version", UNSET))
+
         plugin_schema_view = cls(
             name=name,
             schema=schema,
             schema_error=schema_error,
             source=source,
             trust=trust,
+            kind=kind,
+            restart_required_default=restart_required_default,
+            version=version,
         )
 
         plugin_schema_view.additional_properties = d

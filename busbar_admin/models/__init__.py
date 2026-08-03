@@ -44,6 +44,7 @@ from .hook_transport_view import HookTransportView
 from .hook_view import HookView
 from .hook_view_settings import HookViewSettings
 from .info_view import InfoView
+from .inspect_plugin_req import InspectPluginReq
 from .install_plugin_req import InstallPluginReq
 from .key_metering_view import KeyMeteringView
 from .key_page_view import KeyPageView
@@ -150,6 +151,7 @@ __all__ = (
     "HookView",
     "HookViewSettings",
     "InfoView",
+    "InspectPluginReq",
     "InstallPluginReq",
     "KeyMeteringView",
     "KeyPageView",
