@@ -16,7 +16,7 @@ T = TypeVar("T", bound="HookHealthView")
 @_attrs_define
 class HookHealthView:
     """The live health of one hook's transport (`GET /api/v1/admin/hooks/{name}/health`). Checks
-    whether the hook resolves to a LOADED `kind: hook` plugin in the process's plugin registry —
+    whether the hook resolves to a LOADED `kind: hook` plugin in the process's plugin registry;
     this is a plugin-LOAD status check, not a network reachability probe: it never opens a
     connection, and it cannot tell you whether a `kind: hook` plugin's own configured external
     endpoint (e.g. `busbar-webrequest-hook`'s `settings.url`) is actually reachable, only that the
@@ -27,12 +27,12 @@ class HookHealthView:
                 secret.
             name (str):
             reachable (bool | None): `Some(true)` = resolves to a loaded `kind: hook` plugin; `Some(false)` = it does not
-                (wrong kind, or not installed/loaded) — always `Some`, never `None`, as of 1.5.0's
+                (wrong kind, or not installed/loaded), always `Some`, never `None`, as of 1.5.0's
                 in-process plugin model.
             transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
                 kind (no
                 transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
-                socket path or URL) — the retired 1.4.x socket/webhook sidecar transports are gone.
+                socket path or URL); the retired 1.4.x socket/webhook sidecar transports are gone.
     """
 
     detail: None | str

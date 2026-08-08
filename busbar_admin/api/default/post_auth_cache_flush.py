@@ -83,7 +83,7 @@ def sync_detailed(
     client: AuthenticatedClient,
     body: FlushCacheReq,
 ) -> Response[CacheFlushView | Error]:
-    """Flush the credential cache — one module's partition (`{module}`) or everything (empty body). Instant
+    """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
@@ -117,7 +117,7 @@ def sync(
     client: AuthenticatedClient,
     body: FlushCacheReq,
 ) -> CacheFlushView | Error | None:
-    """Flush the credential cache — one module's partition (`{module}`) or everything (empty body). Instant
+    """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
@@ -146,7 +146,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
     body: FlushCacheReq,
 ) -> Response[CacheFlushView | Error]:
-    """Flush the credential cache — one module's partition (`{module}`) or everything (empty body). Instant
+    """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
@@ -178,7 +178,7 @@ async def asyncio(
     client: AuthenticatedClient,
     body: FlushCacheReq,
 ) -> CacheFlushView | Error | None:
-    """Flush the credential cache — one module's partition (`{module}`) or everything (empty body). Instant
+    """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:

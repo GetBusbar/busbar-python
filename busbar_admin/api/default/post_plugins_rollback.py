@@ -101,9 +101,9 @@ def sync_detailed(
 ) -> Response[Error | PluginRollbackView]:
     """EXPLICIT, authenticated, audited rollback of a plugin to a PRIOR version (1.5.0). Validates the
     target artifact (structure + trust) with the anti-downgrade floor lowered to EXACTLY the target's
-    own version — a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR,
-    never the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the
-    same rebuild-and-swap path as plugins/reload
+    own version; a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR, never
+    the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the same
+    rebuild-and-swap path as plugins/reload
 
     Args:
         if_match (str | Unset):
@@ -138,9 +138,9 @@ def sync(
 ) -> Error | PluginRollbackView | None:
     """EXPLICIT, authenticated, audited rollback of a plugin to a PRIOR version (1.5.0). Validates the
     target artifact (structure + trust) with the anti-downgrade floor lowered to EXACTLY the target's
-    own version — a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR,
-    never the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the
-    same rebuild-and-swap path as plugins/reload
+    own version; a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR, never
+    the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the same
+    rebuild-and-swap path as plugins/reload
 
     Args:
         if_match (str | Unset):
@@ -170,9 +170,9 @@ async def asyncio_detailed(
 ) -> Response[Error | PluginRollbackView]:
     """EXPLICIT, authenticated, audited rollback of a plugin to a PRIOR version (1.5.0). Validates the
     target artifact (structure + trust) with the anti-downgrade floor lowered to EXACTLY the target's
-    own version — a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR,
-    never the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the
-    same rebuild-and-swap path as plugins/reload
+    own version; a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR, never
+    the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the same
+    rebuild-and-swap path as plugins/reload
 
     Args:
         if_match (str | Unset):
@@ -205,9 +205,9 @@ async def asyncio(
 ) -> Error | PluginRollbackView | None:
     """EXPLICIT, authenticated, audited rollback of a plugin to a PRIOR version (1.5.0). Validates the
     target artifact (structure + trust) with the anti-downgrade floor lowered to EXACTLY the target's
-    own version — a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR,
-    never the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the
-    same rebuild-and-swap path as plugins/reload
+    own version; a lower or untrusted artifact still fails (a rollback authenticates the OPERATOR, never
+    the bytes). Persists the version pin to the overlay (survives restart) and hot-swaps via the same
+    rebuild-and-swap path as plugins/reload
 
     Args:
         if_match (str | Unset):

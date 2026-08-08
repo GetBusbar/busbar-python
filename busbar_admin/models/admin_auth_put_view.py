@@ -11,7 +11,7 @@ T = TypeVar("T", bound="AdminAuthPutView")
 
 @_attrs_define
 class AdminAuthPutView:
-    """`PUT /admin-auth` — the resource post-state (`{configured, modules}`, the same shape
+    """`PUT /admin-auth`: the resource post-state (`{configured, modules}`, the same shape
     `GET /admin-auth` returns) plus apply metadata, so a client uses the PUT response as post-state.
 
         Attributes:

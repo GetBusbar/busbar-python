@@ -76,8 +76,8 @@ def sync_detailed(
     client: AuthenticatedClient,
 ) -> Response[Error | PluginSchemaView]:
     """The plugin's self-described settings JSON Schema, read from the SIGNED manifest's `settings_schema`
-    field — works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins keep
-    the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
+    field, which works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins
+    keep the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
     describe answers null falls back server-side to the manifest baseline (source: manifest)
 
     Args:
@@ -108,8 +108,8 @@ def sync(
     client: AuthenticatedClient,
 ) -> Error | PluginSchemaView | None:
     """The plugin's self-described settings JSON Schema, read from the SIGNED manifest's `settings_schema`
-    field — works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins keep
-    the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
+    field, which works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins
+    keep the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
     describe answers null falls back server-side to the manifest baseline (source: manifest)
 
     Args:
@@ -135,8 +135,8 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
 ) -> Response[Error | PluginSchemaView]:
     """The plugin's self-described settings JSON Schema, read from the SIGNED manifest's `settings_schema`
-    field — works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins keep
-    the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
+    field, which works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins
+    keep the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
     describe answers null falls back server-side to the manifest baseline (source: manifest)
 
     Args:
@@ -165,8 +165,8 @@ async def asyncio(
     client: AuthenticatedClient,
 ) -> Error | PluginSchemaView | None:
     """The plugin's self-described settings JSON Schema, read from the SIGNED manifest's `settings_schema`
-    field — works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins keep
-    the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
+    field, which works for every plugin kind (store/secret/auth/hook), not just hooks. `hook` plugins
+    keep the live describe-proxy behavior when describe answers (source: describe); a loaded hook whose
     describe answers null falls back server-side to the manifest baseline (source: manifest)
 
     Args:

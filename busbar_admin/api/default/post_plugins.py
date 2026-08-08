@@ -97,14 +97,13 @@ def sync_detailed(
     Args:
         body (InstallPluginReq): The `POST /api/v1/admin/plugins` request body: install a SIGNED
             plugin tarball. The tarball
-            bytes ride as base64 (`tarball_b64`) — a plugin artifact is opaque binary, so base64 keeps
+            bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps
             it a
             clean JSON field. The engine RE-VERIFIES the contained signed manifest server-side against
             the
             running `plugins.*` trust posture (the client is never trusted). `file` is the bare
             `.tar.gz`
-            filename to store it under (storage only — identity comes from the signed manifest
-            inside).
+            filename to store it under (storage only; identity comes from the signed manifest inside).
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -137,14 +136,13 @@ def sync(
     Args:
         body (InstallPluginReq): The `POST /api/v1/admin/plugins` request body: install a SIGNED
             plugin tarball. The tarball
-            bytes ride as base64 (`tarball_b64`) — a plugin artifact is opaque binary, so base64 keeps
+            bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps
             it a
             clean JSON field. The engine RE-VERIFIES the contained signed manifest server-side against
             the
             running `plugins.*` trust posture (the client is never trusted). `file` is the bare
             `.tar.gz`
-            filename to store it under (storage only — identity comes from the signed manifest
-            inside).
+            filename to store it under (storage only; identity comes from the signed manifest inside).
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -172,14 +170,13 @@ async def asyncio_detailed(
     Args:
         body (InstallPluginReq): The `POST /api/v1/admin/plugins` request body: install a SIGNED
             plugin tarball. The tarball
-            bytes ride as base64 (`tarball_b64`) — a plugin artifact is opaque binary, so base64 keeps
+            bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps
             it a
             clean JSON field. The engine RE-VERIFIES the contained signed manifest server-side against
             the
             running `plugins.*` trust posture (the client is never trusted). `file` is the bare
             `.tar.gz`
-            filename to store it under (storage only — identity comes from the signed manifest
-            inside).
+            filename to store it under (storage only; identity comes from the signed manifest inside).
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -210,14 +207,13 @@ async def asyncio(
     Args:
         body (InstallPluginReq): The `POST /api/v1/admin/plugins` request body: install a SIGNED
             plugin tarball. The tarball
-            bytes ride as base64 (`tarball_b64`) — a plugin artifact is opaque binary, so base64 keeps
+            bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps
             it a
             clean JSON field. The engine RE-VERIFIES the contained signed manifest server-side against
             the
             running `plugins.*` trust posture (the client is never trusted). `file` is the bare
             `.tar.gz`
-            filename to store it under (storage only — identity comes from the signed manifest
-            inside).
+            filename to store it under (storage only; identity comes from the signed manifest inside).
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

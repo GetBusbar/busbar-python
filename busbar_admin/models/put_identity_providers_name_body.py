@@ -6,12 +6,17 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="HookReportedStatusSettingsType0")
+T = TypeVar("T", bound="PutIdentityProvidersNameBody")
 
 
 @_attrs_define
-class HookReportedStatusSettingsType0:
-    """ """
+class PutIdentityProvidersNameBody:
+    """One `identity-providers:` DEFINITION, exactly as config.yaml spells it (`{module, settings, ...}`). Parsed into the
+    section's `deny_unknown_fields` config struct, so an unknown key is the same loud reject the file would give. The
+    accepted shape is the config file's own, documented in the configuration reference; it is not restated here because
+    several of its types parse a wire shape that does not match their field layout.
+
+    """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -25,10 +30,10 @@ class HookReportedStatusSettingsType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        hook_reported_status_settings_type_0 = cls()
+        put_identity_providers_name_body = cls()
 
-        hook_reported_status_settings_type_0.additional_properties = d
-        return hook_reported_status_settings_type_0
+        put_identity_providers_name_body.additional_properties = d
+        return put_identity_providers_name_body
 
     @property
     def additional_keys(self) -> list[str]:

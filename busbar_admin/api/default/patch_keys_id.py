@@ -105,8 +105,8 @@ def sync_detailed(
     Args:
         id (str):
         if_match (str | Unset):
-        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0, S1), so
-            the mutable surface is
+        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the
+            mutable surface is
             auth-shaped only. Every field is optional; only the present ones change. The credential,
             name,
             allowed-pools, and labels are immutable here (rotate/recreate for those).
@@ -155,8 +155,8 @@ def sync(
     Args:
         id (str):
         if_match (str | Unset):
-        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0, S1), so
-            the mutable surface is
+        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the
+            mutable surface is
             auth-shaped only. Every field is optional; only the present ones change. The credential,
             name,
             allowed-pools, and labels are immutable here (rotate/recreate for those).
@@ -200,8 +200,8 @@ async def asyncio_detailed(
     Args:
         id (str):
         if_match (str | Unset):
-        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0, S1), so
-            the mutable surface is
+        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the
+            mutable surface is
             auth-shaped only. Every field is optional; only the present ones change. The credential,
             name,
             allowed-pools, and labels are immutable here (rotate/recreate for those).
@@ -248,8 +248,8 @@ async def asyncio(
     Args:
         id (str):
         if_match (str | Unset):
-        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0, S1), so
-            the mutable surface is
+        body (UpdateKeyReq): Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the
+            mutable surface is
             auth-shaped only. Every field is optional; only the present ones change. The credential,
             name,
             allowed-pools, and labels are immutable here (rotate/recreate for those).

@@ -17,7 +17,7 @@ T = TypeVar("T", bound="CreatedKeyView")
 
 @_attrs_define
 class CreatedKeyView:
-    """`POST /keys` (mint) — the key metadata plus the ONCE-shown signed token, and (when an AWS SigV4
+    """`POST /keys` (mint): the key metadata plus the ONCE-shown signed token, and (when an AWS SigV4
     credential was requested) the AccessKeyId + secret access key. The AWS fields are absent on a
     bearer-only mint.
 
@@ -27,19 +27,18 @@ class CreatedKeyView:
             enabled (bool):
             expires_at (int): Unix-seconds expiry of the signed token.
             group (None | str):
-            group_provisioned (bool): Whether this mint AUTO-PROVISIONED its bound group leaf (self-service D2) — lets a
-                portal
+            group_provisioned (bool): Whether this mint AUTO-PROVISIONED its bound group leaf (self-service); lets a portal
                 distinguish "bound to an existing bucket" from "created your personal bucket + bound".
             id (str):
             labels (CreatedKeyViewLabels):
             name (str):
-            state (str): E-007: same field as `KeyView.state` — a fresh mint is always `"active"` (enabled, not
+            state (str): Same field as `KeyView.state`; a fresh mint is always `"active"` (enabled, not
                 revoked, not deleted).
-            token (str): The busbar-SIGNED token — the key credential (1.5.0, S1), shown EXACTLY once and never
+            token (str): The busbar-SIGNED token: the key credential (1.5.0), shown EXACTLY once and never
                 returned by any read. (This is the field a client must capture to authenticate.)
             aws_access_key_id (None | str | Unset): AWS AccessKeyId (present only when `issue_aws_credential` was set). Not
                 secret.
-            aws_secret_access_key (None | str | Unset): AWS SigV4 secret access key — shown once (present only with an AWS
+            aws_secret_access_key (None | str | Unset): AWS SigV4 secret access key, shown once (present only with an AWS
                 credential).
     """
 

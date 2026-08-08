@@ -19,24 +19,28 @@ T = TypeVar("T", bound="EffectiveConfigView")
 
 @_attrs_define
 class EffectiveConfigView:
-    """The EFFECTIVE config snapshot (`GET /api/v1/admin/config`) — the running configuration as busbar
+    """The EFFECTIVE config snapshot (`GET /api/v1/admin/config`): the running configuration as busbar
     resolved it, for drift detection (compare against your desired config) and one-shot inspection.
     Composed from the same REDACTED reads as the individual endpoints (auth chain names, pool/model/
-    provider topology, hook definitions, global-hook wiring) — so it carries NO secret: no client
+    provider topology, hook definitions, global-hook wiring), so it carries NO secret: no client
     tokens, no provider keys, no hook payloads. Additive-only; the source-layer annotation (base vs
     overlay) lands with the config overlay substrate.
 
         Attributes:
             auth (AuthView): The ingress auth chain read (`GET /api/v1/admin/auth`): the ordered module names that
                 authenticate
-                callers + the upstream-credential mode. Never a secret — module names and the mode are config
+                callers + the upstream-credential mode. Never a secret: module names and the mode are config
                 identifiers, not credentials. An empty `chain` is the open front door (admits every request).
-            global_hooks (list[str]): Names fired on every request (`global_hooks:` + any inline `global: true`).
+            global_hooks (list[str]): Names fired on EVERY request: the hooks attached at the reserved all-pools key
+                `pools.hooks:`
+                in `config.yaml` (the 1.5.3 replacement for the DELETED `global_hooks:` key; that key no
+                longer parses), plus any hook this API declares with `global: true`. The response FIELD name
+                stays `global_hooks`; only the config-file spelling changed.
             hooks (list[HookView]):
             models (list[ModelView]):
             pools (list[PoolView]):
             providers (list[ProviderView]):
-            version (int): The monotonic config version at the time of this read (see `InfoView.config_version`) — so a
+            version (int): The monotonic config version at the time of this read (see `InfoView.config_version`), so a
                 drift-detection read gets the config AND its version in one call.
     """
 

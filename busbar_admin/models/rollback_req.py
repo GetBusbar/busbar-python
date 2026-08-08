@@ -11,7 +11,7 @@ T = TypeVar("T", bound="RollbackReq")
 
 @_attrs_define
 class RollbackReq:
-    """The `POST /api/v1/admin/config/rollback` request body. Optimistic concurrency rides `If-Match` (H3).
+    """The `POST /api/v1/admin/config/rollback` request body. Optimistic concurrency rides `If-Match`.
 
     Attributes:
         version (int): The retained version to restore.

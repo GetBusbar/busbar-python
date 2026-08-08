@@ -16,7 +16,7 @@ T = TypeVar("T", bound="CreateKeyReq")
 
 @_attrs_define
 class CreateKeyReq:
-    """`POST /keys` body (1.5.0 signed-token keys, S1): PURE AUTH + a signed expiring token. A minted
+    """`POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed expiring token. A minted
     key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key - all
     enforcement flows through the bound `group`. `#[serde(deny_unknown_fields)]` so the removed
     1.4.x fields (max_budget_cents/rpm_limit/tpm_limit/budget_period) fail loudly.
@@ -24,7 +24,7 @@ class CreateKeyReq:
         Attributes:
             name (str):
             allowed_pools (list[str] | None | Unset): Pools this key may target. OMITTED = ALL pools; an explicit `[]` = NO
-                pools (C6).
+                pools.
             expires_at (int | None | Unset): Token expiry as an absolute Unix-seconds timestamp. Mutually exclusive with
                 `expires_in`.
             expires_in (None | str | Unset): Token lifetime as a duration string (`7d`, `24h`, `30m`, `3600s`) - the token's
@@ -34,8 +34,8 @@ class CreateKeyReq:
             group (None | str | Unset): The `groups:` bucket this key binds to (at most one). A key with NO group is authed
                 +
                 unlimited (access only). If the named group EXISTS, the key binds to it. If it does NOT
-                exist, the mint 400s UNLESS `parent` is given — then it is AUTO-PROVISIONED as a leaf under
-                `parent` (self-service D2; see `parent`).
+                exist, the mint 400s UNLESS `parent` is given, in which case it is AUTO-PROVISIONED as a leaf under
+                `parent` (self-service; see `parent`).
             issue_aws_credential (bool | Unset): When true, ALSO issue an AWS-style access-key-id + secret access key (the
                 MinIO/S3-compatible
                 model) so a Bedrock-SDK client can authenticate via inbound SigV4. Both are returned ONCE. Default: False.
@@ -43,11 +43,11 @@ class CreateKeyReq:
                 interpreted by
                 enforcement.
             parent (None | str | Unset): AUTO-PROVISION target: the EXISTING parent group under which to create
-                `group` as a leaf when `group` does not yet exist — the first-self-mint materialization of a
+                `group` as a leaf when `group` does not yet exist: the first-self-mint materialization of a
                 `user:<sub>` personal budget bucket. The new leaf's limits come from the nearest-ancestor
                 `child_default` template (inherit-only when none up the chain), created through the same
                 validate-at-the-door path as `POST /groups`. If `group` ALREADY exists, `parent` must equal
-                its actual parent (else 409) — a mint never re-homes an existing group. Ignored when `group`
+                its actual parent (else 409); a mint never re-homes an existing group. Ignored when `group`
                 is absent (a key with no group has nothing to provision).
     """
 

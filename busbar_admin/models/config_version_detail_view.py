@@ -15,7 +15,7 @@ T = TypeVar("T", bound="ConfigVersionDetailView")
 
 @_attrs_define
 class ConfigVersionDetailView:
-    """`GET /config/versions/{v}` — one retained config version WITH its full hook-surface snapshot
+    """`GET /config/versions/{v}`: one retained config version WITH its full hook-surface snapshot
     (projected through the wire `HookView`, keyed by hook name) and the global wiring at that version.
 
         Attributes:

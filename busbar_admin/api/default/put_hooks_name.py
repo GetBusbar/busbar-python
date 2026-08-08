@@ -100,7 +100,7 @@ def sync_detailed(
     body: PutHooksNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
-    """Replace an overlay hook definition — live immediately (grants immutable)
+    """Replace an overlay hook definition, live immediately (grants immutable)
 
     Args:
         name (str):
@@ -135,7 +135,7 @@ def sync(
     body: PutHooksNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
-    """Replace an overlay hook definition — live immediately (grants immutable)
+    """Replace an overlay hook definition, live immediately (grants immutable)
 
     Args:
         name (str):
@@ -165,7 +165,7 @@ async def asyncio_detailed(
     body: PutHooksNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
-    """Replace an overlay hook definition — live immediately (grants immutable)
+    """Replace an overlay hook definition, live immediately (grants immutable)
 
     Args:
         name (str):
@@ -198,7 +198,7 @@ async def asyncio(
     body: PutHooksNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
-    """Replace an overlay hook definition — live immediately (grants immutable)
+    """Replace an overlay hook definition, live immediately (grants immutable)
 
     Args:
         name (str):

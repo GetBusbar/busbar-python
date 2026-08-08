@@ -11,7 +11,7 @@ T = TypeVar("T", bound="CacheFlushView")
 
 @_attrs_define
 class CacheFlushView:
-    """`POST /auth/cache/flush` — number of cached credential-decision entries dropped.
+    """`POST /auth/cache/flush`: number of cached credential-decision entries dropped.
 
     Attributes:
         flushed (int):

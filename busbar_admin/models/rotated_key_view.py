@@ -17,7 +17,7 @@ T = TypeVar("T", bound="RotatedKeyView")
 
 @_attrs_define
 class RotatedKeyView:
-    """`POST /keys/{id}/rotate` — the key metadata plus the ONCE-shown fresh CREDENTIAL. Exactly one of
+    """`POST /keys/{id}/rotate`: the key metadata plus the ONCE-shown fresh CREDENTIAL. Exactly one of
     `token`+`expires_at` (a 1.5.0 signed-token key: a new token at a new binding generation, every
     prior token now rejected) or `secret` (a legacy hashed-secret key) is present.
 
@@ -29,13 +29,13 @@ class RotatedKeyView:
             id (str):
             labels (RotatedKeyViewLabels):
             name (str):
-            state (str): E-007: same field as `KeyView.state` — rotate does not change `enabled`/revoked/tombstoned
+            state (str): Same field as `KeyView.state`; rotate does not change `enabled`/revoked/tombstoned
                 status, so this reflects whatever the key's disposition already was (rotating a `disabled` or
                 `revoked` key is legal and leaves it exactly that; only a `tombstoned` key refuses to rotate,
                 which surfaces as 404 instead of this response).
             expires_at (int | None | Unset): Unix-seconds expiry of the re-minted signed token (present with `token`).
-            secret (None | str | Unset): The fresh bearer secret — shown EXACTLY once (legacy hashed-secret keys only).
-            token (None | str | Unset): The fresh busbar-SIGNED token — shown EXACTLY once (signed-token keys).
+            secret (None | str | Unset): The fresh bearer secret, shown EXACTLY once (legacy hashed-secret keys only).
+            token (None | str | Unset): The fresh busbar-SIGNED token, shown EXACTLY once (signed-token keys).
     """
 
     allowed_pools: list[str] | None

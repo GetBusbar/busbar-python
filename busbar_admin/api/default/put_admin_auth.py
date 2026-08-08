@@ -94,7 +94,7 @@ def sync_detailed(
     body: PutAuthBody,
     if_match: str | Unset = UNSET,
 ) -> Response[AdminAuthPutView | Error]:
-    """Replace the admin_auth chain at runtime — dry-run guarded (the calling credentials must hold full
+    """Replace the admin_auth chain at runtime, dry-run guarded (the calling credentials must hold full
     scope under the NEW chain, else 409). Live until the next reload/restart
 
     Args:
@@ -128,7 +128,7 @@ def sync(
     body: PutAuthBody,
     if_match: str | Unset = UNSET,
 ) -> AdminAuthPutView | Error | None:
-    """Replace the admin_auth chain at runtime — dry-run guarded (the calling credentials must hold full
+    """Replace the admin_auth chain at runtime, dry-run guarded (the calling credentials must hold full
     scope under the NEW chain, else 409). Live until the next reload/restart
 
     Args:
@@ -157,7 +157,7 @@ async def asyncio_detailed(
     body: PutAuthBody,
     if_match: str | Unset = UNSET,
 ) -> Response[AdminAuthPutView | Error]:
-    """Replace the admin_auth chain at runtime — dry-run guarded (the calling credentials must hold full
+    """Replace the admin_auth chain at runtime, dry-run guarded (the calling credentials must hold full
     scope under the NEW chain, else 409). Live until the next reload/restart
 
     Args:
@@ -189,7 +189,7 @@ async def asyncio(
     body: PutAuthBody,
     if_match: str | Unset = UNSET,
 ) -> AdminAuthPutView | Error | None:
-    """Replace the admin_auth chain at runtime — dry-run guarded (the calling credentials must hold full
+    """Replace the admin_auth chain at runtime, dry-run guarded (the calling credentials must hold full
     scope under the NEW chain, else 409). Live until the next reload/restart
 
     Args:

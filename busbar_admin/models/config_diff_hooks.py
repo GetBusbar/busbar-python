@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ConfigDiffHooks")
 
 @_attrs_define
 class ConfigDiffHooks:
-    """The `hooks` object of a `GET /config/diff` — hook names added / removed / changed between the two
+    """The `hooks` object of a `GET /config/diff`: hook names added / removed / changed between the two
     versions.
 
         Attributes:

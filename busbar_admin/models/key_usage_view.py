@@ -16,7 +16,7 @@ class KeyUsageView:
     Attributes:
         id (str):
         name (None | str): The key's display name; `None` when the key was deleted after metering accumulated (history
-            outlives the key — the id still attributes it).
+            outlives the key; the id still attributes it).
         requests (int):
         spend_micros (int): Busbar's derived cost estimate in MICRO-units of the ABSTRACT cost unit (1e-6 unit -
             integer math, sub-cent precise, no float drift), recomputed at read time from the raw token

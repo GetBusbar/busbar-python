@@ -18,7 +18,7 @@ T = TypeVar("T", bound="GroupView")
 @_attrs_define
 class GroupView:
     """A group definition in the registry read (`GET /api/v1/admin/groups`,
-    `GET /api/v1/admin/groups/{name}`) — the limit-tree read surface. Projects the `groups:` config
+    `GET /api/v1/admin/groups/{name}`): the limit-tree read surface. Projects the `groups:` config
     entry faithfully (parent chain, enabled freeze flag, the ordered limits, the `child_default`
     budget template for auto-provisioned children), never a secret. This is the READ shape; the
     WRITE verbs accept a `GroupCfg` verbatim (paste a config.yaml group block). Additive-only.

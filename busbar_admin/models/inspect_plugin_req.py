@@ -11,10 +11,10 @@ T = TypeVar("T", bound="InspectPluginReq")
 
 @_attrs_define
 class InspectPluginReq:
-    """`POST /api/v1/admin/plugins/inspect` request body. SAME shape as [`InstallPluginReq`] (question
-    #7 — "same request body shape as `POST /plugins`") — `file` is accepted for shape parity with
-    the install flow a UI composes around the same upload, but is otherwise UNUSED here: inspect
-    never writes anything to disk, so there is no filename to bind an install would need.
+    """`POST /api/v1/admin/plugins/inspect` request body. SAME shape as [`InstallPluginReq`]; `file`
+    is accepted for shape parity with the install flow a UI composes around the same upload, but is
+    otherwise UNUSED here: inspect never writes anything to disk, so there is no filename to bind
+    an install would need.
 
         Attributes:
             file (str):

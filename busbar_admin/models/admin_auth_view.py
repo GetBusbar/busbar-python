@@ -11,15 +11,15 @@ T = TypeVar("T", bound="AdminAuthView")
 
 @_attrs_define
 class AdminAuthView:
-    """The admin-plane auth read (`GET /api/v1/admin/admin-auth`) — which modules guard the ADMIN surface
+    """The admin-plane auth read (`GET /api/v1/admin/admin-auth`): which modules guard the ADMIN surface
     (distinct from the ingress `auth` chain). `modules` is the live `admin_auth` chain (the SAME
     resource `PUT /api/v1/admin/admin-auth` writes), so a read-after-write is coherent. An empty chain is
-    the open (anonymous, full-authority) dev posture — `configured: false`. Never a secret.
+    the open (anonymous, full-authority) dev posture, `configured: false`. Never a secret.
 
         Attributes:
             configured (bool): Whether an admin credential chain is configured. `false` = the empty chain = open dev
                 posture.
-            modules (list[str]): The active admin-plane guard module names — the `admin_auth` chain verbatim (e.g.
+            modules (list[str]): The active admin-plane guard module names, the `admin_auth` chain verbatim (e.g.
                 `["admin-tokens"]`), reported in order. Empty when the admin plane is open.
     """
 

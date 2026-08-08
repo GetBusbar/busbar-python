@@ -95,7 +95,7 @@ def sync_detailed(
     body: PostHooksBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
-    """Register (or replace) a hook at runtime — live immediately
+    """Register (or replace) a hook at runtime, live immediately
 
     Args:
         if_match (str | Unset):
@@ -127,7 +127,7 @@ def sync(
     body: PostHooksBody,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
-    """Register (or replace) a hook at runtime — live immediately
+    """Register (or replace) a hook at runtime, live immediately
 
     Args:
         if_match (str | Unset):
@@ -154,7 +154,7 @@ async def asyncio_detailed(
     body: PostHooksBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
-    """Register (or replace) a hook at runtime — live immediately
+    """Register (or replace) a hook at runtime, live immediately
 
     Args:
         if_match (str | Unset):
@@ -184,7 +184,7 @@ async def asyncio(
     body: PostHooksBody,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
-    """Register (or replace) a hook at runtime — live immediately
+    """Register (or replace) a hook at runtime, live immediately
 
     Args:
         if_match (str | Unset):

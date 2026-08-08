@@ -11,7 +11,7 @@ T = TypeVar("T", bound="UsageBreakdown")
 
 @_attrs_define
 class UsageBreakdown:
-    """The raw consumption counts + the derived spend estimate — the one shape shared by `total`,
+    """The raw consumption counts + the derived spend estimate: the one shape shared by `total`,
     `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
 
         Attributes:

@@ -15,9 +15,9 @@ T = TypeVar("T", bound="KeyView")
 
 @_attrs_define
 class KeyView:
-    """Virtual-key metadata — the `key_meta()` shape returned by `GET /keys/{id}`, `PATCH /keys/{id}`,
+    """Virtual-key metadata: the `key_meta()` shape returned by `GET /keys/{id}`, `PATCH /keys/{id}`,
     and as each item of `GET /keys`. Never the secret or its hash. 1.5.0: keys are PURE AUTH, no
-    inline limits; `allowed_pools` is `null` = all pools, `[]` = no pools (C6); `group` names the
+    inline limits; `allowed_pools` is `null` = all pools, `[]` = no pools; `group` names the
     bound `groups:` entry (`null` = unlimited).
 
         Attributes:
@@ -28,15 +28,15 @@ class KeyView:
             id (str):
             labels (KeyViewLabels):
             name (str):
-            state (str): E-007: `enabled` alone cannot distinguish a reversible pause from either of the two permanent
-                dispositions — `PATCH {enabled:false}`, `POST /keys/{id}/revoke`, and `DELETE /keys/{id}` all
+            state (str): `enabled` alone cannot distinguish a reversible pause from either of the two permanent
+                dispositions. `PATCH {enabled:false}`, `POST /keys/{id}/revoke`, and `DELETE /keys/{id}` all
                 used to leave `enabled: false` with nothing else to tell them apart. One of exactly four
                 values, additive and derived (never independently settable):
-                - `"active"` — enabled, not revoked, not deleted.
-                - `"disabled"` — `PATCH {enabled:false}`. Reversible: `PATCH {enabled:true}` restores it.
-                - `"revoked"` — `POST /keys/{id}/revoke`. Permanent: denylisted, but the binding row (and
+                - `"active"`: enabled, not revoked, not deleted.
+                - `"disabled"`: `PATCH {enabled:false}`. Reversible: `PATCH {enabled:true}` restores it.
+                - `"revoked"`: `POST /keys/{id}/revoke`. Permanent: denylisted, but the binding row (and
                   `GET /keys/{id}`) stays live for audit/usage attribution.
-                - `"tombstoned"` — `DELETE /keys/{id}`. Permanent: denylisted AND hard-deleted; the row is
+                - `"tombstoned"`: `DELETE /keys/{id}`. Permanent: denylisted AND hard-deleted; the row is
                   kept only so id-attributed billing/audit history keeps resolving. Omitted from a plain
                   `GET /keys` by default; visible there with `?include=tombstoned`.
     """

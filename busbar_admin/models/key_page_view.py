@@ -15,7 +15,7 @@ T = TypeVar("T", bound="KeyPageView")
 
 @_attrs_define
 class KeyPageView:
-    """`GET /keys` — the cursor-paginated key list envelope (`{items, next_cursor}`, hand-rolled in the
+    """`GET /keys`: the cursor-paginated key list envelope (`{items, next_cursor}`, hand-rolled in the
     keys handler rather than via `Page<T>`).
 
         Attributes:

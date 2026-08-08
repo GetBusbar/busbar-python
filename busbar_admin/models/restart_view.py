@@ -11,7 +11,7 @@ T = TypeVar("T", bound="RestartView")
 
 @_attrs_define
 class RestartView:
-    """`POST /restart` — accepted-and-draining result.
+    """`POST /restart`: accepted-and-draining result.
 
     Attributes:
         note (str):

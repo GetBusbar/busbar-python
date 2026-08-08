@@ -11,11 +11,11 @@ T = TypeVar("T", bound="ConfigValidateView")
 
 @_attrs_define
 class ConfigValidateView:
-    """The result of `POST /api/v1/admin/config/validate` — a DRY-RUN: does a proposed config resolve +
+    """The result of `POST /api/v1/admin/config/validate`, a DRY-RUN: does a proposed config resolve +
     validate, WITHOUT applying anything. `ok` is the verdict; `errors` lists every structural/resolution
     failure at once (empty when `ok`). A well-formed request always returns 200 with this view (a valid
     request that describes an INVALID config is `ok: false`, not an HTTP error); only a MALFORMED request
-    body is an `invalid_request`. Env-var interpolation is out of scope — this checks structure and
+    body is an `invalid_request`. Env-var interpolation is out of scope; this checks structure and
     cross-reference resolution, not runtime secret presence.
 
         Attributes:

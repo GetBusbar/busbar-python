@@ -88,7 +88,7 @@ def sync_detailed(
     body: RestartReq | Unset = UNSET,
 ) -> Response[Error | RestartView]:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
-    admin_insecure, store). Drains first; the supervisor brings it back
+    admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
@@ -119,7 +119,7 @@ def sync(
     body: RestartReq | Unset = UNSET,
 ) -> Error | RestartView | None:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
-    admin_insecure, store). Drains first; the supervisor brings it back
+    admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
@@ -145,7 +145,7 @@ async def asyncio_detailed(
     body: RestartReq | Unset = UNSET,
 ) -> Response[Error | RestartView]:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
-    admin_insecure, store). Drains first; the supervisor brings it back
+    admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
@@ -174,7 +174,7 @@ async def asyncio(
     body: RestartReq | Unset = UNSET,
 ) -> Error | RestartView | None:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
-    admin_insecure, store). Drains first; the supervisor brings it back
+    admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as

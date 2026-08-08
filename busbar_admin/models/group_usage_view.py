@@ -15,7 +15,7 @@ T = TypeVar("T", bound="GroupUsageView")
 
 @_attrs_define
 class GroupUsageView:
-    """`GET /groups/{name}/usage` — one group's DERIVED current-window usage, one row per
+    """`GET /groups/{name}/usage`: one group's DERIVED current-window usage, one row per
     enforcement bucket (each `(window, pool?)` its limits materialise), against that bucket's
     caps. The dashboard read: spend/tokens/requests per tier vs the budgets, straight off the
     ledger x the CURRENT rate card (reprice-on-read, nothing stored). The customer's self-service
@@ -25,7 +25,7 @@ class GroupUsageView:
             as_of (int): Epoch seconds the read was taken at (the windows below are current AS OF this instant).
             buckets (list[GroupBucketUsageView]): One row per enforcement bucket, in the group's resolved bucket order.
                 Empty for a group
-                with only a `concurrent` limit (or none) — there is no windowed ledger to read.
+                with only a `concurrent` limit (or none); there is no windowed ledger to read.
             enabled (bool): `false` = the group is FROZEN (`enabled: false`): every request through it rejects.
             group (str): The group name (echoed from the path).
     """

@@ -18,12 +18,12 @@ T = TypeVar("T", bound="ConfigDiffView")
 
 @_attrs_define
 class ConfigDiffView:
-    """`GET /config/diff` — structured hook-surface diff between two retained versions. `global_hooks` is
+    """`GET /config/diff`: structured hook-surface diff between two retained versions. `global_hooks` is
     present only when the global wiring differed between the two sides.
 
         Attributes:
             from_ (int):
-            hooks (ConfigDiffHooks): The `hooks` object of a `GET /config/diff` — hook names added / removed / changed
+            hooks (ConfigDiffHooks): The `hooks` object of a `GET /config/diff`: hook names added / removed / changed
                 between the two
                 versions.
             to (int):

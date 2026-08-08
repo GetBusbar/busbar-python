@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ConfigReloadView")
 
 @_attrs_define
 class ConfigReloadView:
-    """`POST /config/reload` — reload-from-disk result.
+    """`POST /config/reload`: reload-from-disk result.
 
     Attributes:
         config_version (int):

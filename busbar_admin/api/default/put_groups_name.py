@@ -100,7 +100,7 @@ def sync_detailed(
     body: PutGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Replace an overlay group definition — live immediately (limits rebuilt)
+    """Replace an overlay group definition, live immediately (limits rebuilt)
 
     Args:
         name (str):
@@ -135,7 +135,7 @@ def sync(
     body: PutGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Replace an overlay group definition — live immediately (limits rebuilt)
+    """Replace an overlay group definition, live immediately (limits rebuilt)
 
     Args:
         name (str):
@@ -165,7 +165,7 @@ async def asyncio_detailed(
     body: PutGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Replace an overlay group definition — live immediately (limits rebuilt)
+    """Replace an overlay group definition, live immediately (limits rebuilt)
 
     Args:
         name (str):
@@ -198,7 +198,7 @@ async def asyncio(
     body: PutGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Replace an overlay group definition — live immediately (limits rebuilt)
+    """Replace an overlay group definition, live immediately (limits rebuilt)
 
     Args:
         name (str):

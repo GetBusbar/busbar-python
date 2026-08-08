@@ -6,13 +6,15 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="HookViewSettings")
+T = TypeVar("T", bound="PutExportNameBody")
 
 
 @_attrs_define
-class HookViewSettings:
-    """The hook's opaque settings map (operator/API-owned; pushed via the configure wire). Never
-    interpreted by busbar; never a secret by contract (hook settings are operator config).
+class PutExportNameBody:
+    """One `export:` DEFINITION, exactly as config.yaml spells it (`{module, settings, ...}`). Parsed into the section's
+    `deny_unknown_fields` config struct, so an unknown key is the same loud reject the file would give. The accepted
+    shape is the config file's own, documented in the configuration reference; it is not restated here because several
+    of its types parse a wire shape that does not match their field layout.
 
     """
 
@@ -28,10 +30,10 @@ class HookViewSettings:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        hook_view_settings = cls()
+        put_export_name_body = cls()
 
-        hook_view_settings.additional_properties = d
-        return hook_view_settings
+        put_export_name_body.additional_properties = d
+        return put_export_name_body
 
     @property
     def additional_keys(self) -> list[str]:

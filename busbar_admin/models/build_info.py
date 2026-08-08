@@ -17,7 +17,7 @@ class BuildInfo:
         auth_modules (list[str]): Auth modules baked into this binary (e.g. `["tokens"]`; empty under `--no-default-
             features`).
         hook_plugins (list[str]): Hook plugins baked into this binary (e.g. `["ranking"]`).
-        weighted_floor (bool): The inline SWRR floor — ALWAYS `true` (compiled in unconditionally, non-removable).
+        weighted_floor (bool): The inline SWRR floor: ALWAYS `true` (compiled in unconditionally, non-removable).
     """
 
     auth_modules: list[str]

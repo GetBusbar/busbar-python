@@ -13,7 +13,7 @@ T = TypeVar("T", bound="HookTransportView")
 class HookTransportView:
     """The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in kind (no
     transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
-    socket path or URL) — the retired 1.4.x socket/webhook sidecar transports are gone.
+    socket path or URL); the retired 1.4.x socket/webhook sidecar transports are gone.
 
         Attributes:
             kind (str): `"plugin"` for a signed dlopen'd hook plugin, or `"none"` for a hook with no plugin

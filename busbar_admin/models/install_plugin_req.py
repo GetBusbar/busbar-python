@@ -12,10 +12,10 @@ T = TypeVar("T", bound="InstallPluginReq")
 @_attrs_define
 class InstallPluginReq:
     """The `POST /api/v1/admin/plugins` request body: install a SIGNED plugin tarball. The tarball
-    bytes ride as base64 (`tarball_b64`) — a plugin artifact is opaque binary, so base64 keeps it a
+    bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps it a
     clean JSON field. The engine RE-VERIFIES the contained signed manifest server-side against the
     running `plugins.*` trust posture (the client is never trusted). `file` is the bare `.tar.gz`
-    filename to store it under (storage only — identity comes from the signed manifest inside).
+    filename to store it under (storage only; identity comes from the signed manifest inside).
 
         Attributes:
             file (str):

@@ -91,7 +91,7 @@ def sync_detailed(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Response[Any | Error]:
-    """Revoke a key — it stops resolving immediately. Optional `If-Match` (the key's ETag)
+    """Revoke a key: it stops resolving immediately. Optional `If-Match` (the key's ETag)
 
     Args:
         id (str):
@@ -123,7 +123,7 @@ def sync(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Any | Error | None:
-    """Revoke a key — it stops resolving immediately. Optional `If-Match` (the key's ETag)
+    """Revoke a key: it stops resolving immediately. Optional `If-Match` (the key's ETag)
 
     Args:
         id (str):
@@ -150,7 +150,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Response[Any | Error]:
-    """Revoke a key — it stops resolving immediately. Optional `If-Match` (the key's ETag)
+    """Revoke a key: it stops resolving immediately. Optional `If-Match` (the key's ETag)
 
     Args:
         id (str):
@@ -180,7 +180,7 @@ async def asyncio(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Any | Error | None:
-    """Revoke a key — it stops resolving immediately. Optional `If-Match` (the key's ETag)
+    """Revoke a key: it stops resolving immediately. Optional `If-Match` (the key's ETag)
 
     Args:
         id (str):
