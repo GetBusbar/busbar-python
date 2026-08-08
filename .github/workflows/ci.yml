@@ -26,6 +26,9 @@ jobs:
           git diff --exit-code -- busbar_admin setup.py \
             || (echo "::error::Generated client is out of date. Run 'make generate' and commit." && exit 1)
 
+      - name: Fail if the README's version claims have drifted
+        run: python3 .github/check-readme-versions.py
+
       - name: Editable install + typed import smoke test
         run: |
           pip install -e .

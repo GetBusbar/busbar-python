@@ -13,12 +13,22 @@ so every response is a real dataclass (`InfoView`, `TopologyInfo`, ...) — not
 
 ## Versioning
 
-The SDK carries its **own** semantic version, independent of the busbar server /
-OpenAPI `info.version` (currently `1.5.0`). The current release is **`0.2.0`**
-(the `1.5.0` spec added `operationId`s, which renamed every generated function —
-a breaking change from `0.1.0`). A given
-SDK release targets the frozen, additive-only `/api/v1/admin` surface and will
+- **SDK version:** `0.4.0`. The SDK carries its own semantic version, independent of
+  the busbar server it talks to.
+- **Generated from:** busbar OpenAPI `info.version` `1.5.3`, the bundled
+  [`openapi.json`](./openapi.json).
+
+A given SDK release targets the frozen, additive-only `/api/v1/admin` surface and will
 keep working across server versions on that surface.
+
+Neither number above is maintained by hand alone: CI runs
+`.github/check-readme-versions.py`, which fails the build if this section stops matching
+`setup.py` and `openapi.json`. They went stale silently once, so now they cannot.
+
+### History
+
+`0.2.0` was the breaking release: the busbar `1.5.0` spec added `operationId`s, which
+renamed every generated function.
 
 ## Install
 
@@ -48,7 +58,7 @@ client = AuthenticatedClient(
 with client as client:
     info: InfoView = get_info.sync(client=client)
     # `info` is TYPED — your editor autocompletes .version, .topology, .build, ...
-    print("busbar version:", info.version)                 # -> "1.4.0"
+    print("busbar version:", info.version)                 # -> "1.5.3"
     print("pools:", info.topology.pools)
     print("config version:", info.config_version)
 ```
