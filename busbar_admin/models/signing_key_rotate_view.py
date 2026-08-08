@@ -11,7 +11,7 @@ T = TypeVar("T", bound="SigningKeyRotateView")
 
 @_attrs_define
 class SigningKeyRotateView:
-    """`POST /signing-key/rotate` — the current key-signing key id plus the REVOKE-ALL warning. 1.5.0 is
+    """`POST /signing-key/rotate`: the current key-signing key id plus the REVOKE-ALL warning. 1.5.0 is
     single-key: the actual swap is an operator action, so this reports intent, not an in-process swap.
 
         Attributes:

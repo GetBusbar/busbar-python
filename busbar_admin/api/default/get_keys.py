@@ -97,7 +97,7 @@ def sync_detailed(
     include: str | Unset = UNSET,
 ) -> Response[Error | KeyPageView]:
     """List virtual keys (metadata only; never secrets). Filters: ?enabled=, ?prefix=, ?group= (keys bound
-    to a group — a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
+    to a group; a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
 
     Args:
         enabled (str | Unset):
@@ -142,7 +142,7 @@ def sync(
     include: str | Unset = UNSET,
 ) -> Error | KeyPageView | None:
     """List virtual keys (metadata only; never secrets). Filters: ?enabled=, ?prefix=, ?group= (keys bound
-    to a group — a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
+    to a group; a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
 
     Args:
         enabled (str | Unset):
@@ -182,7 +182,7 @@ async def asyncio_detailed(
     include: str | Unset = UNSET,
 ) -> Response[Error | KeyPageView]:
     """List virtual keys (metadata only; never secrets). Filters: ?enabled=, ?prefix=, ?group= (keys bound
-    to a group — a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
+    to a group; a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
 
     Args:
         enabled (str | Unset):
@@ -225,7 +225,7 @@ async def asyncio(
     include: str | Unset = UNSET,
 ) -> Error | KeyPageView | None:
     """List virtual keys (metadata only; never secrets). Filters: ?enabled=, ?prefix=, ?group= (keys bound
-    to a group — a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
+    to a group; a `user:<sub>` leaf's keys are one person's). Paginate: ?limit=, ?cursor= (opaque)
 
     Args:
         enabled (str | Unset):

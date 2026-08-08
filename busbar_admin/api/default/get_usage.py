@@ -76,7 +76,7 @@ def sync_detailed(
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
 ) -> Response[Error | UsageView]:
-    """Metering: current UTC-day bucket — {window, as_of, currency, total, by_model, by_key}, raw token
+    """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
@@ -106,7 +106,7 @@ def sync(
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
 ) -> Error | UsageView | None:
-    """Metering: current UTC-day bucket — {window, as_of, currency, total, by_model, by_key}, raw token
+    """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
@@ -131,7 +131,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
 ) -> Response[Error | UsageView]:
-    """Metering: current UTC-day bucket — {window, as_of, currency, total, by_model, by_key}, raw token
+    """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
@@ -159,7 +159,7 @@ async def asyncio(
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
 ) -> Error | UsageView | None:
-    """Metering: current UTC-day bucket — {window, as_of, currency, total, by_model, by_key}, raw token
+    """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:

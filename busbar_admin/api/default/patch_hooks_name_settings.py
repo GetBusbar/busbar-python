@@ -106,7 +106,7 @@ def sync_detailed(
         name (str):
         if_match (str | Unset):
         body (PatchSettingsReq): The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -142,7 +142,7 @@ def sync(
         name (str):
         if_match (str | Unset):
         body (PatchSettingsReq): The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -173,7 +173,7 @@ async def asyncio_detailed(
         name (str):
         if_match (str | Unset):
         body (PatchSettingsReq): The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -207,7 +207,7 @@ async def asyncio(
         name (str):
         if_match (str | Unset):
         body (PatchSettingsReq): The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

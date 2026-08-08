@@ -90,7 +90,7 @@ def sync_detailed(
     limit: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
 ) -> Response[AuditPageView | Error]:
-    """Admin audit log — every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
+    """Admin audit log: every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
     {items, next_cursor}
 
     Args:
@@ -129,7 +129,7 @@ def sync(
     limit: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
 ) -> AuditPageView | Error | None:
-    """Admin audit log — every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
+    """Admin audit log: every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
     {items, next_cursor}
 
     Args:
@@ -163,7 +163,7 @@ async def asyncio_detailed(
     limit: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
 ) -> Response[AuditPageView | Error]:
-    """Admin audit log — every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
+    """Admin audit log: every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
     {items, next_cursor}
 
     Args:
@@ -200,7 +200,7 @@ async def asyncio(
     limit: str | Unset = UNSET,
     cursor: str | Unset = UNSET,
 ) -> AuditPageView | Error | None:
-    """Admin audit log — every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
+    """Admin audit log: every mutation with its outcome (newest first). Page: ?limit=, ?cursor=; returns
     {items, next_cursor}
 
     Args:

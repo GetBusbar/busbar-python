@@ -14,18 +14,18 @@ class AuditEntry:
     """One admin audit record. `outcome` is a stable token tooling can branch on. The record is
     HASH-CHAINED for tamper-EVIDENCE: `hash = sha256(prev_hash | seq | ts | action | resource |
     outcome | principal)`, and `prev_hash` is the preceding entry's `hash`. Recomputing the chain detects any
-    altered/reordered/deleted entry (detection, not prevention — a compromised host can still rewrite
+    altered/reordered/deleted entry (detection, not prevention; a compromised host can still rewrite
     the whole chain; prevention is shipping the log off-box to a SIEM).
 
         Attributes:
             action (str): The action, `noun.verb` (e.g. `hook.register`, `hook.delete`).
-            hash_ (str): `sha256(prev_hash | seq | ts | action | resource | outcome | principal)` — the tamper-evidence
+            hash_ (str): `sha256(prev_hash | seq | ts | action | resource | outcome | principal)`: the tamper-evidence
                 digest.
             outcome (str): Stable outcome token: `applied` (mutation committed) | `rejected` (validation/conflict, nothing
                 changed).
             prev_hash (str): The preceding entry's `hash` (empty for the first entry of the process, or the oldest retained
                 entry whose predecessor was pruned).
-            principal (str): WHO — the authenticated principal id that attempted the mutation (`admin` for the operator
+            principal (str): WHO: the authenticated principal id that attempted the mutation (`admin` for the operator
                 token; a virtual-key id or an external module's principal id otherwise; `anonymous` for the
                 explicit open admin posture). Attribution, never a credential.
             resource (str): The resource acted on (e.g. `hook:compress`). Never a secret.

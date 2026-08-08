@@ -100,7 +100,7 @@ def sync_detailed(
     body: PatchGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Partial update — change only the fields present (e.g. raise a budget, freeze a group)
+    """Partial update: change only the fields present (e.g. raise a budget, freeze a group)
 
     Args:
         name (str):
@@ -136,7 +136,7 @@ def sync(
     body: PatchGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Partial update — change only the fields present (e.g. raise a budget, freeze a group)
+    """Partial update: change only the fields present (e.g. raise a budget, freeze a group)
 
     Args:
         name (str):
@@ -167,7 +167,7 @@ async def asyncio_detailed(
     body: PatchGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Partial update — change only the fields present (e.g. raise a budget, freeze a group)
+    """Partial update: change only the fields present (e.g. raise a budget, freeze a group)
 
     Args:
         name (str):
@@ -201,7 +201,7 @@ async def asyncio(
     body: PatchGroupsNameBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Partial update — change only the fields present (e.g. raise a budget, freeze a group)
+    """Partial update: change only the fields present (e.g. raise a budget, freeze a group)
 
     Args:
         name (str):

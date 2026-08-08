@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ConfigRollbackView")
 
 @_attrs_define
 class ConfigRollbackView:
-    """`POST /config/rollback` — restore-a-retained-version result (the restored version + the NEW
+    """`POST /config/rollback`: restore-a-retained-version result (the restored version + the NEW
     config version the rollback produced).
 
         Attributes:

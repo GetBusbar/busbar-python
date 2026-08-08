@@ -15,7 +15,7 @@ T = TypeVar("T", bound="ConfigVersionPageView")
 
 @_attrs_define
 class ConfigVersionPageView:
-    """`GET /config/versions` — the cursor-paginated version-history envelope (`{items, next_cursor}`).
+    """`GET /config/versions`: the cursor-paginated version-history envelope (`{items, next_cursor}`).
 
     Attributes:
         items (list[ConfigVersion]):

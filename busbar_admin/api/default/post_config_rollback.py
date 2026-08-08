@@ -104,7 +104,7 @@ def sync_detailed(
     Args:
         if_match (str | Unset):
         body (RollbackReq): The `POST /api/v1/admin/config/rollback` request body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -137,7 +137,7 @@ def sync(
     Args:
         if_match (str | Unset):
         body (RollbackReq): The `POST /api/v1/admin/config/rollback` request body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -165,7 +165,7 @@ async def asyncio_detailed(
     Args:
         if_match (str | Unset):
         body (RollbackReq): The `POST /api/v1/admin/config/rollback` request body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -196,7 +196,7 @@ async def asyncio(
     Args:
         if_match (str | Unset):
         body (RollbackReq): The `POST /api/v1/admin/config/rollback` request body. Optimistic
-            concurrency rides `If-Match` (H3).
+            concurrency rides `If-Match`.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

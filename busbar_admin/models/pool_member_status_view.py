@@ -13,14 +13,14 @@ T = TypeVar("T", bound="PoolMemberStatusView")
 class PoolMemberStatusView:
     """One member's live status within a pool. The breaker signal is the release-exposed
     `usable`/`cooldown_remaining_seconds` pair (a lane in breaker cooldown reports `usable: false` with the
-    seconds remaining) — the same summary `/stats` surfaces.
+    seconds remaining), the same summary `/stats` surfaces.
 
         Attributes:
             available_concurrency (int): Free concurrency slots on this lane right now (lane-global; permits are shared
                 across pools).
             cooldown_remaining_seconds (int): Seconds until a tripped breaker's cooldown elapses; `0` when not cooling down.
                 (`_seconds`
-                suffix — the one unit-suffix spelling across the surface, like `uptime_seconds`.)
+                suffix: the one unit-suffix spelling across the surface, like `uptime_seconds`.)
             dead (bool): Whether the lane is hard-down/dead (distinct from a transiently-tripped breaker).
             err (int):
             inflight (int): In-flight requests on this lane right now.
@@ -29,8 +29,8 @@ class PoolMemberStatusView:
             model (str):
             ok (int): Successful and errored request tallies for this lane.
             trip_count (int): MONOTONIC count of Closed→Open breaker trips on this lane. Breaker episodes are transient
-                and can open+close entirely between two polls — a consumer alerting on trips diffs this
-                count instead of trying to catch the live edge (audit #5). Carried across config apply and
+                and can open+close entirely between two polls, so a consumer alerting on trips diffs this
+                count instead of trying to catch the live edge. Carried across config apply and
                 restart with the rest of the learned health.
             usable (bool): Whether the lane can currently take dispatch (breaker closed / recovered). `false` while a
                 tripped breaker cools down or the lane is dead.

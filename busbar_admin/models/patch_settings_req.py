@@ -15,7 +15,7 @@ T = TypeVar("T", bound="PatchSettingsReq")
 
 @_attrs_define
 class PatchSettingsReq:
-    """The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic concurrency rides `If-Match` (H3).
+    """The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic concurrency rides `If-Match`.
 
     Attributes:
         settings (PatchSettingsReqSettings):

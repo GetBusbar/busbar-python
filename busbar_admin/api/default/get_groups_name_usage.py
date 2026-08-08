@@ -73,7 +73,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
 ) -> Response[Error | GroupUsageView]:
-    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps — the
+    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps: the
     self-service dashboard read (spend derives from the token ledger x the CURRENT rate card at read
     time)
 
@@ -104,7 +104,7 @@ def sync(
     *,
     client: AuthenticatedClient,
 ) -> Error | GroupUsageView | None:
-    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps — the
+    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps: the
     self-service dashboard read (spend derives from the token ledger x the CURRENT rate card at read
     time)
 
@@ -130,7 +130,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
 ) -> Response[Error | GroupUsageView]:
-    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps — the
+    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps: the
     self-service dashboard read (spend derives from the token ledger x the CURRENT rate card at read
     time)
 
@@ -159,7 +159,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
 ) -> Error | GroupUsageView | None:
-    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps — the
+    """The group's derived current-window usage per (window, pool) enforcement bucket vs its caps: the
     self-service dashboard read (spend derives from the token ledger x the CURRENT rate card at read
     time)
 

@@ -92,7 +92,7 @@ def sync_detailed(
     principal ~10min replay)
 
     Args:
-        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys, S1): PURE AUTH + a signed
+        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed
             expiring token. A minted
             key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key
             - all
@@ -128,7 +128,7 @@ def sync(
     principal ~10min replay)
 
     Args:
-        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys, S1): PURE AUTH + a signed
+        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed
             expiring token. A minted
             key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key
             - all
@@ -159,7 +159,7 @@ async def asyncio_detailed(
     principal ~10min replay)
 
     Args:
-        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys, S1): PURE AUTH + a signed
+        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed
             expiring token. A minted
             key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key
             - all
@@ -193,7 +193,7 @@ async def asyncio(
     principal ~10min replay)
 
     Args:
-        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys, S1): PURE AUTH + a signed
+        body (CreateKeyReq): `POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed
             expiring token. A minted
             key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key
             - all

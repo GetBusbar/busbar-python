@@ -18,7 +18,7 @@ T = TypeVar("T", bound="HookStatusView")
 
 @_attrs_define
 class HookStatusView:
-    """`GET /hooks/{name}/status` — the hook's OBSERVED state: desired vs reported settings with a
+    """`GET /hooks/{name}/status`, the hook's OBSERVED state: desired vs reported settings with a
     `drift` verdict, plus the hook's self-reported metrics. `reported`/`drift` are `null` and `note`
     is present when the hook did not answer (fail-open); `metrics` is invariantly an array.
 
@@ -26,20 +26,23 @@ class HookStatusView:
             as_of (int):
             desired (HookDesiredStatus): The DESIRED settings side of `hooks/{name}/status`: busbar's registry copy of the
                 hook's settings
-                and their version.
+                (KEY NAMES only, see [`super::HookView::settings_keys`]) and their version.
             drift (bool | None):
+            drift_keys (list[str]): The DESIRED settings KEY NAMES the hook is not actually running: the actionable half of
+                `drift`, carrying names this body already serves and no value from either bag. Invariantly an
+                array (empty on the no-answer branch, where no drift is known).
             metrics (list[Any]): Validated + bounded self-reported metrics; each entry carries `{name, type, value}` and,
                 when
                 the hook sent them, optional `labels`/`quantiles`/`estimated`/`ci_low`/`ci_high`/`help`/
                 `label`/`unit`/`viz`/`max` members.
 
-                E-004 (busbar-ui/docs/ENGINE-BUGS.md): schemars' blanket `JsonSchema` impl for
+                schemars' blanket `JsonSchema` impl for
                 `serde_json::Value` renders as the JSON-Schema-2020-12 boolean `true` (`schemars-1.2.1`'s
-                `json_schema_impls/serdejson.rs`), which is legal 2020-12 but — nested here as this array's
-                `items` — is a boolean SUB-schema, and `kin-openapi` (the parser under `oapi-codegen`, which
+                `json_schema_impls/serdejson.rs`), which is legal 2020-12 but, nested here as this array's
+                `items`, is a boolean SUB-schema, and `kin-openapi` (the parser under `oapi-codegen`, which
                 every published SDK generates through) cannot represent one at all: the parse aborts, taking
                 out Python/TS/Go SDK regeneration simultaneously. `#[schemars(schema_with)]` overrides just
-                this field's schema to `{"type": "array", "items": {}}` — `{}` is the equivalent "accepts
+                this field's schema to `{"type": "array", "items": {}}`; `{}` is the equivalent "accepts
                 anything" schema every generator DOES understand, and is what busbar-ui's own
                 `openapi-prep.py` already rewrites `items: true` into client-side. This is the only
                 `items: true` in the document; every other `additionalProperties: true` schemars emits
@@ -53,6 +56,7 @@ class HookStatusView:
     as_of: int
     desired: HookDesiredStatus
     drift: bool | None
+    drift_keys: list[str]
     metrics: list[Any]
     name: str
     reported: HookReportedStatus | None
@@ -69,6 +73,8 @@ class HookStatusView:
 
         drift: bool | None
         drift = self.drift
+
+        drift_keys = self.drift_keys
 
         metrics = self.metrics
 
@@ -95,6 +101,7 @@ class HookStatusView:
                 "as_of": as_of,
                 "desired": desired,
                 "drift": drift,
+                "drift_keys": drift_keys,
                 "metrics": metrics,
                 "name": name,
                 "reported": reported,
@@ -122,6 +129,8 @@ class HookStatusView:
             return cast(bool | None, data)
 
         drift = _parse_drift(d.pop("drift"))
+
+        drift_keys = cast(list[str], d.pop("drift_keys"))
 
         metrics = cast(list[Any], d.pop("metrics"))
 
@@ -157,6 +166,7 @@ class HookStatusView:
             as_of=as_of,
             desired=desired,
             drift=drift,
+            drift_keys=drift_keys,
             metrics=metrics,
             name=name,
             reported=reported,

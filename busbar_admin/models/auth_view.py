@@ -12,7 +12,7 @@ T = TypeVar("T", bound="AuthView")
 @_attrs_define
 class AuthView:
     """The ingress auth chain read (`GET /api/v1/admin/auth`): the ordered module names that authenticate
-    callers + the upstream-credential mode. Never a secret — module names and the mode are config
+    callers + the upstream-credential mode. Never a secret: module names and the mode are config
     identifiers, not credentials. An empty `chain` is the open front door (admits every request).
 
         Attributes:

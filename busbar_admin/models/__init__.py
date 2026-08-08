@@ -34,15 +34,12 @@ from .group_bucket_usage_view import GroupBucketUsageView
 from .group_usage_view import GroupUsageView
 from .group_view import GroupView
 from .hook_desired_status import HookDesiredStatus
-from .hook_desired_status_settings import HookDesiredStatusSettings
 from .hook_health_view import HookHealthView
 from .hook_reported_status import HookReportedStatus
-from .hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
 from .hook_schema_view import HookSchemaView
 from .hook_status_view import HookStatusView
 from .hook_transport_view import HookTransportView
 from .hook_view import HookView
-from .hook_view_settings import HookViewSettings
 from .info_view import InfoView
 from .inspect_plugin_req import InspectPluginReq
 from .install_plugin_req import InstallPluginReq
@@ -54,10 +51,14 @@ from .key_view_labels import KeyViewLabels
 from .limit_view import LimitView
 from .model_usage_view import ModelUsageView
 from .model_view import ModelView
+from .named_def_view import NamedDefView
+from .named_settings_req import NamedSettingsReq
+from .named_settings_req_settings import NamedSettingsReqSettings
 from .overlay_reset_view import OverlayResetView
 from .page_group_view import PageGroupView
 from .page_hook_view import PageHookView
 from .page_model_view import PageModelView
+from .page_named_def_view import PageNamedDefView
 from .page_plugin_view import PagePluginView
 from .page_pool_view import PagePoolView
 from .page_provider_view import PageProviderView
@@ -89,10 +90,12 @@ from .post_hooks_body_config import PostHooksBodyConfig
 from .provider_view import ProviderView
 from .put_auth_body import PutAuthBody
 from .put_config_settings_body import PutConfigSettingsBody
+from .put_export_name_body import PutExportNameBody
 from .put_groups_name_body import PutGroupsNameBody
 from .put_groups_name_body_config import PutGroupsNameBodyConfig
 from .put_hooks_name_body import PutHooksNameBody
 from .put_hooks_name_body_config import PutHooksNameBodyConfig
+from .put_identity_providers_name_body import PutIdentityProvidersNameBody
 from .restart_req import RestartReq
 from .restart_view import RestartView
 from .revoke_view import RevokeView
@@ -141,15 +144,12 @@ __all__ = (
     "GroupUsageView",
     "GroupView",
     "HookDesiredStatus",
-    "HookDesiredStatusSettings",
     "HookHealthView",
     "HookReportedStatus",
-    "HookReportedStatusSettingsType0",
     "HookSchemaView",
     "HookStatusView",
     "HookTransportView",
     "HookView",
-    "HookViewSettings",
     "InfoView",
     "InspectPluginReq",
     "InstallPluginReq",
@@ -161,10 +161,14 @@ __all__ = (
     "LimitView",
     "ModelUsageView",
     "ModelView",
+    "NamedDefView",
+    "NamedSettingsReq",
+    "NamedSettingsReqSettings",
     "OverlayResetView",
     "PageGroupView",
     "PageHookView",
     "PageModelView",
+    "PageNamedDefView",
     "PagePluginView",
     "PagePoolView",
     "PageProviderView",
@@ -196,10 +200,12 @@ __all__ = (
     "ProviderView",
     "PutAuthBody",
     "PutConfigSettingsBody",
+    "PutExportNameBody",
     "PutGroupsNameBody",
     "PutGroupsNameBodyConfig",
     "PutHooksNameBody",
     "PutHooksNameBodyConfig",
+    "PutIdentityProvidersNameBody",
     "RestartReq",
     "RestartView",
     "RevokeView",

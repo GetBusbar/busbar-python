@@ -23,16 +23,17 @@ class InfoView:
 
         Attributes:
             build (BuildInfo): The compiled-in feature proof (`InfoView.build`).
-            config_persistence (bool): Whether config-overlay persistence is enabled (`BUSBAR_CONFIG_OVERLAY` set): `true` =
-                API-applied
-                config changes are durable across restarts; `false` = live-only (lost on restart). Lets tooling
-                tell an operator whether their runtime changes will survive a restart.
-            config_version (int): Monotonic config version — `0` at boot, +1 per API config apply. Drift-detection: re-read
+            config_persistence (bool): Whether config-overlay persistence is enabled, i.e. the config is MUTABLE with a
+                writable
+                `config.overlay` backend: `true` = API-applied config changes are durable across restarts;
+                `false` = the config is LOCKED (`config.locked: true`) and admin-API config mutations are
+                refused. Lets tooling tell an operator whether runtime changes are accepted and durable.
+            config_version (int): Monotonic config version: `0` at boot, +1 per API config apply. Drift-detection: re-read
                 and
                 compare to tell whether the running config changed. Process-local (resets on restart).
-            started_at (int | None): Epoch seconds of process start — the BOOT EPOCH marker: `config_version` (and any
+            started_at (int | None): Epoch seconds of process start, the BOOT EPOCH marker: `config_version` (and any
                 process-local counter) resets on restart, so a consumer that sees `started_at` change knows
-                to read a counter reset as "new epoch", never as "reverted" (audit minor #2 / #4).
+                to read a counter reset as "new epoch", never as "reverted".
             topology (TopologyInfo): Pool/model/provider counts (`InfoView.topology`).
             uptime_seconds (int | None): Seconds since process start, or `None` if the start instant was never stamped.
             version (str): busbar semantic version (`CARGO_PKG_VERSION`).

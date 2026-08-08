@@ -6,11 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="HookDesiredStatusSettings")
+T = TypeVar("T", bound="NamedSettingsReqSettings")
 
 
 @_attrs_define
-class HookDesiredStatusSettings:
+class NamedSettingsReqSettings:
     """ """
 
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -25,10 +25,10 @@ class HookDesiredStatusSettings:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        hook_desired_status_settings = cls()
+        named_settings_req_settings = cls()
 
-        hook_desired_status_settings.additional_properties = d
-        return hook_desired_status_settings
+        named_settings_req_settings.additional_properties = d
+        return named_settings_req_settings
 
     @property
     def additional_keys(self) -> list[str]:

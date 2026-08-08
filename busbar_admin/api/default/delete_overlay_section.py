@@ -94,7 +94,7 @@ def sync_detailed(
     if_match: str | Unset = UNSET,
 ) -> Response[Error | OverlayResetView]:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset — the OTHER sections' overlay survives. A NEW
+    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
     config version; an already-empty section is an idempotent no-op (changed:false)
 
     Args:
@@ -128,7 +128,7 @@ def sync(
     if_match: str | Unset = UNSET,
 ) -> Error | OverlayResetView | None:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset — the OTHER sections' overlay survives. A NEW
+    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
     config version; an already-empty section is an idempotent no-op (changed:false)
 
     Args:
@@ -157,7 +157,7 @@ async def asyncio_detailed(
     if_match: str | Unset = UNSET,
 ) -> Response[Error | OverlayResetView]:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset — the OTHER sections' overlay survives. A NEW
+    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
     config version; an already-empty section is an idempotent no-op (changed:false)
 
     Args:
@@ -189,7 +189,7 @@ async def asyncio(
     if_match: str | Unset = UNSET,
 ) -> Error | OverlayResetView | None:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset — the OTHER sections' overlay survives. A NEW
+    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
     config version; an already-empty section is an idempotent no-op (changed:false)
 
     Args:

@@ -65,7 +65,7 @@ def sync_detailed(
     client: AuthenticatedClient,
 ) -> Response[ConfigSettingsView | Error]:
     """Read the API-set single-value config overlay (root section:
-    listen/tls/rate_card/store/security/limits/…) — only the operator's overrides; base config.yaml
+    listen/tls/rate_card/store/security/limits/…), only the operator's overrides; base config.yaml
     stands for the rest
 
     Raises:
@@ -90,7 +90,7 @@ def sync(
     client: AuthenticatedClient,
 ) -> ConfigSettingsView | Error | None:
     """Read the API-set single-value config overlay (root section:
-    listen/tls/rate_card/store/security/limits/…) — only the operator's overrides; base config.yaml
+    listen/tls/rate_card/store/security/limits/…), only the operator's overrides; base config.yaml
     stands for the rest
 
     Raises:
@@ -111,7 +111,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
 ) -> Response[ConfigSettingsView | Error]:
     """Read the API-set single-value config overlay (root section:
-    listen/tls/rate_card/store/security/limits/…) — only the operator's overrides; base config.yaml
+    listen/tls/rate_card/store/security/limits/…), only the operator's overrides; base config.yaml
     stands for the rest
 
     Raises:
@@ -134,7 +134,7 @@ async def asyncio(
     client: AuthenticatedClient,
 ) -> ConfigSettingsView | Error | None:
     """Read the API-set single-value config overlay (root section:
-    listen/tls/rate_card/store/security/limits/…) — only the operator's overrides; base config.yaml
+    listen/tls/rate_card/store/security/limits/…), only the operator's overrides; base config.yaml
     stands for the rest
 
     Raises:

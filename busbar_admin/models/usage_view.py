@@ -25,19 +25,18 @@ class UsageView:
         as_of (int): Freshness marker: the epoch this read was computed at (counters accumulate live).
         by_key (list[KeyUsageView]): Per-key aggregation (same raw-split shape). CAPPED at the top 1000 rows by spend
             (the
-            FinOps-relevant ordering); `by_key_truncated` says the cap fired — never a silent cut.
+            FinOps-relevant ordering); `by_key_truncated` says the cap fired, never a silent cut.
         by_key_truncated (bool): True when `by_key` was truncated to the cap (a deployment with more active keys than
             the
             cap). `by_model` is never capped (bounded by the configured model fleet).
-        by_model (list[ModelUsageView]): Per-(model, provider) aggregation — cost attribution by model (the FinOps
-            unit).
+        by_model (list[ModelUsageView]): Per-(model, provider) aggregation: cost attribution by model (the FinOps unit).
         currency (str): The denomination of every `spend_micros` in this response (`USAGE_CURRENCY`, currently
             `"USD"`). A single-const source of truth so removal is one line. Emitted only here.
-        total (UsageBreakdown): The raw consumption counts + the derived spend estimate — the one shape shared by
+        total (UsageBreakdown): The raw consumption counts + the derived spend estimate: the one shape shared by
             `total`,
             `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
         window (UsageWindow): A metering window: `[start, end)` epoch seconds.
-        others (None | Unset | UsageBreakdown): The summed remainder BEYOND the `by_key` cap — present exactly when
+        others (None | Unset | UsageBreakdown): The summed remainder BEYOND the `by_key` cap, present exactly when
             `by_key_truncated`, so
             every unit of consumption is attributable at least to "others" (FinOps completeness:
             `total == sum(by_key) + others`).

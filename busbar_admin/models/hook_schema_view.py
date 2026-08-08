@@ -11,7 +11,7 @@ T = TypeVar("T", bound="HookSchemaView")
 
 @_attrs_define
 class HookSchemaView:
-    """`GET /hooks/{name}/schema` — the hook's self-described settings JSON Schema (proxied over the
+    """`GET /hooks/{name}/schema`: the hook's self-described settings JSON Schema (proxied over the
     `describe` wire message), or `null` when the hook/transport does not answer.
 
         Attributes:

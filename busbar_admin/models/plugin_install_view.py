@@ -16,7 +16,7 @@ class PluginInstallView:
     """The result of installing a dynamic-library store plugin (`POST /api/v1/admin/plugins`). The
     engine RE-VERIFIED the uploaded bytes against the running trust posture (the client is never
     trusted), validated the ABI handshake, and atomically wrote the library (+ its manifest sidecar)
-    into the plugins directory. `active` takes effect on the next store (re)load — a store change
+    into the plugins directory. `active` takes effect on the next store (re)load; a store change
     applies on restart / `store.module` apply, not as a hot swap (design: store install is
     boot-time/config-apply). Additive-only; never a secret.
 

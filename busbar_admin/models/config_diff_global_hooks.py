@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ConfigDiffGlobalHooks")
 
 @_attrs_define
 class ConfigDiffGlobalHooks:
-    """The `global_hooks` delta of a `GET /config/diff` — present only when the global wiring changed.
+    """The `global_hooks` delta of a `GET /config/diff`, present only when the global wiring changed.
 
     Attributes:
         from_ (list[str]):

@@ -13,28 +13,27 @@ T = TypeVar("T", bound="PluginSchemaView")
 
 @_attrs_define
 class PluginSchemaView:
-    """`GET /plugins/{name}/schema` — the generalized, all-kinds sibling of [`HookSchemaView`]
-    (plugin-settings-schema-SPEC.md). Carries `trust`/`source`/`schema_error` on top of
+    """`GET /plugins/{name}/schema`: the generalized, all-kinds sibling of [`HookSchemaView`].
+    Carries `trust`/`source`/`schema_error` on top of
     `{name, schema}` so busbar-ui never has to infer trust state or the describe/manifest
-    precedence rule from context — the server always picks exactly one source and reports which.
+    precedence rule from context; the server always picks exactly one source and reports which.
 
         Attributes:
             name (str):
-            schema (Any): The plugin's settings JSON Schema verbatim, or `null` — either because the manifest never
+            schema (Any): The plugin's settings JSON Schema verbatim, or `null`, either because the manifest never
                 set `settings_schema`, or (distinctly, see `schema_error`) because it did but the value
                 failed to parse.
             schema_error (None | str): Set only when the manifest's `settings_schema` was present but failed to parse as
-                JSON —
+                JSON;
                 `null` for a manifest that genuinely never set the field. Never collapsed into a bare
-                `schema: null` (question #3, round-4 correction): a present-but-corrupt schema is a real
+                `schema: null`: a present-but-corrupt schema is a real
                 authoring/packaging bug, not "this plugin simply has none."
             source (str): `"describe"` when a currently-loaded `kind: hook` answered its live `describe` wire
                 message (the existing describe-proxy behavior, unchanged); `"manifest"` otherwise. Lets
                 busbar-ui explain "why does this form look different from what I expected" without
-                implementing the describe/manifest precedence rule itself (question #3, round-4
-                correction).
-            trust (str): `"trusted" | "unverified" | "rejected"` — the same vocabulary the plugin catalog already
-                uses (never `"verified"`; question #8, round-4 correction).
+                implementing the describe/manifest precedence rule itself.
+            trust (str): `"trusted" | "unverified" | "rejected"`: the same vocabulary the plugin catalog already
+                uses (never `"verified"`).
             kind (None | str | Unset): The plugin's `kind` (`hook` | `secret` | …) from its manifest. Both `GET
                 /plugins/{file}/schema`
                 and `POST /plugins/inspect` emit it (`null` only when the plugin cannot be resolved to a

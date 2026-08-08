@@ -85,17 +85,17 @@ def sync_detailed(
     client: AuthenticatedClient,
     body: InspectPluginReq,
 ) -> Response[Error | PluginSchemaView]:
-    """Stateless read-only preview of a candidate plugin tarball — verify its signature, parse its
-    manifest, and report its settings schema WITHOUT installing anything
+    """Stateless read-only preview of a candidate plugin tarball: verify its signature, parse its manifest,
+    and report its settings schema WITHOUT installing anything
 
     Args:
         body (InspectPluginReq): `POST /api/v1/admin/plugins/inspect` request body. SAME shape as
-            [`InstallPluginReq`] (question
-            #7 — "same request body shape as `POST /plugins`") — `file` is accepted for shape parity
-            with
-            the install flow a UI composes around the same upload, but is otherwise UNUSED here:
-            inspect
-            never writes anything to disk, so there is no filename to bind an install would need.
+            [`InstallPluginReq`]; `file`
+            is accepted for shape parity with the install flow a UI composes around the same upload,
+            but is
+            otherwise UNUSED here: inspect never writes anything to disk, so there is no filename to
+            bind
+            an install would need.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -121,17 +121,17 @@ def sync(
     client: AuthenticatedClient,
     body: InspectPluginReq,
 ) -> Error | PluginSchemaView | None:
-    """Stateless read-only preview of a candidate plugin tarball — verify its signature, parse its
-    manifest, and report its settings schema WITHOUT installing anything
+    """Stateless read-only preview of a candidate plugin tarball: verify its signature, parse its manifest,
+    and report its settings schema WITHOUT installing anything
 
     Args:
         body (InspectPluginReq): `POST /api/v1/admin/plugins/inspect` request body. SAME shape as
-            [`InstallPluginReq`] (question
-            #7 — "same request body shape as `POST /plugins`") — `file` is accepted for shape parity
-            with
-            the install flow a UI composes around the same upload, but is otherwise UNUSED here:
-            inspect
-            never writes anything to disk, so there is no filename to bind an install would need.
+            [`InstallPluginReq`]; `file`
+            is accepted for shape parity with the install flow a UI composes around the same upload,
+            but is
+            otherwise UNUSED here: inspect never writes anything to disk, so there is no filename to
+            bind
+            an install would need.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -152,17 +152,17 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
     body: InspectPluginReq,
 ) -> Response[Error | PluginSchemaView]:
-    """Stateless read-only preview of a candidate plugin tarball — verify its signature, parse its
-    manifest, and report its settings schema WITHOUT installing anything
+    """Stateless read-only preview of a candidate plugin tarball: verify its signature, parse its manifest,
+    and report its settings schema WITHOUT installing anything
 
     Args:
         body (InspectPluginReq): `POST /api/v1/admin/plugins/inspect` request body. SAME shape as
-            [`InstallPluginReq`] (question
-            #7 — "same request body shape as `POST /plugins`") — `file` is accepted for shape parity
-            with
-            the install flow a UI composes around the same upload, but is otherwise UNUSED here:
-            inspect
-            never writes anything to disk, so there is no filename to bind an install would need.
+            [`InstallPluginReq`]; `file`
+            is accepted for shape parity with the install flow a UI composes around the same upload,
+            but is
+            otherwise UNUSED here: inspect never writes anything to disk, so there is no filename to
+            bind
+            an install would need.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -186,17 +186,17 @@ async def asyncio(
     client: AuthenticatedClient,
     body: InspectPluginReq,
 ) -> Error | PluginSchemaView | None:
-    """Stateless read-only preview of a candidate plugin tarball — verify its signature, parse its
-    manifest, and report its settings schema WITHOUT installing anything
+    """Stateless read-only preview of a candidate plugin tarball: verify its signature, parse its manifest,
+    and report its settings schema WITHOUT installing anything
 
     Args:
         body (InspectPluginReq): `POST /api/v1/admin/plugins/inspect` request body. SAME shape as
-            [`InstallPluginReq`] (question
-            #7 — "same request body shape as `POST /plugins`") — `file` is accepted for shape parity
-            with
-            the install flow a UI composes around the same upload, but is otherwise UNUSED here:
-            inspect
-            never writes anything to disk, so there is no filename to bind an install would need.
+            [`InstallPluginReq`]; `file`
+            is accepted for shape parity with the install flow a UI composes around the same upload,
+            but is
+            otherwise UNUSED here: inspect never writes anything to disk, so there is no filename to
+            bind
+            an install would need.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

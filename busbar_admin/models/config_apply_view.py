@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ConfigApplyView")
 
 @_attrs_define
 class ConfigApplyView:
-    """`POST /config/apply` — apply-a-full-config result. The change is live but not written to disk.
+    """`POST /config/apply`: apply-a-full-config result. The change is live but not written to disk.
 
     Attributes:
         applied (bool):

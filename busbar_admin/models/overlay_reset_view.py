@@ -11,7 +11,7 @@ T = TypeVar("T", bound="OverlayResetView")
 
 @_attrs_define
 class OverlayResetView:
-    """`DELETE /overlay/{section}` — per-section overlay reset result: the section reverted, the
+    """`DELETE /overlay/{section}`, per-section overlay reset result: the section reverted, the
     resulting config version, and whether anything changed (`false` = the section had no overlay state,
     an idempotent no-op).
 

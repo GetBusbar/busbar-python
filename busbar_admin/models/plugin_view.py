@@ -14,9 +14,9 @@ T = TypeVar("T", bound="PluginView")
 @_attrs_define
 class PluginView:
     """One plugin in the plugin catalog (`GET /api/v1/admin/plugins?type=`). A plugin is either
-    COMPILED-IN (baked into the binary, feature-gated — provably removable via `--no-default-features`)
+    COMPILED-IN (baked into the binary, feature-gated, provably removable via `--no-default-features`)
     or a signed DYNAMIC-LIBRARY plugin (a loadable `.so`/`.dll`/`.dylib`, dlopen'd over the signed
-    plugin ABI — this covers `auth`, `hooks`, and `store` plugin kinds alike as of 1.5.0; the
+    plugin ABI; this covers `auth`, `hooks`, and `store` plugin kinds alike as of 1.5.0; the
     retired 1.4.x socket/webhook "external" transport is gone). `active` is `Some(true/false)`
     where activation is tracked (auth modules: in the chain?; hook plugins: configured = true;
     dynamic store: the configured `store.module`) and `None` where it is a per-pool concern not
@@ -27,22 +27,22 @@ class PluginView:
                 summarized
                 at this level.
             has_schema (bool): `true` iff `GET /plugins/{file}/schema` would resolve this row's `file` to a manifest that
-                declares `settings_schema` at all — i.e. iff `schema_url` below is non-null — so a plugin
-                catalog can render which rows are configurable in one list call instead of a fetch per row
-                (E-003). Mirrors `schema_url.is_some()`; kept as its own boolean rather than requiring the
+                declares `settings_schema` at all, i.e. iff `schema_url` below is non-null, so a plugin
+                catalog can render which rows are configurable in one list call instead of a fetch per row.
+                Mirrors `schema_url.is_some()`; kept as its own boolean rather than requiring the
                 caller to null-check `schema_url` for the same fact. `false` for compiled-in/external rows
                 (no manifest to carry a schema) and for a dynamic-library row whose manifest never set
                 `settings_schema`. Additive.
-            loader (str): `"compiled-in"` or `"plugin"` (a dlopen'd dynamic-library plugin — auth, hook, and store
+            loader (str): `"compiled-in"` or `"plugin"` (a dlopen'd dynamic-library plugin: auth, hook, and store
                 kinds alike as of 1.5.0's signed plugin ABI).
             name (str):
-            target (None | str): For a dynamic-library plugin, its NAME (not a socket path or URL — the retired 1.4.x
+            target (None | str): For a dynamic-library plugin, its NAME (not a socket path or URL, the retired 1.4.x
                 transport target). `None` for compiled-in.
-            type_ (str): `"auth"`, `"hooks"`, or `"store"` — the plugin TYPE (each a distinct engine contract).
-            error (None | str | Unset): Why a dynamic-library plugin did not validate (`valid: false`) — a short, secret-
-                free reason.
-            file (None | str | Unset): The artifact FILENAME in `plugins.dir` — the `{file}` path segment `DELETE
-                /plugins/{file}` and `GET /plugins/{file}/schema` key off (E-003: a list row previously
+            type_ (str): `"auth"`, `"hooks"`, or `"store"`: the plugin TYPE (each a distinct engine contract).
+            error (None | str | Unset): Why a dynamic-library plugin did not validate (`valid: false`): a short, secret-free
+                reason.
+            file (None | str | Unset): The artifact FILENAME in `plugins.dir`: the `{file}` path segment `DELETE
+                /plugins/{file}` and `GET /plugins/{file}/schema` key off (a list row previously
                 carried no field a client could feed straight back into either sibling endpoint; `target`
                 is documented as the manifest NAME, not necessarily the on-disk filename, and is not a
                 reliable substitute). `None` for compiled-in/external rows, which have no backing artifact
@@ -51,26 +51,26 @@ class PluginView:
                 library plugins with a
                 manifest). Operator-facing name for the "ABI" the engine speaks.
             publisher (None | str | Unset): The manifest's declared publisher (dynamic-library plugins with a manifest).
-            schema_error (None | str | Unset): A manifest that SET `settings_schema` but whose value fails to parse
-                (question #3's round-4
-                correction, carried onto the list row too) — distinct from a manifest that never set the
+            schema_error (None | str | Unset): A manifest that SET `settings_schema` but whose value fails to parse (carried
+                onto the
+                list row too), distinct from a manifest that never set the
                 field at all (`schema_url: null`, this field also `None`). `schema_url` stays non-null in
                 this case; the operator sees the row is degraded from the list alone, before ever following
                 the URL.
-            schema_url (None | str | Unset): Server-resolved path to this plugin's `GET /plugins/{name}/schema` endpoint
-                (questions
-                #10/#11 of plugin-settings-schema-SPEC.md) — ALWAYS a relative path under the admin origin
+            schema_url (None | str | Unset): Server-resolved path to this plugin's `GET /plugins/{name}/schema` endpoint:
+                ALWAYS a
+                relative path under the admin origin
                 (the client MUST reject an absolute/cross-origin value rather than fetch it; this endpoint
                 only ever emits the admin-prefixed relative form, never anything else). Non-null whenever the
                 manifest declared a `settings_schema` AT ALL, even if it's unparseable (following it then
-                surfaces `schema_error` — question #11, round-8 correction: a present-but-corrupt schema is a
-                worse, distinct condition from "no schema declared", never folded into the same `null`).
+                surfaces `schema_error`: a present-but-corrupt schema is a worse, distinct
+                condition from "no schema declared", never folded into the same `null`).
                 `null` for a compiled-in/external row (no manifest to carry a schema at all) and for any
                 dynamic-library row whose manifest never set `settings_schema`.
             trust (None | str | Unset): The server-side trust verdict for a dynamic-library plugin, re-evaluated against the
                 running
                 `plugins.trust` posture: `"trusted"` (signed by an allowlisted publisher), `"unverified"`
-                (loaded but not verified — the posture permits it), or `"rejected"` (the `halt` posture would
+                (loaded but not verified, the posture permits it), or `"rejected"` (the `halt` posture would
                 refuse it). `None` for compiled-in/external.
             valid (bool | None | Unset): For a dynamic-library plugin: whether the library validated as a busbar store
                 plugin the engine

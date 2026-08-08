@@ -12,7 +12,7 @@ T = TypeVar("T", bound="ConfigVersion")
 @_attrs_define
 class ConfigVersion:
     """One recorded config version: the metadata the versions LIST shows, plus the full hook-surface
-    snapshot rollback restores. Never contains a secret (hook definitions are operator config —
+    snapshot rollback restores. Never contains a secret (hook definitions are operator config:
     transports, grants, deadlines).
 
         Attributes:

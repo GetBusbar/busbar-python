@@ -91,7 +91,7 @@ def sync_detailed(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Response[Any | Error]:
-    """Remove a hook at runtime — live immediately
+    """Remove a hook at runtime, live immediately
 
     Args:
         name (str):
@@ -123,7 +123,7 @@ def sync(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Any | Error | None:
-    """Remove a hook at runtime — live immediately
+    """Remove a hook at runtime, live immediately
 
     Args:
         name (str):
@@ -150,7 +150,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Response[Any | Error]:
-    """Remove a hook at runtime — live immediately
+    """Remove a hook at runtime, live immediately
 
     Args:
         name (str):
@@ -180,7 +180,7 @@ async def asyncio(
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
 ) -> Any | Error | None:
-    """Remove a hook at runtime — live immediately
+    """Remove a hook at runtime, live immediately
 
     Args:
         name (str):

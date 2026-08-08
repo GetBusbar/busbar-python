@@ -95,7 +95,7 @@ def sync_detailed(
     body: PostGroupsBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Create (or replace) a group at runtime — live immediately (upsert)
+    """Create (or replace) a group at runtime, live immediately (upsert)
 
     Args:
         if_match (str | Unset):
@@ -127,7 +127,7 @@ def sync(
     body: PostGroupsBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Create (or replace) a group at runtime — live immediately (upsert)
+    """Create (or replace) a group at runtime, live immediately (upsert)
 
     Args:
         if_match (str | Unset):
@@ -154,7 +154,7 @@ async def asyncio_detailed(
     body: PostGroupsBody,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | GroupView]:
-    """Create (or replace) a group at runtime — live immediately (upsert)
+    """Create (or replace) a group at runtime, live immediately (upsert)
 
     Args:
         if_match (str | Unset):
@@ -184,7 +184,7 @@ async def asyncio(
     body: PostGroupsBody,
     if_match: str | Unset = UNSET,
 ) -> Error | GroupView | None:
-    """Create (or replace) a group at runtime — live immediately (upsert)
+    """Create (or replace) a group at runtime, live immediately (upsert)
 
     Args:
         if_match (str | Unset):

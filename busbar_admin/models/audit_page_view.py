@@ -15,7 +15,7 @@ T = TypeVar("T", bound="AuditPageView")
 
 @_attrs_define
 class AuditPageView:
-    """`GET /audit` — the cursor-paginated audit-log envelope (`{items, next_cursor}`, hand-rolled in the
+    """`GET /audit`: the cursor-paginated audit-log envelope (`{items, next_cursor}`, hand-rolled in the
     audit handler).
 
         Attributes:

@@ -12,7 +12,7 @@ T = TypeVar("T", bound="UpdateKeyReq")
 
 @_attrs_define
 class UpdateKeyReq:
-    """Partial update to an existing key. Keys are PURE AUTH (1.5.0, S1), so the mutable surface is
+    """Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the mutable surface is
     auth-shaped only. Every field is optional; only the present ones change. The credential, name,
     allowed-pools, and labels are immutable here (rotate/recreate for those).
 

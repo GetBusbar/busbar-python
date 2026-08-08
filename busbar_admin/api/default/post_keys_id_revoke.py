@@ -87,7 +87,7 @@ def sync_detailed(
     client: AuthenticatedClient,
 ) -> Response[Error | RevokeView]:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
-    shows the record; verify now fails). Idempotent — revoking an already-revoked key is 200. DELETE
+    shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
     /keys/{id} is the revoke-AND-forget variant (1.5.0)
 
     Args:
@@ -118,7 +118,7 @@ def sync(
     client: AuthenticatedClient,
 ) -> Error | RevokeView | None:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
-    shows the record; verify now fails). Idempotent — revoking an already-revoked key is 200. DELETE
+    shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
     /keys/{id} is the revoke-AND-forget variant (1.5.0)
 
     Args:
@@ -144,7 +144,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient,
 ) -> Response[Error | RevokeView]:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
-    shows the record; verify now fails). Idempotent — revoking an already-revoked key is 200. DELETE
+    shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
     /keys/{id} is the revoke-AND-forget variant (1.5.0)
 
     Args:
@@ -173,7 +173,7 @@ async def asyncio(
     client: AuthenticatedClient,
 ) -> Error | RevokeView | None:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
-    shows the record; verify now fails). Idempotent — revoking an already-revoked key is 200. DELETE
+    shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
     /keys/{id} is the revoke-AND-forget variant (1.5.0)
 
     Args:

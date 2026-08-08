@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-
-if TYPE_CHECKING:
-    from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
-
 
 T = TypeVar("T", bound="HookReportedStatus")
 
@@ -18,23 +14,27 @@ class HookReportedStatus:
     """The REPORTED settings side of `hooks/{name}/status`: what the hook says it is actually running
     (present only when the hook answered `status`).
 
+    KEY NAMES only, and for a sharper reason than the desired side: the reported bag is the hook's
+    ECHO of the SECRET-RESOLVED settings busbar pushed it, i.e. the PLAINTEXT of every `SecretRef`,
+    and this read is reachable at READ-ONLY admin scope. `null` when the hook answered `status` but
+    reported no settings.
+
         Attributes:
-            settings (HookReportedStatusSettingsType0 | None):
+            settings_keys (list[str] | None): Sorted KEY NAMES of the observed settings bag, never its values.
             settings_version (int | None):
     """
 
-    settings: HookReportedStatusSettingsType0 | None
+    settings_keys: list[str] | None
     settings_version: int | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
+        settings_keys: list[str] | None
+        if isinstance(self.settings_keys, list):
+            settings_keys = self.settings_keys
 
-        settings: dict[str, Any] | None
-        if isinstance(self.settings, HookReportedStatusSettingsType0):
-            settings = self.settings.to_dict()
         else:
-            settings = self.settings
+            settings_keys = self.settings_keys
 
         settings_version: int | None
         settings_version = self.settings_version
@@ -43,7 +43,7 @@ class HookReportedStatus:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "settings": settings,
+                "settings_keys": settings_keys,
                 "settings_version": settings_version,
             }
         )
@@ -52,24 +52,22 @@ class HookReportedStatus:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
-
         d = dict(src_dict)
 
-        def _parse_settings(data: object) -> HookReportedStatusSettingsType0 | None:
+        def _parse_settings_keys(data: object) -> list[str] | None:
             if data is None:
                 return data
             try:
-                if not isinstance(data, dict):
+                if not isinstance(data, list):
                     raise TypeError()
-                settings_type_0 = HookReportedStatusSettingsType0.from_dict(data)
+                settings_keys_type_0 = cast(list[str], data)
 
-                return settings_type_0
+                return settings_keys_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(HookReportedStatusSettingsType0 | None, data)
+            return cast(list[str] | None, data)
 
-        settings = _parse_settings(d.pop("settings"))
+        settings_keys = _parse_settings_keys(d.pop("settings_keys"))
 
         def _parse_settings_version(data: object) -> int | None:
             if data is None:
@@ -79,7 +77,7 @@ class HookReportedStatus:
         settings_version = _parse_settings_version(d.pop("settings_version"))
 
         hook_reported_status = cls(
-            settings=settings,
+            settings_keys=settings_keys,
             settings_version=settings_version,
         )
 

@@ -97,21 +97,21 @@ def sync_detailed(
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
-    listen/tls/admin_listen/admin_tls/admin_insecure/store are stored + flagged restart-to-apply (bound
-    once at start / store reused across a hot reload). NEVER writes config.yaml
+    listen/tls/admin_listen/admin_tls/admin_require_mtls/store are stored + flagged restart-to-apply
+    (bound once at start / store reused across a hot reload). NEVER writes config.yaml
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name. The
-            optional top-level boolean `persist` asserts the change MUST be stored in the config
-            overlay: with `persist: true` a busbar that has no overlay refuses with `400
-            invalid_request` instead of applying the change in memory only. Omitted or `false` means
-            the change is applied and stored where storage is available, and applied in memory only
-            where it is not (the response `note` says which); `false` never suppresses storage. Every
-            other top-level key must be a known settings section — an unknown key is a 400. The
-            accepted shape is the config file's own, documented in the configuration reference; it is
-            not restated here because several of its types parse a wire shape that does not match
-            their field layout.
+        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
+            Durable by default (1.5.3): a mutable config always stores the change in its overlay
+            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
+            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
+            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
+            the field), but its value has NO effect: persistence is unconditional on a mutable config
+            and refusal is unconditional on a locked one. Every other top-level key must be a known
+            settings section; an unknown key is a 400. The accepted shape is the config file's own,
+            documented in the configuration reference; it is not restated here because several of its
+            types parse a wire shape that does not match their field layout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -142,21 +142,21 @@ def sync(
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
-    listen/tls/admin_listen/admin_tls/admin_insecure/store are stored + flagged restart-to-apply (bound
-    once at start / store reused across a hot reload). NEVER writes config.yaml
+    listen/tls/admin_listen/admin_tls/admin_require_mtls/store are stored + flagged restart-to-apply
+    (bound once at start / store reused across a hot reload). NEVER writes config.yaml
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name. The
-            optional top-level boolean `persist` asserts the change MUST be stored in the config
-            overlay: with `persist: true` a busbar that has no overlay refuses with `400
-            invalid_request` instead of applying the change in memory only. Omitted or `false` means
-            the change is applied and stored where storage is available, and applied in memory only
-            where it is not (the response `note` says which); `false` never suppresses storage. Every
-            other top-level key must be a known settings section — an unknown key is a 400. The
-            accepted shape is the config file's own, documented in the configuration reference; it is
-            not restated here because several of its types parse a wire shape that does not match
-            their field layout.
+        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
+            Durable by default (1.5.3): a mutable config always stores the change in its overlay
+            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
+            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
+            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
+            the field), but its value has NO effect: persistence is unconditional on a mutable config
+            and refusal is unconditional on a locked one. Every other top-level key must be a known
+            settings section; an unknown key is a 400. The accepted shape is the config file's own,
+            documented in the configuration reference; it is not restated here because several of its
+            types parse a wire shape that does not match their field layout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -182,21 +182,21 @@ async def asyncio_detailed(
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
-    listen/tls/admin_listen/admin_tls/admin_insecure/store are stored + flagged restart-to-apply (bound
-    once at start / store reused across a hot reload). NEVER writes config.yaml
+    listen/tls/admin_listen/admin_tls/admin_require_mtls/store are stored + flagged restart-to-apply
+    (bound once at start / store reused across a hot reload). NEVER writes config.yaml
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name. The
-            optional top-level boolean `persist` asserts the change MUST be stored in the config
-            overlay: with `persist: true` a busbar that has no overlay refuses with `400
-            invalid_request` instead of applying the change in memory only. Omitted or `false` means
-            the change is applied and stored where storage is available, and applied in memory only
-            where it is not (the response `note` says which); `false` never suppresses storage. Every
-            other top-level key must be a known settings section — an unknown key is a 400. The
-            accepted shape is the config file's own, documented in the configuration reference; it is
-            not restated here because several of its types parse a wire shape that does not match
-            their field layout.
+        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
+            Durable by default (1.5.3): a mutable config always stores the change in its overlay
+            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
+            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
+            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
+            the field), but its value has NO effect: persistence is unconditional on a mutable config
+            and refusal is unconditional on a locked one. Every other top-level key must be a known
+            settings section; an unknown key is a 400. The accepted shape is the config file's own,
+            documented in the configuration reference; it is not restated here because several of its
+            types parse a wire shape that does not match their field layout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -225,21 +225,21 @@ async def asyncio(
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
-    listen/tls/admin_listen/admin_tls/admin_insecure/store are stored + flagged restart-to-apply (bound
-    once at start / store reused across a hot reload). NEVER writes config.yaml
+    listen/tls/admin_listen/admin_tls/admin_require_mtls/store are stored + flagged restart-to-apply
+    (bound once at start / store reused across a hot reload). NEVER writes config.yaml
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name. The
-            optional top-level boolean `persist` asserts the change MUST be stored in the config
-            overlay: with `persist: true` a busbar that has no overlay refuses with `400
-            invalid_request` instead of applying the change in memory only. Omitted or `false` means
-            the change is applied and stored where storage is available, and applied in memory only
-            where it is not (the response `note` says which); `false` never suppresses storage. Every
-            other top-level key must be a known settings section — an unknown key is a 400. The
-            accepted shape is the config file's own, documented in the configuration reference; it is
-            not restated here because several of its types parse a wire shape that does not match
-            their field layout.
+        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
+            Durable by default (1.5.3): a mutable config always stores the change in its overlay
+            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
+            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
+            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
+            the field), but its value has NO effect: persistence is unconditional on a mutable config
+            and refusal is unconditional on a locked one. Every other top-level key must be a known
+            settings section; an unknown key is a 400. The accepted shape is the config file's own,
+            documented in the configuration reference; it is not restated here because several of its
+            types parse a wire shape that does not match their field layout.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

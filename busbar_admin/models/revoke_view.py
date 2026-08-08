@@ -11,7 +11,7 @@ T = TypeVar("T", bound="RevokeView")
 
 @_attrs_define
 class RevokeView:
-    """`POST /keys/{id}/revoke` — the revoked key's id (denylisted without deleting the binding). 1.5.0.
+    """`POST /keys/{id}/revoke`: the revoked key's id (denylisted without deleting the binding). 1.5.0.
 
     Attributes:
         revoked (str): The id that was revoked (durably denylisted; the binding record remains).

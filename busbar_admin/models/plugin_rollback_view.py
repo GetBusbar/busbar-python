@@ -14,7 +14,7 @@ class PluginRollbackView:
     """The result of an EXPLICIT plugin ROLLBACK (`POST /api/v1/admin/plugins/rollback`, 1.5.0
     rollback-friendly versioning): the operator deliberately pinned a plugin DOWN to a prior version and
     the engine hot-swapped to that artifact. The pin is persisted (survives restart) and the trust
-    floor was lowered to EXACTLY the pinned version for THIS plugin — a lower artifact still cannot
+    floor was lowered to EXACTLY the pinned version for THIS plugin; a lower artifact still cannot
     load, and an automatic/silent replay of an old artifact is still refused (only this explicit,
     audited action lowered the floor). Additive-only; never a secret.
 
