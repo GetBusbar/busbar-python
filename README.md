@@ -1,5 +1,9 @@
 # busbar-admin (Python SDK)
 
+[![CI](https://github.com/GetBusbar/busbar-python/actions/workflows/ci.yml/badge.svg)](https://github.com/GetBusbar/busbar-python/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/GetBusbar/busbar-python/branch/main/graph/badge.svg)](https://codecov.io/gh/GetBusbar/busbar-python)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 A typed Python client for the **Busbar Admin API** (`/api/v1/admin`).
 
 The client is generated from the typed OpenAPI 3.1 schema in
