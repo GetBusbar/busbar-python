@@ -1,5 +1,7 @@
 # busbar-admin (Python SDK)
 
+[![Coverage](https://codecov.io/gh/GetBusbar/busbar-python/branch/dev/graph/badge.svg)](https://codecov.io/gh/GetBusbar/busbar-python)
+
 A typed Python client for the **Busbar Admin API** (`/api/v1/admin`).
 
 The client is generated from the typed OpenAPI 3.1 schema in
