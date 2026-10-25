@@ -22,6 +22,7 @@ checks:
       )
     requires:
     - python3
+    - pip
   coverage:
     run: |
       set -e
@@ -41,5 +42,6 @@ checks:
       )
     requires:
     - python3
+    - pip
 env:
   CI: 'true'
