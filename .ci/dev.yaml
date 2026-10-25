@@ -1,0 +1,45 @@
+# Imported from .github/workflows/ci.yml by `modernci import github`.
+to: dev
+checks:
+  build:
+    run: |
+      set -e
+      # Install generator (pinned)
+      pip install -r requirements-dev.txt </dev/null
+      # Regenerate client from openapi.json
+      make generate </dev/null
+      # Fail if the committed client is stale
+      ( bash -e /dev/fd/3 3<<'MODERNCI_STEP' </dev/null
+      git diff --exit-code -- busbar_admin setup.py \
+        || (echo "::error::Generated client is out of date. Run 'make generate' and commit." && exit 1)
+      MODERNCI_STEP
+      )
+      # Editable install + typed import smoke test
+      ( bash -e /dev/fd/3 3<<'MODERNCI_STEP' </dev/null
+      pip install -e .
+      python -c "from busbar_admin.api.default import get_api_v1_admin_info; from busbar_admin.models import InfoView; import attrs; print('typed InfoView fields:', [f.name for f in attrs.fields(InfoView)])"
+      MODERNCI_STEP
+      )
+    requires:
+    - python3
+  coverage:
+    run: |
+      set -e
+      # Install project + coverage tooling
+      ( bash -e /dev/fd/3 3<<'MODERNCI_STEP' </dev/null
+      pip install -e .
+      pip install pytest pytest-cov
+      MODERNCI_STEP
+      )
+      # Run pytest with coverage
+      ( bash -e /dev/fd/3 3<<'MODERNCI_STEP' </dev/null
+      # Non-required coverage job. Exit code 5 == "no tests collected"
+      # (the repo currently ships only a generated client); treat that as
+      # success so real test failures still fail while an empty suite does not.
+      pytest --cov=busbar_admin --cov-report=xml || [ $? -eq 5 ]
+      MODERNCI_STEP
+      )
+    requires:
+    - python3
+env:
+  CI: 'true'
