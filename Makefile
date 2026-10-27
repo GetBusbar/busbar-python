@@ -3,7 +3,7 @@
 # The client under busbar_admin/ is generated from openapi.json and committed so
 # consumers install without regenerating. `make generate` re-derives it.
 
-GENERATOR_VERSION := 0.29.0
+GENERATOR_VERSION := 0.29.1
 CONFIG := openapi-python-client.yaml
 SPEC := openapi.json
 PACKAGE := busbar_admin
