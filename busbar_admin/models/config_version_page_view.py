@@ -48,7 +48,7 @@ class ConfigVersionPageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.config_version import ConfigVersion
+        from ..models.config_version import ConfigVersion  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

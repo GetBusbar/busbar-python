@@ -49,7 +49,7 @@ class PageModelView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.model_view import ModelView
+        from ..models.model_view import ModelView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

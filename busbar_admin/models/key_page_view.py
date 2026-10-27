@@ -49,7 +49,7 @@ class KeyPageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.key_view import KeyView
+        from ..models.key_view import KeyView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

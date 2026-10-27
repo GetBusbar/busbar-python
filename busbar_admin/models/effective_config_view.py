@@ -94,11 +94,11 @@ class EffectiveConfigView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.auth_view import AuthView
-        from ..models.hook_view import HookView
-        from ..models.model_view import ModelView
-        from ..models.pool_view import PoolView
-        from ..models.provider_view import ProviderView
+        from ..models.auth_view import AuthView  # noqa: PLC0415
+        from ..models.hook_view import HookView  # noqa: PLC0415
+        from ..models.model_view import ModelView  # noqa: PLC0415
+        from ..models.pool_view import PoolView  # noqa: PLC0415
+        from ..models.provider_view import ProviderView  # noqa: PLC0415
 
         d = dict(src_dict)
         auth = AuthView.from_dict(d.pop("auth"))

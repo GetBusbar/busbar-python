@@ -49,7 +49,7 @@ class PagePoolView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.pool_view import PoolView
+        from ..models.pool_view import PoolView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

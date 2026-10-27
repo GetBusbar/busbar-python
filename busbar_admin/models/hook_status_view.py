@@ -49,7 +49,7 @@ class HookStatusView:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.hook_reported_status import HookReportedStatus
+        from ..models.hook_reported_status import HookReportedStatus  # noqa: PLC0415
 
         as_of = self.as_of
 
@@ -96,8 +96,8 @@ class HookStatusView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_desired_status import HookDesiredStatus
-        from ..models.hook_reported_status import HookReportedStatus
+        from ..models.hook_desired_status import HookDesiredStatus  # noqa: PLC0415
+        from ..models.hook_reported_status import HookReportedStatus  # noqa: PLC0415
 
         d = dict(src_dict)
         as_of = d.pop("as_of")

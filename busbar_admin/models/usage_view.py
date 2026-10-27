@@ -73,7 +73,7 @@ class UsageView:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.usage_breakdown import UsageBreakdown
+        from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
 
         as_of = self.as_of
 
@@ -123,10 +123,10 @@ class UsageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.key_usage_view import KeyUsageView
-        from ..models.model_usage_view import ModelUsageView
-        from ..models.usage_breakdown import UsageBreakdown
-        from ..models.usage_window import UsageWindow
+        from ..models.key_usage_view import KeyUsageView  # noqa: PLC0415
+        from ..models.model_usage_view import ModelUsageView  # noqa: PLC0415
+        from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
+        from ..models.usage_window import UsageWindow  # noqa: PLC0415
 
         d = dict(src_dict)
         as_of = d.pop("as_of")

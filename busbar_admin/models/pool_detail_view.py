@@ -50,7 +50,7 @@ class PoolDetailView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.pool_member_status_view import PoolMemberStatusView
+        from ..models.pool_member_status_view import PoolMemberStatusView  # noqa: PLC0415
 
         d = dict(src_dict)
         members = []

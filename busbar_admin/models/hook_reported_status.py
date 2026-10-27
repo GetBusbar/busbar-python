@@ -28,7 +28,7 @@ class HookReportedStatus:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
+        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0  # noqa: PLC0415
 
         settings: dict[str, Any] | None
         if isinstance(self.settings, HookReportedStatusSettingsType0):
@@ -52,7 +52,7 @@ class HookReportedStatus:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0
+        from ..models.hook_reported_status_settings_type_0 import HookReportedStatusSettingsType0  # noqa: PLC0415
 
         d = dict(src_dict)
 

@@ -49,7 +49,7 @@ class PagePluginView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.plugin_view import PluginView
+        from ..models.plugin_view import PluginView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

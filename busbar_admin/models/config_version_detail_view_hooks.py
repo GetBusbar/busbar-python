@@ -15,8 +15,6 @@ T = TypeVar("T", bound="ConfigVersionDetailViewHooks")
 
 @_attrs_define
 class ConfigVersionDetailViewHooks:
-    """ """
-
     additional_properties: dict[str, HookView] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -29,7 +27,7 @@ class ConfigVersionDetailViewHooks:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_view import HookView
+        from ..models.hook_view import HookView  # noqa: PLC0415
 
         d = dict(src_dict)
         config_version_detail_view_hooks = cls()

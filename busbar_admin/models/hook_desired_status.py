@@ -45,7 +45,7 @@ class HookDesiredStatus:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_desired_status_settings import HookDesiredStatusSettings
+        from ..models.hook_desired_status_settings import HookDesiredStatusSettings  # noqa: PLC0415
 
         d = dict(src_dict)
         settings = HookDesiredStatusSettings.from_dict(d.pop("settings"))

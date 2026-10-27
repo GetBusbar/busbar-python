@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ErrorErrorCode(str, Enum):
+class ErrorErrorCode(StrEnum):
     CONFLICT = "conflict"
     FORBIDDEN = "forbidden"
     INTERNAL = "internal"

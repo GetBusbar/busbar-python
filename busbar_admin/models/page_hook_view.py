@@ -49,7 +49,7 @@ class PageHookView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_view import HookView
+        from ..models.hook_view import HookView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []
