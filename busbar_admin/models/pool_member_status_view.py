@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PoolMemberStatusView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PoolMemberStatusView:
     """One member's live status within a pool. The breaker signal is the release-exposed
     `usable`/`cooldown_remaining_seconds` pair (a lane in breaker cooldown reports `usable: false` with the

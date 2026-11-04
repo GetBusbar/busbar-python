@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="CacheFlushView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class CacheFlushView:
     """`POST /auth/cache/flush`: number of cached credential-decision entries dropped.
 

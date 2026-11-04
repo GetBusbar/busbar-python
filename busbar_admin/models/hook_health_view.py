@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="HookHealthView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookHealthView:
     """The live health of one hook's transport (`GET /api/v1/admin/hooks/{name}/health`). Checks
     whether the hook resolves to a LOADED `kind: hook` plugin in the process's plugin registry;
@@ -67,7 +67,7 @@ class HookHealthView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_transport_view import HookTransportView
+        from ..models.hook_transport_view import HookTransportView  # noqa: PLC0415
 
         d = dict(src_dict)
 

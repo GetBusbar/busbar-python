@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="LimitView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class LimitView:
     """One limit inside a `GroupView`: an explicit `{ metric, amount, per, pool }` projection of a
     config `LimitCfg`. The config file's compact `{ budget: 3000, per: month }` form is

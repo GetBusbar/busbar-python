@@ -8,7 +8,7 @@ from attrs import define as _attrs_define
 T = TypeVar("T", bound="PutAuthBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PutAuthBody:
     """The `PUT /api/v1/admin/admin-auth` body: the replacement admin auth chain.
 
@@ -36,6 +36,8 @@ class PutAuthBody:
         d = dict(src_dict)
         admin_auth = cast(list[str], d.pop("admin_auth"))
 
+        if d:
+            raise ValueError("Unexpected fields for PutAuthBody")
         put_auth_body = cls(
             admin_auth=admin_auth,
         )

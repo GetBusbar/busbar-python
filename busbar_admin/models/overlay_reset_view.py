@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="OverlayResetView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class OverlayResetView:
     """`DELETE /overlay/{section}`, per-section overlay reset result: the section reverted, the
     resulting config version, and whether anything changed (`false` = the section had no overlay state,
@@ -18,7 +18,9 @@ class OverlayResetView:
         Attributes:
             changed (bool): `true` when the reset discarded overlay mutations; `false` for an already-empty section.
             config_version (int):
-            reset (str): The section that was reset (`groups` | `hooks` | `root` | `plugin_versions`).
+            reset (str): The section that was reset. This endpoint's `section` path parameter enumerates the valid
+                set; it is deliberately not restated here, because the hand-written copy that used to sit on
+                this line went stale the moment a section was added.
     """
 
     changed: bool

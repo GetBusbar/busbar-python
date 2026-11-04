@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PoolMemberView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PoolMemberView:
     """One member of a pool: the model it targets and its SWRR weight.
 

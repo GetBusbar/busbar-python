@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ConfigDiffHooks")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ConfigDiffHooks:
     """The `hooks` object of a `GET /config/diff`: hook names added / removed / changed between the two
     versions.

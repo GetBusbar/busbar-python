@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="UsageView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class UsageView:
     """
     Attributes:
@@ -32,6 +32,10 @@ class UsageView:
         by_model (list[ModelUsageView]): Per-(model, provider) aggregation: cost attribution by model (the FinOps unit).
         currency (str): The denomination of every `spend_micros` in this response (`USAGE_CURRENCY`, currently
             `"USD"`). A single-const source of truth so removal is one line. Emitted only here.
+        rate_card_version (None | str): The highest history entry key used to price this read, as 40 lowercase
+            hexadecimal digits.
+            Supplying this key as `?as_of` selects the same inclusive history-key boundary when an earlier
+            entry arrives later. Null when no row was priced through dated history.
         total (UsageBreakdown): The raw consumption counts + the derived spend estimate: the one shape shared by
             `total`,
             `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
@@ -47,13 +51,14 @@ class UsageView:
     by_key_truncated: bool
     by_model: list[ModelUsageView]
     currency: str
+    rate_card_version: None | str
     total: UsageBreakdown
     window: UsageWindow
     others: None | Unset | UsageBreakdown = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.usage_breakdown import UsageBreakdown
+        from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
 
         as_of = self.as_of
 
@@ -70,6 +75,9 @@ class UsageView:
             by_model.append(by_model_item)
 
         currency = self.currency
+
+        rate_card_version: None | str
+        rate_card_version = self.rate_card_version
 
         total = self.total.to_dict()
 
@@ -92,6 +100,7 @@ class UsageView:
                 "by_key_truncated": by_key_truncated,
                 "by_model": by_model,
                 "currency": currency,
+                "rate_card_version": rate_card_version,
                 "total": total,
                 "window": window,
             }
@@ -103,10 +112,10 @@ class UsageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.key_usage_view import KeyUsageView
-        from ..models.model_usage_view import ModelUsageView
-        from ..models.usage_breakdown import UsageBreakdown
-        from ..models.usage_window import UsageWindow
+        from ..models.key_usage_view import KeyUsageView  # noqa: PLC0415
+        from ..models.model_usage_view import ModelUsageView  # noqa: PLC0415
+        from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
+        from ..models.usage_window import UsageWindow  # noqa: PLC0415
 
         d = dict(src_dict)
         as_of = d.pop("as_of")
@@ -129,6 +138,13 @@ class UsageView:
 
         currency = d.pop("currency")
 
+        def _parse_rate_card_version(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        rate_card_version = _parse_rate_card_version(d.pop("rate_card_version"))
+
         total = UsageBreakdown.from_dict(d.pop("total"))
 
         window = UsageWindow.from_dict(d.pop("window"))
@@ -146,7 +162,7 @@ class UsageView:
                 return others_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(None | Unset | UsageBreakdown, data)
+            raise ValueError("Invalid value for others")
 
         others = _parse_others(d.pop("others", UNSET))
 
@@ -156,6 +172,7 @@ class UsageView:
             by_key_truncated=by_key_truncated,
             by_model=by_model,
             currency=currency,
+            rate_card_version=rate_card_version,
             total=total,
             window=window,
             others=others,

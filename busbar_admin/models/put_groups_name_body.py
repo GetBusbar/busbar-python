@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PutGroupsNameBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PutGroupsNameBody:
     """
     Attributes:
@@ -38,11 +38,13 @@ class PutGroupsNameBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.put_groups_name_body_config import PutGroupsNameBodyConfig
+        from ..models.put_groups_name_body_config import PutGroupsNameBodyConfig  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PutGroupsNameBodyConfig.from_dict(d.pop("config"))
 
+        if d:
+            raise ValueError("Unexpected fields for PutGroupsNameBody")
         put_groups_name_body = cls(
             config=config,
         )

@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="HookTransportView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookTransportView:
     """The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in kind (no
     transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a

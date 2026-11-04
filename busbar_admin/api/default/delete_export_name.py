@@ -7,6 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
+from ...models.pending_restart_removal_view import PendingRestartRemovalView
 from ...types import UNSET, Response, Unset
 
 
@@ -22,7 +23,7 @@ def _get_kwargs(
     _kwargs: dict[str, Any] = {
         "method": "delete",
         "url": "/api/v1/admin/export/{name}".format(
-            name=quote(str(name), safe=""),
+            name=quote(str(name), safe="").replace(".", "%2E"),
         ),
     }
 
@@ -30,7 +31,14 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | Error | None:
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Any | Error | PendingRestartRemovalView | None:
+    if response.status_code == 200:
+        response_200 = PendingRestartRemovalView.from_dict(response.json())
+
+        return response_200
+
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -70,15 +78,24 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_500
 
+    if response.status_code == 503:
+        response_503 = Error.from_dict(response.json())
+
+        return response_503
+
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
         return None
 
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | Error]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[Any | Error | PendingRestartRemovalView]:
     return Response(
-        status_code=HTTPStatus(response.status_code),
+        status_code=HTTPStatus(response.status_code)
+        if response.status_code in HTTPStatus._value2member_map_
+        else response.status_code,
         content=response.content,
         headers=response.headers,
         parsed=_parse_response(client=client, response=response),
@@ -90,7 +107,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
-) -> Response[Any | Error]:
+) -> Response[Any | Error | PendingRestartRemovalView]:
     """Remove one `export:` definition, refused while another config section still references it by bare
     name
 
@@ -103,7 +120,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | Error]
+        Response[Any | Error | PendingRestartRemovalView]
     """
 
     kwargs = _get_kwargs(
@@ -111,7 +128,7 @@ def sync_detailed(
         if_match=if_match,
     )
 
-    response = client.get_httpx_client().request(
+    response = client._request(
         **kwargs,
     )
 
@@ -123,7 +140,7 @@ def sync(
     *,
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
-) -> Any | Error | None:
+) -> Any | Error | PendingRestartRemovalView | None:
     """Remove one `export:` definition, refused while another config section still references it by bare
     name
 
@@ -136,7 +153,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Any | Error
+        Any | Error | PendingRestartRemovalView
     """
 
     return sync_detailed(
@@ -151,7 +168,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
-) -> Response[Any | Error]:
+) -> Response[Any | Error | PendingRestartRemovalView]:
     """Remove one `export:` definition, refused while another config section still references it by bare
     name
 
@@ -164,7 +181,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | Error]
+        Response[Any | Error | PendingRestartRemovalView]
     """
 
     kwargs = _get_kwargs(
@@ -172,7 +189,7 @@ async def asyncio_detailed(
         if_match=if_match,
     )
 
-    response = await client.get_async_httpx_client().request(**kwargs)
+    response = await client._async_request(**kwargs)
 
     return _build_response(client=client, response=response)
 
@@ -182,7 +199,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     if_match: str | Unset = UNSET,
-) -> Any | Error | None:
+) -> Any | Error | PendingRestartRemovalView | None:
     """Remove one `export:` definition, refused while another config section still references it by bare
     name
 
@@ -195,7 +212,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Any | Error
+        Any | Error | PendingRestartRemovalView
     """
 
     return (

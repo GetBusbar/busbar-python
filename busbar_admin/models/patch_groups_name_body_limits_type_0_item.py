@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PatchGroupsNameBodyLimitsType0Item")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PatchGroupsNameBodyLimitsType0Item:
     """A `limits:` entry. The accepted shape is the config file's own, documented in the configuration reference; it is not
     restated here because several of its types parse a wire shape that does not match their field layout.

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="KeyView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class KeyView:
     """Virtual-key metadata: the `key_meta()` shape returned by `GET /keys/{id}`, `PATCH /keys/{id}`,
     and as each item of `GET /keys`. Never the secret or its hash. 1.5.0: keys are PURE AUTH, no
@@ -93,7 +93,7 @@ class KeyView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.key_view_labels import KeyViewLabels
+        from ..models.key_view_labels import KeyViewLabels  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -108,7 +108,7 @@ class KeyView:
                 return allowed_pools_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[str] | None, data)
+            raise ValueError("Invalid value for allowed_pools")
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 

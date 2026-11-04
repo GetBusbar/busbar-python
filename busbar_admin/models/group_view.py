@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="GroupView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class GroupView:
     """A group definition in the registry read (`GET /api/v1/admin/groups`,
     `GET /api/v1/admin/groups/{name}`): the limit-tree read surface. Projects the `groups:` config
@@ -88,7 +88,7 @@ class GroupView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.limit_view import LimitView
+        from ..models.limit_view import LimitView  # noqa: PLC0415
 
         d = dict(src_dict)
         enabled = d.pop("enabled")
@@ -120,7 +120,7 @@ class GroupView:
                 return child_default_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[LimitView] | None | Unset, data)
+            raise ValueError("Invalid value for child_default")
 
         child_default = _parse_child_default(d.pop("child_default", UNSET))
 

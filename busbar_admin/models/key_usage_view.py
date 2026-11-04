@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.key_usage_view_classes import KeyUsageViewClasses
+
+
 T = TypeVar("T", bound="KeyUsageView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class KeyUsageView:
     """One key's row of the per-key aggregation: the key id/name (never the secret) + its counts.
 
@@ -28,6 +34,10 @@ class KeyUsageView:
         tokens_cache_read (int):
         tokens_input (int): Uncached input tokens (normalized additive-cache convention).
         tokens_output (int):
+        classes (KeyUsageViewClasses | Unset): THE PLANE-DECLARED CLASSES the row's ledger lines counted outside the
+            token split, keyed by
+            the class name the plane declares (new in 1.6.0, [`ClassUsage`]). Absent when the row carries
+            none, so a token-only row reads exactly as 1.5.5's.
     """
 
     id: str
@@ -38,6 +48,7 @@ class KeyUsageView:
     tokens_cache_read: int
     tokens_input: int
     tokens_output: int
+    classes: KeyUsageViewClasses | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -58,6 +69,10 @@ class KeyUsageView:
 
         tokens_output = self.tokens_output
 
+        classes: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.classes, Unset):
+            classes = self.classes.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -72,11 +87,15 @@ class KeyUsageView:
                 "tokens_output": tokens_output,
             }
         )
+        if classes is not UNSET:
+            field_dict["classes"] = classes
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.key_usage_view_classes import KeyUsageViewClasses  # noqa: PLC0415
+
         d = dict(src_dict)
         id = d.pop("id")
 
@@ -99,6 +118,13 @@ class KeyUsageView:
 
         tokens_output = d.pop("tokens_output")
 
+        _classes = d.pop("classes", UNSET)
+        classes: KeyUsageViewClasses | Unset
+        if isinstance(_classes, Unset):
+            classes = UNSET
+        else:
+            classes = KeyUsageViewClasses.from_dict(_classes)
+
         key_usage_view = cls(
             id=id,
             name=name,
@@ -108,6 +134,7 @@ class KeyUsageView:
             tokens_cache_read=tokens_cache_read,
             tokens_input=tokens_input,
             tokens_output=tokens_output,
+            classes=classes,
         )
 
         key_usage_view.additional_properties = d

@@ -24,7 +24,7 @@ def _get_kwargs(
     _kwargs: dict[str, Any] = {
         "method": "delete",
         "url": "/api/v1/admin/overlay/{section}".format(
-            section=quote(str(section), safe=""),
+            section=quote(str(section), safe="").replace(".", "%2E"),
         ),
     }
 
@@ -70,6 +70,11 @@ def _parse_response(
 
         return response_500
 
+    if response.status_code == 503:
+        response_503 = Error.from_dict(response.json())
+
+        return response_503
+
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
@@ -80,7 +85,9 @@ def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
 ) -> Response[Error | OverlayResetView]:
     return Response(
-        status_code=HTTPStatus(response.status_code),
+        status_code=HTTPStatus(response.status_code)
+        if response.status_code in HTTPStatus._value2member_map_
+        else response.status_code,
         content=response.content,
         headers=response.headers,
         parsed=_parse_response(client=client, response=response),
@@ -94,8 +101,9 @@ def sync_detailed(
     if_match: str | Unset = UNSET,
 ) -> Response[Error | OverlayResetView]:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
-    config version; an already-empty section is an idempotent no-op (changed:false)
+    groups|hooks|root|plugin_versions|identity-providers|export|tools|agents). Per-section reset: the
+    OTHER sections' overlay survives. A NEW config version; an already-empty section is an idempotent
+    no-op (changed:false)
 
     Args:
         section (DeleteOverlaySectionSection):
@@ -114,7 +122,7 @@ def sync_detailed(
         if_match=if_match,
     )
 
-    response = client.get_httpx_client().request(
+    response = client._request(
         **kwargs,
     )
 
@@ -128,8 +136,9 @@ def sync(
     if_match: str | Unset = UNSET,
 ) -> Error | OverlayResetView | None:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
-    config version; an already-empty section is an idempotent no-op (changed:false)
+    groups|hooks|root|plugin_versions|identity-providers|export|tools|agents). Per-section reset: the
+    OTHER sections' overlay survives. A NEW config version; an already-empty section is an idempotent
+    no-op (changed:false)
 
     Args:
         section (DeleteOverlaySectionSection):
@@ -157,8 +166,9 @@ async def asyncio_detailed(
     if_match: str | Unset = UNSET,
 ) -> Response[Error | OverlayResetView]:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
-    config version; an already-empty section is an idempotent no-op (changed:false)
+    groups|hooks|root|plugin_versions|identity-providers|export|tools|agents). Per-section reset: the
+    OTHER sections' overlay survives. A NEW config version; an already-empty section is an idempotent
+    no-op (changed:false)
 
     Args:
         section (DeleteOverlaySectionSection):
@@ -177,7 +187,7 @@ async def asyncio_detailed(
         if_match=if_match,
     )
 
-    response = await client.get_async_httpx_client().request(**kwargs)
+    response = await client._async_request(**kwargs)
 
     return _build_response(client=client, response=response)
 
@@ -189,8 +199,9 @@ async def asyncio(
     if_match: str | Unset = UNSET,
 ) -> Error | OverlayResetView | None:
     """DISCARD a section's overlay mutations and revert it to base config.yaml (section ∈
-    groups|hooks|root|plugin_versions). Per-section reset: the OTHER sections' overlay survives. A NEW
-    config version; an already-empty section is an idempotent no-op (changed:false)
+    groups|hooks|root|plugin_versions|identity-providers|export|tools|agents). Per-section reset: the
+    OTHER sections' overlay survives. A NEW config version; an already-empty section is an idempotent
+    no-op (changed:false)
 
     Args:
         section (DeleteOverlaySectionSection):

@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="PluginInstallView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginInstallView:
     """The result of installing a dynamic-library store plugin (`POST /api/v1/admin/plugins`). The
     engine RE-VERIFIED the uploaded bytes against the running trust posture (the client is never

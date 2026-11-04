@@ -13,11 +13,14 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     window: str | Unset = UNSET,
+    as_of: str | Unset = UNSET,
 ) -> dict[str, Any]:
 
     params: dict[str, Any] = {}
 
     params["window"] = window
+
+    params["as_of"] = as_of
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
@@ -51,10 +54,20 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_403
 
+    if response.status_code == 409:
+        response_409 = Error.from_dict(response.json())
+
+        return response_409
+
     if response.status_code == 500:
         response_500 = Error.from_dict(response.json())
 
         return response_500
+
+    if response.status_code == 503:
+        response_503 = Error.from_dict(response.json())
+
+        return response_503
 
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -64,7 +77,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | UsageView]:
     return Response(
-        status_code=HTTPStatus(response.status_code),
+        status_code=HTTPStatus(response.status_code)
+        if response.status_code in HTTPStatus._value2member_map_
+        else response.status_code,
         content=response.content,
         headers=response.headers,
         parsed=_parse_response(client=client, response=response),
@@ -75,12 +90,14 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
+    as_of: str | Unset = UNSET,
 ) -> Response[Error | UsageView]:
     """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
         window (str | Unset):
+        as_of (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -92,9 +109,10 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         window=window,
+        as_of=as_of,
     )
 
-    response = client.get_httpx_client().request(
+    response = client._request(
         **kwargs,
     )
 
@@ -105,12 +123,14 @@ def sync(
     *,
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
+    as_of: str | Unset = UNSET,
 ) -> Error | UsageView | None:
     """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
         window (str | Unset):
+        as_of (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -123,6 +143,7 @@ def sync(
     return sync_detailed(
         client=client,
         window=window,
+        as_of=as_of,
     ).parsed
 
 
@@ -130,12 +151,14 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
+    as_of: str | Unset = UNSET,
 ) -> Response[Error | UsageView]:
     """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
         window (str | Unset):
+        as_of (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -147,9 +170,10 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         window=window,
+        as_of=as_of,
     )
 
-    response = await client.get_async_httpx_client().request(**kwargs)
+    response = await client._async_request(**kwargs)
 
     return _build_response(client=client, response=response)
 
@@ -158,12 +182,14 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     window: str | Unset = UNSET,
+    as_of: str | Unset = UNSET,
 ) -> Error | UsageView | None:
     """Metering: current UTC-day bucket ({window, as_of, currency, total, by_model, by_key}), raw token
     split + derived spend_micros
 
     Args:
         window (str | Unset):
+        as_of (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -177,5 +203,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             window=window,
+            as_of=as_of,
         )
     ).parsed

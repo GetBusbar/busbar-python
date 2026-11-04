@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ProviderView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ProviderView:
     """A provider in the topology read (`GET /api/v1/admin/providers`): the provider name + how many model
     lanes route through it.

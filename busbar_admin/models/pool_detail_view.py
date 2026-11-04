@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PoolDetailView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PoolDetailView:
     """The LIVE per-pool detail read (`GET /api/v1/admin/pools/{name}`), the reliability/capacity dashboard
     data: each member's breaker state, concurrency headroom, in-flight
@@ -50,7 +50,7 @@ class PoolDetailView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.pool_member_status_view import PoolMemberStatusView
+        from ..models.pool_member_status_view import PoolMemberStatusView  # noqa: PLC0415
 
         d = dict(src_dict)
         members = []

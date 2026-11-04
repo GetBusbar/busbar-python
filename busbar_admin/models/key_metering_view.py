@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="KeyMeteringView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class KeyMeteringView:
     """`GET /keys/{id}/usage`: the key's all-time attribution counters (a 1.5.0 key bucket accrues in
     the `total` window; limits live on the bound group's own windows) plus the fraction of the

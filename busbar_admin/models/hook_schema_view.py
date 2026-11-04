@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="HookSchemaView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookSchemaView:
     """`GET /hooks/{name}/schema`: the hook's self-described settings JSON Schema (proxied over the
     `describe` wire message), or `null` when the hook/transport does not answer.

@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="InspectPluginReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class InspectPluginReq:
     """`POST /api/v1/admin/plugins/inspect` request body. SAME shape as [`InstallPluginReq`]; `file`
     is accepted for shape parity with the install flow a UI composes around the same upload, but is

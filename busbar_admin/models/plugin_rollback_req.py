@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PluginRollbackReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginRollbackReq:
     """The `POST /api/v1/admin/plugins/rollback` body: the target library FILENAME to roll DOWN to.
 

@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ModelView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ModelView:
     """A model lane in the topology read (`GET /api/v1/admin/models`): the config key + its upstream
     provider. No credentials, ever.

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="ConfigDiffView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ConfigDiffView:
     """`GET /config/diff`: structured hook-surface diff between two retained versions. `global_hooks` is
     present only when the global wiring differed between the two sides.
@@ -37,7 +37,7 @@ class ConfigDiffView:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.config_diff_global_hooks import ConfigDiffGlobalHooks
+        from ..models.config_diff_global_hooks import ConfigDiffGlobalHooks  # noqa: PLC0415
 
         from_ = self.from_
 
@@ -69,8 +69,8 @@ class ConfigDiffView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.config_diff_global_hooks import ConfigDiffGlobalHooks
-        from ..models.config_diff_hooks import ConfigDiffHooks
+        from ..models.config_diff_global_hooks import ConfigDiffGlobalHooks  # noqa: PLC0415
+        from ..models.config_diff_hooks import ConfigDiffHooks  # noqa: PLC0415
 
         d = dict(src_dict)
         from_ = d.pop("from")
@@ -92,7 +92,7 @@ class ConfigDiffView:
                 return global_hooks_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(ConfigDiffGlobalHooks | None | Unset, data)
+            raise ValueError("Invalid value for global_hooks")
 
         global_hooks = _parse_global_hooks(d.pop("global_hooks", UNSET))
 

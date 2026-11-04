@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="ConfigVersionDetailView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ConfigVersionDetailView:
     """`GET /config/versions/{v}`: one retained config version WITH its full hook-surface snapshot
     (projected through the wire `HookView`, keyed by hook name) and the global wiring at that version.
@@ -65,7 +65,7 @@ class ConfigVersionDetailView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.config_version_detail_view_hooks import ConfigVersionDetailViewHooks
+        from ..models.config_version_detail_view_hooks import ConfigVersionDetailViewHooks  # noqa: PLC0415
 
         d = dict(src_dict)
         global_hooks = cast(list[str], d.pop("global_hooks"))

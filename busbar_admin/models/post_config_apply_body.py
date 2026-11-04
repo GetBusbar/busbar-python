@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PostConfigApplyBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PostConfigApplyBody:
     """Replace the running configuration.
 
@@ -52,8 +52,8 @@ class PostConfigApplyBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.post_config_apply_body_config import PostConfigApplyBodyConfig
-        from ..models.post_config_apply_body_providers import PostConfigApplyBodyProviders
+        from ..models.post_config_apply_body_config import PostConfigApplyBodyConfig  # noqa: PLC0415
+        from ..models.post_config_apply_body_providers import PostConfigApplyBodyProviders  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PostConfigApplyBodyConfig.from_dict(d.pop("config"))
@@ -65,6 +65,8 @@ class PostConfigApplyBody:
         else:
             providers = PostConfigApplyBodyProviders.from_dict(_providers)
 
+        if d:
+            raise ValueError("Unexpected fields for PostConfigApplyBody")
         post_config_apply_body = cls(
             config=config,
             providers=providers,

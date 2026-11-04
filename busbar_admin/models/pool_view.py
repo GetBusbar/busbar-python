@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PoolView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PoolView:
     """A pool in the topology read (`GET /api/v1/admin/pools`). Summary shape today: name + the member
     models and their weights. LIVE per-member status (breaker state, available concurrency, latency
@@ -50,7 +50,7 @@ class PoolView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.pool_member_view import PoolMemberView
+        from ..models.pool_member_view import PoolMemberView  # noqa: PLC0415
 
         d = dict(src_dict)
         members = []

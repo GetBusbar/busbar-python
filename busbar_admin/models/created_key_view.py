@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="CreatedKeyView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class CreatedKeyView:
     """`POST /keys` (mint): the key metadata plus the ONCE-shown signed token, and (when an AWS SigV4
     credential was requested) the AccessKeyId + secret access key. The AWS fields are absent on a
@@ -124,7 +124,7 @@ class CreatedKeyView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.created_key_view_labels import CreatedKeyViewLabels
+        from ..models.created_key_view_labels import CreatedKeyViewLabels  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -139,7 +139,7 @@ class CreatedKeyView:
                 return allowed_pools_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[str] | None, data)
+            raise ValueError("Invalid value for allowed_pools")
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 

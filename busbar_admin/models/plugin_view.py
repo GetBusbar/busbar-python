@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="PluginView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginView:
     """One plugin in the plugin catalog (`GET /api/v1/admin/plugins?type=`). A plugin is either
     COMPILED-IN (baked into the binary, feature-gated, provably removable via `--no-default-features`)

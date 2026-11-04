@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="NamedSettingsReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class NamedSettingsReq:
     """The `PATCH /api/v1/admin/<section>/{name}/settings` body: the whole replacement settings bag.
     A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics: `settings:` is
@@ -41,7 +41,7 @@ class NamedSettingsReq:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.named_settings_req_settings import NamedSettingsReqSettings
+        from ..models.named_settings_req_settings import NamedSettingsReqSettings  # noqa: PLC0415
 
         d = dict(src_dict)
         settings = NamedSettingsReqSettings.from_dict(d.pop("settings"))

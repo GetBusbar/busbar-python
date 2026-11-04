@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="KeyPageView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class KeyPageView:
     """`GET /keys`: the cursor-paginated key list envelope (`{items, next_cursor}`, hand-rolled in the
     keys handler rather than via `Page<T>`).
@@ -49,7 +49,7 @@ class KeyPageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.key_view import KeyView
+        from ..models.key_view import KeyView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

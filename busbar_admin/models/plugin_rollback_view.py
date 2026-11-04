@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PluginRollbackView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginRollbackView:
     """The result of an EXPLICIT plugin ROLLBACK (`POST /api/v1/admin/plugins/rollback`, 1.5.0
     rollback-friendly versioning): the operator deliberately pinned a plugin DOWN to a prior version and

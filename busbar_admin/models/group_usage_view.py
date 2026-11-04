@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="GroupUsageView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class GroupUsageView:
     """`GET /groups/{name}/usage`: one group's DERIVED current-window usage, one row per
     enforcement bucket (each `(window, pool?)` its limits materialise), against that bucket's
@@ -63,7 +63,7 @@ class GroupUsageView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.group_bucket_usage_view import GroupBucketUsageView
+        from ..models.group_bucket_usage_view import GroupBucketUsageView  # noqa: PLC0415
 
         d = dict(src_dict)
         as_of = d.pop("as_of")

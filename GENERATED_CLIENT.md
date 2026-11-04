@@ -21,26 +21,26 @@ client = AuthenticatedClient(base_url="https://api.example.com", token="SuperSec
 Now call your endpoint and use your models:
 
 ```python
-from busbar_admin.models import MyDataModel
-from busbar_admin.api.my_tag import get_my_data_model
+from busbar_admin.models import Error, InfoView
+from busbar_admin.api.default import get_api_v1_admin_info
 from busbar_admin.types import Response
 
 with client as client:
-    my_data: MyDataModel = get_my_data_model.sync(client=client)
+    my_data: Error | InfoView | None = get_api_v1_admin_info.sync(client=client)
     # or if you need more info (e.g. status_code)
-    response: Response[MyDataModel] = get_my_data_model.sync_detailed(client=client)
+    response: Response[Error | InfoView] = get_api_v1_admin_info.sync_detailed(client=client)
 ```
 
 Or do the same thing with an async version:
 
 ```python
-from busbar_admin.models import MyDataModel
-from busbar_admin.api.my_tag import get_my_data_model
+from busbar_admin.models import Error, InfoView
+from busbar_admin.api.default import get_api_v1_admin_info
 from busbar_admin.types import Response
 
 async with client as client:
-    my_data: MyDataModel = await get_my_data_model.asyncio(client=client)
-    response: Response[MyDataModel] = await get_my_data_model.asyncio_detailed(client=client)
+    my_data: Error | InfoView | None = await get_api_v1_admin_info.asyncio(client=client)
+    response: Response[Error | InfoView] = await get_api_v1_admin_info.asyncio_detailed(client=client)
 ```
 
 By default, when you're calling an HTTPS API it will attempt to verify that SSL is working correctly. Using certificate verification is highly recommended most of the time, but sometimes you may need to authenticate to a server (especially an internal server) using a custom certificate bundle.
@@ -62,12 +62,12 @@ client = AuthenticatedClient(base_url="https://internal_api.example.com", token=
 Things to know:
 1. Every path/method combo becomes a Python module with four functions:
     1. `sync`: Blocking request that returns parsed data (if successful) or `None`
-    1. `sync_detailed`: Blocking request that always returns a `Request`, optionally with `parsed` set if the request was successful.
+    1. `sync_detailed`: Blocking request that always returns a `Response`, optionally with `parsed` set if the request was successful.
     1. `asyncio`: Like `sync` but async instead of blocking
     1. `asyncio_detailed`: Like `sync_detailed` but async instead of blocking
 
 1. All path/query params, and bodies become method arguments.
-1. If your endpoint had any tags on it, the first tag will be used as a module name for the function (my_tag above)
+1. If your endpoint had any tags on it, the first tag will be used as a module name for the function (default above)
 1. Any endpoint which did not have a tag will be in `busbar_admin.api.default`
 
 ## Advanced customizations
@@ -105,6 +105,8 @@ client = Client(
     base_url="https://api.example.com",
 )
 # Note that base_url needs to be re-set, as would any shared cookies, headers, etc.
-client.set_httpx_client(httpx.Client(base_url="https://api.example.com", proxies="http://localhost:8030"))
+client.set_httpx_client(
+    httpx.Client(base_url="https://api.example.com", transport=httpx.HTTPTransport(proxy="http://localhost:8030"))
+)
 ```
 

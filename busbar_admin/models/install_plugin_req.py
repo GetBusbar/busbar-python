@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="InstallPluginReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class InstallPluginReq:
     """The `POST /api/v1/admin/plugins` request body: install a SIGNED plugin tarball. The tarball
     bytes ride as base64 (`tarball_b64`): a plugin artifact is opaque binary, so base64 keeps it a

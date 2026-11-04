@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PagePoolView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PagePoolView:
     """A cursor-paginated list envelope. `items` is this page; `next_cursor` is `Some` when more remain.
     Generic over the item view so every list endpoint shares one shape.
@@ -49,7 +49,7 @@ class PagePoolView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.pool_view import PoolView
+        from ..models.pool_view import PoolView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

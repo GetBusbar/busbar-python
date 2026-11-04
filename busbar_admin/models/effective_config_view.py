@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 if TYPE_CHECKING:
     from ..models.auth_view import AuthView
     from ..models.hook_view import HookView
@@ -17,7 +19,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="EffectiveConfigView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class EffectiveConfigView:
     """The EFFECTIVE config snapshot (`GET /api/v1/admin/config`): the running configuration as busbar
     resolved it, for drift detection (compare against your desired config) and one-shot inspection.
@@ -42,6 +44,10 @@ class EffectiveConfigView:
             providers (list[ProviderView]):
             version (int): The monotonic config version at the time of this read (see `InfoView.config_version`), so a
                 drift-detection read gets the config AND its version in one call.
+            reload_to_apply (list[str] | Unset): The plane sections the running configuration writes whose plane the process
+                did not open at
+                boot: a plane is opened once, at process start, when its section is configured, so each is
+                stored and validated but serves nothing until the next RESTART. Omitted when none.
     """
 
     auth: AuthView
@@ -51,6 +57,7 @@ class EffectiveConfigView:
     pools: list[PoolView]
     providers: list[ProviderView]
     version: int
+    reload_to_apply: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -80,6 +87,10 @@ class EffectiveConfigView:
 
         version = self.version
 
+        reload_to_apply: list[str] | Unset = UNSET
+        if not isinstance(self.reload_to_apply, Unset):
+            reload_to_apply = self.reload_to_apply
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -93,16 +104,18 @@ class EffectiveConfigView:
                 "version": version,
             }
         )
+        if reload_to_apply is not UNSET:
+            field_dict["reload_to_apply"] = reload_to_apply
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.auth_view import AuthView
-        from ..models.hook_view import HookView
-        from ..models.model_view import ModelView
-        from ..models.pool_view import PoolView
-        from ..models.provider_view import ProviderView
+        from ..models.auth_view import AuthView  # noqa: PLC0415
+        from ..models.hook_view import HookView  # noqa: PLC0415
+        from ..models.model_view import ModelView  # noqa: PLC0415
+        from ..models.pool_view import PoolView  # noqa: PLC0415
+        from ..models.provider_view import ProviderView  # noqa: PLC0415
 
         d = dict(src_dict)
         auth = AuthView.from_dict(d.pop("auth"))
@@ -139,6 +152,8 @@ class EffectiveConfigView:
 
         version = d.pop("version")
 
+        reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
+
         effective_config_view = cls(
             auth=auth,
             global_hooks=global_hooks,
@@ -147,6 +162,7 @@ class EffectiveConfigView:
             pools=pools,
             providers=providers,
             version=version,
+            reload_to_apply=reload_to_apply,
         )
 
         effective_config_view.additional_properties = d

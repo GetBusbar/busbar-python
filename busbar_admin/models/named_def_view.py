@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="NamedDefView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class NamedDefView:
     """ONE definition of ONE 1.5.3 named-DEFINITION map: the read shape of the GENERIC named-map CRUD
     (`GET /api/v1/admin/identity-providers[/{name}]`, `GET /api/v1/admin/export[/{name}]`, and
@@ -34,6 +34,15 @@ class NamedDefView:
 
         Attributes:
             module (str): The `module:` backing this instance (a built-in name or a signed-plugin name/alias).
+
+                ALWAYS present, matching 1.5.5's wire shape byte-for-byte (`required` includes `module`,
+                schema type `"string"`, never nullable): 1.5.5 had no named-map section whose entries
+                carried no module, so it has no representation for one, and the ruling is 1:1 with 1.5.5
+                rather than inventing a new shape. EMPTY-STRINGED, not omitted, for a section whose entries
+                are not plugin instances -- today `agents:`, whose entries describe endpoints somebody else
+                runs (`NamedMapSection::requires_module`). Every section that HAS a module requires it to be
+                non-empty, so an empty string is unambiguous for "no module" without a `skip_serializing_if`
+                that would shrink `required` below 1.5.5's.
             name (str): The instance NAME: the map key, and the token every reference site uses.
             settings_keys (list[str]): The KEY NAMES of the module's opaque settings bag, sorted, WITHOUT their values, the
                 redacted projection of `settings:`. Operator/API-owned and never interpreted here, but also
@@ -43,10 +52,25 @@ class NamedDefView:
             browser_login_configured (bool | None | Unset): `identity-providers` ONLY: whether a `browser_login:` block is
                 configured, the presence that
                 puts a button on the hosted login page.
-            max_admin_scope (None | str | Unset): `identity-providers` ONLY: the per-provider ADMIN CEILING (`none` | `read-
-                only` | `full`).
-                `None` ⇒ the definition names none, so the most restrictive default applies. Omitted entirely
-                for a section that carries no ceiling.
+            fingerprint_pinned (bool | None | Unset): `agents` ONLY: whether an approved card FINGERPRINT is pinned yet. A
+                registration with a
+                root but no fingerprint is the normal state of a fresh entry awaiting approval, and it is
+                the state an operator most needs to be able to see.
+            max_admin_scope (None | str | Unset): `identity-providers` ONLY: the per-provider ADMIN CEILING (`read-only` |
+                `full`). There is no
+                `none` token: `Scope::parse_ceiling` rejects it, because a ceiling
+                caps what a grant can reach and cannot express the absence of one.
+                `None` ⇒ the definition names no ceiling, so the most restrictive default applies. Omitted
+                entirely for a section that carries no ceiling.
+            pin_mechanism (None | str | Unset): `agents` ONLY: which authenticity root this registration is pinned to
+                (`jws_issuer_key` |
+                `cert_spki` | `mtls` | `unpinned`). Projected because an operator scanning a registration
+                list needs to SEE which entries have no root; a mechanism that could only be discovered by
+                reading the config file is a mechanism nobody audits.
+            reverify_ttl (None | str | Unset): `agents` ONLY: the re-verification cadence this registration carries, as
+                written. The
+                backend `url:` is deliberately NOT projected here: it is the real remote endpoint and is
+                never client-visible.
             token_configured (bool | None | Unset): `identity-providers` ONLY: whether a `token:` secret REFERENCE is
                 configured (the built-in
                 `admin-tokens` operator credential). The reference itself is never projected.
@@ -63,7 +87,10 @@ class NamedDefView:
     name: str
     settings_keys: list[str]
     browser_login_configured: bool | None | Unset = UNSET
+    fingerprint_pinned: bool | None | Unset = UNSET
     max_admin_scope: None | str | Unset = UNSET
+    pin_mechanism: None | str | Unset = UNSET
+    reverify_ttl: None | str | Unset = UNSET
     token_configured: bool | None | Unset = UNSET
     unparseable: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -81,11 +108,29 @@ class NamedDefView:
         else:
             browser_login_configured = self.browser_login_configured
 
+        fingerprint_pinned: bool | None | Unset
+        if isinstance(self.fingerprint_pinned, Unset):
+            fingerprint_pinned = UNSET
+        else:
+            fingerprint_pinned = self.fingerprint_pinned
+
         max_admin_scope: None | str | Unset
         if isinstance(self.max_admin_scope, Unset):
             max_admin_scope = UNSET
         else:
             max_admin_scope = self.max_admin_scope
+
+        pin_mechanism: None | str | Unset
+        if isinstance(self.pin_mechanism, Unset):
+            pin_mechanism = UNSET
+        else:
+            pin_mechanism = self.pin_mechanism
+
+        reverify_ttl: None | str | Unset
+        if isinstance(self.reverify_ttl, Unset):
+            reverify_ttl = UNSET
+        else:
+            reverify_ttl = self.reverify_ttl
 
         token_configured: bool | None | Unset
         if isinstance(self.token_configured, Unset):
@@ -110,8 +155,14 @@ class NamedDefView:
         )
         if browser_login_configured is not UNSET:
             field_dict["browser_login_configured"] = browser_login_configured
+        if fingerprint_pinned is not UNSET:
+            field_dict["fingerprint_pinned"] = fingerprint_pinned
         if max_admin_scope is not UNSET:
             field_dict["max_admin_scope"] = max_admin_scope
+        if pin_mechanism is not UNSET:
+            field_dict["pin_mechanism"] = pin_mechanism
+        if reverify_ttl is not UNSET:
+            field_dict["reverify_ttl"] = reverify_ttl
         if token_configured is not UNSET:
             field_dict["token_configured"] = token_configured
         if unparseable is not UNSET:
@@ -137,6 +188,15 @@ class NamedDefView:
 
         browser_login_configured = _parse_browser_login_configured(d.pop("browser_login_configured", UNSET))
 
+        def _parse_fingerprint_pinned(data: object) -> bool | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(bool | None | Unset, data)
+
+        fingerprint_pinned = _parse_fingerprint_pinned(d.pop("fingerprint_pinned", UNSET))
+
         def _parse_max_admin_scope(data: object) -> None | str | Unset:
             if data is None:
                 return data
@@ -145,6 +205,24 @@ class NamedDefView:
             return cast(None | str | Unset, data)
 
         max_admin_scope = _parse_max_admin_scope(d.pop("max_admin_scope", UNSET))
+
+        def _parse_pin_mechanism(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        pin_mechanism = _parse_pin_mechanism(d.pop("pin_mechanism", UNSET))
+
+        def _parse_reverify_ttl(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        reverify_ttl = _parse_reverify_ttl(d.pop("reverify_ttl", UNSET))
 
         def _parse_token_configured(data: object) -> bool | None | Unset:
             if data is None:
@@ -169,7 +247,10 @@ class NamedDefView:
             name=name,
             settings_keys=settings_keys,
             browser_login_configured=browser_login_configured,
+            fingerprint_pinned=fingerprint_pinned,
             max_admin_scope=max_admin_scope,
+            pin_mechanism=pin_mechanism,
+            reverify_ttl=reverify_ttl,
             token_configured=token_configured,
             unparseable=unparseable,
         )

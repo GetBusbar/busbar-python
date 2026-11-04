@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PostConfigValidateBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PostConfigValidateBody:
     """Validate a configuration without applying it.
 
@@ -52,8 +52,8 @@ class PostConfigValidateBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.post_config_validate_body_config import PostConfigValidateBodyConfig
-        from ..models.post_config_validate_body_providers import PostConfigValidateBodyProviders
+        from ..models.post_config_validate_body_config import PostConfigValidateBodyConfig  # noqa: PLC0415
+        from ..models.post_config_validate_body_providers import PostConfigValidateBodyProviders  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PostConfigValidateBodyConfig.from_dict(d.pop("config"))
@@ -65,6 +65,8 @@ class PostConfigValidateBody:
         else:
             providers = PostConfigValidateBodyProviders.from_dict(_providers)
 
+        if d:
+            raise ValueError("Unexpected fields for PostConfigValidateBody")
         post_config_validate_body = cls(
             config=config,
             providers=providers,

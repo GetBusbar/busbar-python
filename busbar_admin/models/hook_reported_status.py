@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="HookReportedStatus")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookReportedStatus:
     """The REPORTED settings side of `hooks/{name}/status`: what the hook says it is actually running
     (present only when the hook answered `status`).
@@ -65,7 +65,7 @@ class HookReportedStatus:
                 return settings_keys_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[str] | None, data)
+            raise ValueError("Invalid value for settings_keys")
 
         settings_keys = _parse_settings_keys(d.pop("settings_keys"))
 

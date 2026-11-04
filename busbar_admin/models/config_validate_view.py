@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ConfigValidateView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ConfigValidateView:
     """The result of `POST /api/v1/admin/config/validate`, a DRY-RUN: does a proposed config resolve +
     validate, WITHOUT applying anything. `ok` is the verdict; `errors` lists every structural/resolution

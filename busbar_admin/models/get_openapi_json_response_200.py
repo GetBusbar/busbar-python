@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="GetOpenapiJsonResponse200")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class GetOpenapiJsonResponse200:
     """An OpenAPI 3.1 document (this document's shape)"""
 

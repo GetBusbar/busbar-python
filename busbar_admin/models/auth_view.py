@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="AuthView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class AuthView:
     """The ingress auth chain read (`GET /api/v1/admin/auth`): the ordered module names that authenticate
     callers + the upstream-credential mode. Never a secret: module names and the mode are config

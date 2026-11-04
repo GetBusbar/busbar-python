@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="CreateKeyReqLabels")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class CreateKeyReqLabels:
     """Optional mint-time labels echoed onto this key's metric series; never interpreted by
     enforcement.

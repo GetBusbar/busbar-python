@@ -9,10 +9,8 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PatchSettingsReqSettings")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PatchSettingsReqSettings:
-    """ """
-
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

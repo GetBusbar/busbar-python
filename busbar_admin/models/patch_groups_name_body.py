@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PatchGroupsNameBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PatchGroupsNameBody:
     """A partial update: only the fields present are changed. `limits` and `child_default` REPLACE their whole value when
     present.
@@ -79,8 +79,8 @@ class PatchGroupsNameBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.patch_groups_name_body_child_default import PatchGroupsNameBodyChildDefault
-        from ..models.patch_groups_name_body_limits_type_0_item import PatchGroupsNameBodyLimitsType0Item
+        from ..models.patch_groups_name_body_child_default import PatchGroupsNameBodyChildDefault  # noqa: PLC0415
+        from ..models.patch_groups_name_body_limits_type_0_item import PatchGroupsNameBodyLimitsType0Item  # noqa: PLC0415
 
         d = dict(src_dict)
         _child_default = d.pop("child_default", UNSET)
@@ -117,7 +117,7 @@ class PatchGroupsNameBody:
                 return limits_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[PatchGroupsNameBodyLimitsType0Item] | None | Unset, data)
+            raise ValueError("Invalid value for limits")
 
         limits = _parse_limits(d.pop("limits", UNSET))
 
@@ -130,6 +130,8 @@ class PatchGroupsNameBody:
 
         parent = _parse_parent(d.pop("parent", UNSET))
 
+        if d:
+            raise ValueError("Unexpected fields for PatchGroupsNameBody")
         patch_groups_name_body = cls(
             child_default=child_default,
             enabled=enabled,

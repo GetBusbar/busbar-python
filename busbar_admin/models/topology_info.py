@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="TopologyInfo")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class TopologyInfo:
     """Pool/model/provider counts (`InfoView.topology`).
 

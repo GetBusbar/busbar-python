@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="ConfigDiffGlobalHooks")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ConfigDiffGlobalHooks:
     """The `global_hooks` delta of a `GET /config/diff`, present only when the global wiring changed.
 

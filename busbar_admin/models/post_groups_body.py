@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PostGroupsBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PostGroupsBody:
     """
     Attributes:
@@ -43,13 +43,15 @@ class PostGroupsBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.post_groups_body_config import PostGroupsBodyConfig
+        from ..models.post_groups_body_config import PostGroupsBodyConfig  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PostGroupsBodyConfig.from_dict(d.pop("config"))
 
         name = d.pop("name")
 
+        if d:
+            raise ValueError("Unexpected fields for PostGroupsBody")
         post_groups_body = cls(
             config=config,
             name=name,

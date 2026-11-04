@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PutConfigSettingsBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PutConfigSettingsBody:
     """The settings sections to replace, keyed by section name. Durable by default (1.5.3): a mutable config always stores
     the change in its overlay (survives restart), and a locked config (`config.locked: true`) refuses ANY change with

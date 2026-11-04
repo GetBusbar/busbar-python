@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="RevokeView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class RevokeView:
     """`POST /keys/{id}/revoke`: the revoked key's id (denylisted without deleting the binding). 1.5.0.
 

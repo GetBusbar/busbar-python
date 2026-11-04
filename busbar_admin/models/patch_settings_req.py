@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PatchSettingsReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PatchSettingsReq:
     """The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic concurrency rides `If-Match`.
 
@@ -39,7 +39,7 @@ class PatchSettingsReq:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.patch_settings_req_settings import PatchSettingsReqSettings
+        from ..models.patch_settings_req_settings import PatchSettingsReqSettings  # noqa: PLC0415
 
         d = dict(src_dict)
         settings = PatchSettingsReqSettings.from_dict(d.pop("settings"))

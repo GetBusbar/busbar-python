@@ -10,7 +10,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="RestartReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class RestartReq:
     """The `POST /api/v1/admin/restart` body. Absent is the same as `{}`.
 
@@ -39,6 +39,8 @@ class RestartReq:
         d = dict(src_dict)
         confirm = d.pop("confirm", UNSET)
 
+        if d:
+            raise ValueError("Unexpected fields for RestartReq")
         restart_req = cls(
             confirm=confirm,
         )

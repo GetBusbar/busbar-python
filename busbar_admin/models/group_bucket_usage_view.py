@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="GroupBucketUsageView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class GroupBucketUsageView:
     """One `(window, pool?)` enforcement bucket's usage vs caps inside a [`GroupUsageView`].
 
@@ -25,7 +25,14 @@ class GroupBucketUsageView:
             cap is set.
         pool (None | str | Unset): The pool scope for a pool-qualified bucket; absent for a group-wide bucket.
         requests_cap (int | None | Unset): The bucket's caps, when configured (absent = uncapped on that metric).
+        tokens_cache_read_cap (int | None | Unset):
+        tokens_cache_write_cap (int | None | Unset):
         tokens_cap (int | None | Unset):
+        tokens_input_cap (int | None | Unset): Per-tier token caps mirroring the cost tiers, when configured (absent =
+            uncapped on that
+            tier): `tokens_input` = uncached input, `tokens_output` = output, `tokens_cache_read`,
+            `tokens_cache_write` = cache creation.
+        tokens_output_cap (int | None | Unset):
     """
 
     requests: int
@@ -36,7 +43,11 @@ class GroupBucketUsageView:
     budget_remaining_cents: int | None | Unset = UNSET
     pool: None | str | Unset = UNSET
     requests_cap: int | None | Unset = UNSET
+    tokens_cache_read_cap: int | None | Unset = UNSET
+    tokens_cache_write_cap: int | None | Unset = UNSET
     tokens_cap: int | None | Unset = UNSET
+    tokens_input_cap: int | None | Unset = UNSET
+    tokens_output_cap: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -72,11 +83,35 @@ class GroupBucketUsageView:
         else:
             requests_cap = self.requests_cap
 
+        tokens_cache_read_cap: int | None | Unset
+        if isinstance(self.tokens_cache_read_cap, Unset):
+            tokens_cache_read_cap = UNSET
+        else:
+            tokens_cache_read_cap = self.tokens_cache_read_cap
+
+        tokens_cache_write_cap: int | None | Unset
+        if isinstance(self.tokens_cache_write_cap, Unset):
+            tokens_cache_write_cap = UNSET
+        else:
+            tokens_cache_write_cap = self.tokens_cache_write_cap
+
         tokens_cap: int | None | Unset
         if isinstance(self.tokens_cap, Unset):
             tokens_cap = UNSET
         else:
             tokens_cap = self.tokens_cap
+
+        tokens_input_cap: int | None | Unset
+        if isinstance(self.tokens_input_cap, Unset):
+            tokens_input_cap = UNSET
+        else:
+            tokens_input_cap = self.tokens_input_cap
+
+        tokens_output_cap: int | None | Unset
+        if isinstance(self.tokens_output_cap, Unset):
+            tokens_output_cap = UNSET
+        else:
+            tokens_output_cap = self.tokens_output_cap
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -96,8 +131,16 @@ class GroupBucketUsageView:
             field_dict["pool"] = pool
         if requests_cap is not UNSET:
             field_dict["requests_cap"] = requests_cap
+        if tokens_cache_read_cap is not UNSET:
+            field_dict["tokens_cache_read_cap"] = tokens_cache_read_cap
+        if tokens_cache_write_cap is not UNSET:
+            field_dict["tokens_cache_write_cap"] = tokens_cache_write_cap
         if tokens_cap is not UNSET:
             field_dict["tokens_cap"] = tokens_cap
+        if tokens_input_cap is not UNSET:
+            field_dict["tokens_input_cap"] = tokens_input_cap
+        if tokens_output_cap is not UNSET:
+            field_dict["tokens_output_cap"] = tokens_output_cap
 
         return field_dict
 
@@ -148,6 +191,24 @@ class GroupBucketUsageView:
 
         requests_cap = _parse_requests_cap(d.pop("requests_cap", UNSET))
 
+        def _parse_tokens_cache_read_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_cache_read_cap = _parse_tokens_cache_read_cap(d.pop("tokens_cache_read_cap", UNSET))
+
+        def _parse_tokens_cache_write_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_cache_write_cap = _parse_tokens_cache_write_cap(d.pop("tokens_cache_write_cap", UNSET))
+
         def _parse_tokens_cap(data: object) -> int | None | Unset:
             if data is None:
                 return data
@@ -156,6 +217,24 @@ class GroupBucketUsageView:
             return cast(int | None | Unset, data)
 
         tokens_cap = _parse_tokens_cap(d.pop("tokens_cap", UNSET))
+
+        def _parse_tokens_input_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_input_cap = _parse_tokens_input_cap(d.pop("tokens_input_cap", UNSET))
+
+        def _parse_tokens_output_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_output_cap = _parse_tokens_output_cap(d.pop("tokens_output_cap", UNSET))
 
         group_bucket_usage_view = cls(
             requests=requests,
@@ -166,7 +245,11 @@ class GroupBucketUsageView:
             budget_remaining_cents=budget_remaining_cents,
             pool=pool,
             requests_cap=requests_cap,
+            tokens_cache_read_cap=tokens_cache_read_cap,
+            tokens_cache_write_cap=tokens_cache_write_cap,
             tokens_cap=tokens_cap,
+            tokens_input_cap=tokens_input_cap,
+            tokens_output_cap=tokens_output_cap,
         )
 
         group_bucket_usage_view.additional_properties = d

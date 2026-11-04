@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="RestartView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class RestartView:
     """`POST /restart`: accepted-and-draining result.
 

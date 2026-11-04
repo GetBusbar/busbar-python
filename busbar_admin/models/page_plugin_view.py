@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PagePluginView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PagePluginView:
     """A cursor-paginated list envelope. `items` is this page; `next_cursor` is `Some` when more remain.
     Generic over the item view so every list endpoint shares one shape.
@@ -49,7 +49,7 @@ class PagePluginView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.plugin_view import PluginView
+        from ..models.plugin_view import PluginView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

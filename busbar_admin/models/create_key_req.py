@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="CreateKeyReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class CreateKeyReq:
     """`POST /keys` body (1.5.0 signed-token keys): PURE AUTH + a signed expiring token. A minted
     key is a busbar-signed `{sub, exp, kid}` token, returned ONCE. No rpm/tpm/budget on a key - all
@@ -25,6 +25,8 @@ class CreateKeyReq:
             name (str):
             allowed_pools (list[str] | None | Unset): Pools this key may target. OMITTED = ALL pools; an explicit `[]` = NO
                 pools.
+            audience (None | str | Unset): Optional exact resource audience for this bearer; omitted preserves ordinary key
+                tokens.
             expires_at (int | None | Unset): Token expiry as an absolute Unix-seconds timestamp. Mutually exclusive with
                 `expires_in`.
             expires_in (None | str | Unset): Token lifetime as a duration string (`7d`, `24h`, `30m`, `3600s`) - the token's
@@ -53,6 +55,7 @@ class CreateKeyReq:
 
     name: str
     allowed_pools: list[str] | None | Unset = UNSET
+    audience: None | str | Unset = UNSET
     expires_at: int | None | Unset = UNSET
     expires_in: None | str | Unset = UNSET
     group: None | str | Unset = UNSET
@@ -71,6 +74,12 @@ class CreateKeyReq:
 
         else:
             allowed_pools = self.allowed_pools
+
+        audience: None | str | Unset
+        if isinstance(self.audience, Unset):
+            audience = UNSET
+        else:
+            audience = self.audience
 
         expires_at: int | None | Unset
         if isinstance(self.expires_at, Unset):
@@ -111,6 +120,8 @@ class CreateKeyReq:
         )
         if allowed_pools is not UNSET:
             field_dict["allowed_pools"] = allowed_pools
+        if audience is not UNSET:
+            field_dict["audience"] = audience
         if expires_at is not UNSET:
             field_dict["expires_at"] = expires_at
         if expires_in is not UNSET:
@@ -128,7 +139,7 @@ class CreateKeyReq:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_key_req_labels import CreateKeyReqLabels
+        from ..models.create_key_req_labels import CreateKeyReqLabels  # noqa: PLC0415
 
         d = dict(src_dict)
         name = d.pop("name")
@@ -146,9 +157,18 @@ class CreateKeyReq:
                 return allowed_pools_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[str] | None | Unset, data)
+            raise ValueError("Invalid value for allowed_pools")
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools", UNSET))
+
+        def _parse_audience(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        audience = _parse_audience(d.pop("audience", UNSET))
 
         def _parse_expires_at(data: object) -> int | None | Unset:
             if data is None:
@@ -195,9 +215,12 @@ class CreateKeyReq:
 
         parent = _parse_parent(d.pop("parent", UNSET))
 
+        if d:
+            raise ValueError("Unexpected fields for CreateKeyReq")
         create_key_req = cls(
             name=name,
             allowed_pools=allowed_pools,
+            audience=audience,
             expires_at=expires_at,
             expires_in=expires_in,
             group=group,

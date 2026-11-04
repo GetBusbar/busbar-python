@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="PutIdentityProvidersNameBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PutIdentityProvidersNameBody:
     """One `identity-providers:` DEFINITION, exactly as config.yaml spells it (`{module, settings, ...}`). Parsed into the
     section's `deny_unknown_fields` config struct, so an unknown key is the same loud reject the file would give. The

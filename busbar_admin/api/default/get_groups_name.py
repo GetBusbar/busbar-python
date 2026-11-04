@@ -18,7 +18,7 @@ def _get_kwargs(
     _kwargs: dict[str, Any] = {
         "method": "get",
         "url": "/api/v1/admin/groups/{name}".format(
-            name=quote(str(name), safe=""),
+            name=quote(str(name), safe="").replace(".", "%2E"),
         ),
     }
 
@@ -51,6 +51,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_500
 
+    if response.status_code == 503:
+        response_503 = Error.from_dict(response.json())
+
+        return response_503
+
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
@@ -59,7 +64,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | GroupView]:
     return Response(
-        status_code=HTTPStatus(response.status_code),
+        status_code=HTTPStatus(response.status_code)
+        if response.status_code in HTTPStatus._value2member_map_
+        else response.status_code,
         content=response.content,
         headers=response.headers,
         parsed=_parse_response(client=client, response=response),
@@ -88,7 +95,7 @@ def sync_detailed(
         name=name,
     )
 
-    response = client.get_httpx_client().request(
+    response = client._request(
         **kwargs,
     )
 
@@ -141,7 +148,7 @@ async def asyncio_detailed(
         name=name,
     )
 
-    response = await client.get_async_httpx_client().request(**kwargs)
+    response = await client._async_request(**kwargs)
 
     return _build_response(client=client, response=response)
 

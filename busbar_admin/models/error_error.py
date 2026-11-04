@@ -11,7 +11,7 @@ from ..models.error_error_code import ErrorErrorCode
 T = TypeVar("T", bound="ErrorError")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class ErrorError:
     """
     Attributes:

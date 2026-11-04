@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="HookDesiredStatus")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookDesiredStatus:
     """The DESIRED settings side of `hooks/{name}/status`: busbar's registry copy of the hook's settings
     (KEY NAMES only, see [`super::HookView::settings_keys`]) and their version.

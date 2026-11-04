@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PostHooksBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PostHooksBody:
     """
     Attributes:
@@ -43,13 +43,15 @@ class PostHooksBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.post_hooks_body_config import PostHooksBodyConfig
+        from ..models.post_hooks_body_config import PostHooksBodyConfig  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PostHooksBodyConfig.from_dict(d.pop("config"))
 
         name = d.pop("name")
 
+        if d:
+            raise ValueError("Unexpected fields for PostHooksBody")
         post_hooks_body = cls(
             config=config,
             name=name,

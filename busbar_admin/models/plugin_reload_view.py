@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PluginReloadView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginReloadView:
     """The result of re-scanning the plugins directory (`POST /api/v1/admin/plugins/reload`): the
     current dynamic-library inventory, each with its ABI-validity. Reconciles the reported set to the
@@ -50,7 +50,7 @@ class PluginReloadView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.plugin_view import PluginView
+        from ..models.plugin_view import PluginView  # noqa: PLC0415
 
         d = dict(src_dict)
         note = d.pop("note")

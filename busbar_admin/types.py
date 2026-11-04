@@ -4,7 +4,7 @@ from collections.abc import Mapping, MutableMapping
 from http import HTTPStatus
 from typing import IO, BinaryIO, Generic, Literal, TypeVar
 
-from attrs import define
+from attrs import define, field
 
 
 class Unset:
@@ -45,10 +45,10 @@ T = TypeVar("T")
 class Response(Generic[T]):
     """A response from an endpoint"""
 
-    status_code: HTTPStatus
-    content: bytes
-    headers: MutableMapping[str, str]
-    parsed: T | None
+    status_code: HTTPStatus | int
+    content: bytes = field(repr=False)
+    headers: MutableMapping[str, str] = field(repr=False)
+    parsed: T | None = field(repr=False)
 
 
 __all__ = ["UNSET", "File", "FileTypes", "RequestFiles", "Response", "Unset"]

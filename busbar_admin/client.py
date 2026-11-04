@@ -1,8 +1,120 @@
 import ssl
-from typing import Any
+from _thread import LockType
+from collections.abc import AsyncGenerator, Generator
+from threading import Lock
+from typing import Any, Self
 
 import httpx
 from attrs import define, evolve, field
+
+
+def _validate_response_limit(instance: Any, attribute: Any, value: int) -> None:
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise ValueError("max_response_bytes must be a positive integer")
+
+
+@define
+class _ResponseBudget:
+    remaining: int
+    active: bool = True
+
+
+_RESPONSE_BUDGET = "busbar.response_budget"
+_RESPONSE_COUNTED = "busbar.response_counted"
+
+
+class _BudgetAuth(httpx.Auth):
+    def __init__(self, delegate: httpx.Auth | None, budget: _ResponseBudget) -> None:
+        self.delegate = delegate
+        self.budget = budget
+
+    def _auth(self, request: httpx.Request) -> httpx.Auth:
+        if self.delegate is not None:
+            return self.delegate
+        if request.url.username or request.url.password:
+            return httpx.BasicAuth(request.url.username, request.url.password)
+        return httpx.Auth()
+
+    def sync_auth_flow(self, request: httpx.Request) -> Generator[httpx.Request, httpx.Response, None]:
+        flow = self._auth(request).sync_auth_flow(request)
+        try:
+            request = next(flow)
+            while True:
+                request.extensions[_RESPONSE_BUDGET] = self.budget
+                response = yield request
+                try:
+                    request = flow.send(response)
+                except StopIteration:
+                    return
+        finally:
+            flow.close()
+
+    async def async_auth_flow(self, request: httpx.Request) -> AsyncGenerator[httpx.Request, httpx.Response]:
+        flow = self._auth(request).async_auth_flow(request)
+        try:
+            request = await anext(flow)
+            while True:
+                request.extensions[_RESPONSE_BUDGET] = self.budget
+                response = yield request
+                try:
+                    request = await flow.asend(response)
+                except StopAsyncIteration:
+                    return
+        finally:
+            await flow.aclose()
+
+
+def _response_budget(response: httpx.Response) -> _ResponseBudget | None:
+    budget = response.request.extensions.get(_RESPONSE_BUDGET)
+    if budget is None or not budget.active or response.extensions.get(_RESPONSE_COUNTED) is budget:
+        return None
+    return budget
+
+
+def _consume_response_bytes(budget: _ResponseBudget, size: int) -> None:
+    if size > budget.remaining:
+        raise ValueError("Admin response exceeds configured size limit")
+    budget.remaining -= size
+
+
+def _limit_response(response: httpx.Response) -> None:
+    budget = _response_budget(response)
+    if budget is None:
+        return
+    if response.is_stream_consumed:
+        _consume_response_bytes(budget, len(response.content))
+    else:
+        content = bytearray()
+        for chunk in response.iter_bytes(chunk_size=min(64 * 1024, budget.remaining + 1)):
+            _consume_response_bytes(budget, len(chunk))
+            content.extend(chunk)
+        # Populate HTTPX's read cache after bounded decoding, before its redirect/auth readers run.
+        response._content = bytes(content)
+    response.extensions[_RESPONSE_COUNTED] = budget
+
+
+async def _limit_async_response(response: httpx.Response) -> None:
+    budget = _response_budget(response)
+    if budget is None:
+        return
+    if response.is_stream_consumed:
+        _consume_response_bytes(budget, len(response.content))
+    else:
+        content = bytearray()
+        async for chunk in response.aiter_bytes(chunk_size=min(64 * 1024, budget.remaining + 1)):
+            _consume_response_bytes(budget, len(chunk))
+            content.extend(chunk)
+        # Match the sync reader without decoding compressed content a second time.
+        response._content = bytes(content)
+    response.extensions[_RESPONSE_COUNTED] = budget
+
+
+def _response_hooks(hooks: dict[str, Any], *, asynchronous: bool) -> dict[str, Any]:
+    result = dict(hooks)
+    guard = _limit_async_response if asynchronous else _limit_response
+    existing = list(result.get("response", []))
+    result["response"] = [guard, *(hook for hook in existing if hook is not guard)]
+    return result
 
 
 @define
@@ -29,69 +141,100 @@ class Client:
 
 
     Attributes:
+        max_response_bytes: Maximum accumulated decoded response bytes per SDK call, including redirects (32 MiB by default).
         raise_on_unexpected_status: Whether or not to raise an errors.UnexpectedStatus if the API returns a
             status code that was not documented in the source OpenAPI document. Can also be provided as a keyword
             argument to the constructor.
     """
 
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
-    _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(factory=dict, kw_only=True, alias="cookies")
-    _headers: dict[str, str] = field(factory=dict, kw_only=True, alias="headers")
+    max_response_bytes: int = field(default=32 * 1024 * 1024, kw_only=True, validator=_validate_response_limit)
+    _base_url: str = field(alias="base_url", repr=False)
+    _cookies: dict[str, str] = field(factory=dict, kw_only=True, alias="cookies", repr=False, converter=dict)
+    _headers: dict[str, str] = field(factory=dict, kw_only=True, alias="headers", repr=False, converter=dict)
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(default=True, kw_only=True, alias="verify_ssl")
     _follow_redirects: bool = field(default=False, kw_only=True, alias="follow_redirects")
-    _httpx_args: dict[str, Any] = field(factory=dict, kw_only=True, alias="httpx_args")
+    _httpx_args: dict[str, Any] = field(factory=dict, kw_only=True, alias="httpx_args", repr=False, converter=dict)
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+    _has_manual_client: bool = field(default=False, init=False, repr=False)
+    _client_lock: LockType = field(factory=Lock, init=False, repr=False, eq=False)
+
+    def _request(self, **kwargs: Any) -> httpx.Response:
+        budget = _ResponseBudget(self.max_response_bytes)
+        client = self.get_httpx_client()
+        try:
+            with client.stream(auth=_BudgetAuth(client.auth, budget), **kwargs) as response:
+                _limit_response(response)
+                return response
+        finally:
+            budget.active = False
+
+    async def _async_request(self, **kwargs: Any) -> httpx.Response:
+        budget = _ResponseBudget(self.max_response_bytes)
+        client = self.get_async_httpx_client()
+        try:
+            async with client.stream(auth=_BudgetAuth(client.auth, budget), **kwargs) as response:
+                await _limit_async_response(response)
+                return response
+        finally:
+            budget.active = False
+
+    def _get_headers(self) -> dict[str, str]:
+        return dict(self._headers)
+
+    def _get_httpx_args(self, *, asynchronous: bool = False) -> dict[str, Any]:
+        args = dict(self._httpx_args)
+        args["event_hooks"] = _response_hooks(args.get("event_hooks") or {}, asynchronous=asynchronous)
+        return args
+
+    def _ensure_copyable(self) -> None:
+        if self._has_manual_client:
+            raise ValueError("Cannot copy a manually supplied HTTPX client; configure that client directly")
 
     def with_headers(self, headers: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional headers"""
-        if self._client is not None:
-            self._client.headers.update(headers)
-        if self._async_client is not None:
-            self._async_client.headers.update(headers)
+        self._ensure_copyable()
         return evolve(self, headers={**self._headers, **headers})
 
     def with_cookies(self, cookies: dict[str, str]) -> "Client":
         """Get a new client matching this one with additional cookies"""
-        if self._client is not None:
-            self._client.cookies.update(cookies)
-        if self._async_client is not None:
-            self._async_client.cookies.update(cookies)
+        self._ensure_copyable()
         return evolve(self, cookies={**self._cookies, **cookies})
 
     def with_timeout(self, timeout: httpx.Timeout) -> "Client":
         """Get a new client matching this one with a new timeout configuration"""
-        if self._client is not None:
-            self._client.timeout = timeout
-        if self._async_client is not None:
-            self._async_client.timeout = timeout
+        self._ensure_copyable()
         return evolve(self, timeout=timeout)
 
-    def set_httpx_client(self, client: httpx.Client) -> "Client":
+    def set_httpx_client(self, client: httpx.Client) -> Self:
         """Manually set the underlying httpx.Client
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
         """
-        self._client = client
+        with self._client_lock:
+            client.event_hooks = _response_hooks(client.event_hooks, asynchronous=False)
+            self._client = client
+            self._has_manual_client = True
         return self
 
     def get_httpx_client(self) -> httpx.Client:
         """Get the underlying httpx.Client, constructing a new one if not previously set"""
-        if self._client is None:
-            self._client = httpx.Client(
-                base_url=self._base_url,
-                cookies=self._cookies,
-                headers=self._headers,
-                timeout=self._timeout,
-                verify=self._verify_ssl,
-                follow_redirects=self._follow_redirects,
-                **self._httpx_args,
-            )
-        return self._client
+        with self._client_lock:
+            if self._client is None:
+                self._client = httpx.Client(
+                    base_url=self._base_url,
+                    cookies=self._cookies,
+                    headers=self._get_headers(),
+                    timeout=self._timeout,
+                    verify=self._verify_ssl,
+                    follow_redirects=self._follow_redirects,
+                    **self._get_httpx_args(),
+                )
+            return self._client
 
-    def __enter__(self) -> "Client":
+    def __enter__(self) -> Self:
         """Enter a context manager for self.client—you cannot enter twice (see httpx docs)"""
         self.get_httpx_client().__enter__()
         return self
@@ -100,29 +243,33 @@ class Client:
         """Exit a context manager for internal httpx.Client (see httpx docs)"""
         self.get_httpx_client().__exit__(*args, **kwargs)
 
-    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> "Client":
+    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> Self:
         """Manually set the underlying httpx.AsyncClient
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
         """
-        self._async_client = async_client
+        with self._client_lock:
+            async_client.event_hooks = _response_hooks(async_client.event_hooks, asynchronous=True)
+            self._async_client = async_client
+            self._has_manual_client = True
         return self
 
     def get_async_httpx_client(self) -> httpx.AsyncClient:
         """Get the underlying httpx.AsyncClient, constructing a new one if not previously set"""
-        if self._async_client is None:
-            self._async_client = httpx.AsyncClient(
-                base_url=self._base_url,
-                cookies=self._cookies,
-                headers=self._headers,
-                timeout=self._timeout,
-                verify=self._verify_ssl,
-                follow_redirects=self._follow_redirects,
-                **self._httpx_args,
-            )
-        return self._async_client
+        with self._client_lock:
+            if self._async_client is None:
+                self._async_client = httpx.AsyncClient(
+                    base_url=self._base_url,
+                    cookies=self._cookies,
+                    headers=self._get_headers(),
+                    timeout=self._timeout,
+                    verify=self._verify_ssl,
+                    follow_redirects=self._follow_redirects,
+                    **self._get_httpx_args(asynchronous=True),
+                )
+            return self._async_client
 
-    async def __aenter__(self) -> "Client":
+    async def __aenter__(self) -> Self:
         """Enter a context manager for underlying httpx.AsyncClient—you cannot enter twice (see httpx docs)"""
         await self.get_async_httpx_client().__aenter__()
         return self
@@ -156,6 +303,7 @@ class AuthenticatedClient:
 
 
     Attributes:
+        max_response_bytes: Maximum accumulated decoded response bytes per SDK call, including redirects (32 MiB by default).
         raise_on_unexpected_status: Whether or not to raise an errors.UnexpectedStatus if the API returns a
             status code that was not documented in the source OpenAPI document. Can also be provided as a keyword
             argument to the constructor.
@@ -165,68 +313,121 @@ class AuthenticatedClient:
     """
 
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
-    _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(factory=dict, kw_only=True, alias="cookies")
-    _headers: dict[str, str] = field(factory=dict, kw_only=True, alias="headers")
+    max_response_bytes: int = field(default=32 * 1024 * 1024, kw_only=True, validator=_validate_response_limit)
+    _base_url: str = field(alias="base_url", repr=False)
+    _cookies: dict[str, str] = field(factory=dict, kw_only=True, alias="cookies", repr=False, converter=dict)
+    _headers: dict[str, str] = field(factory=dict, kw_only=True, alias="headers", repr=False, converter=dict)
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(default=True, kw_only=True, alias="verify_ssl")
     _follow_redirects: bool = field(default=False, kw_only=True, alias="follow_redirects")
-    _httpx_args: dict[str, Any] = field(factory=dict, kw_only=True, alias="httpx_args")
+    _httpx_args: dict[str, Any] = field(factory=dict, kw_only=True, alias="httpx_args", repr=False, converter=dict)
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
+    _has_manual_client: bool = field(default=False, init=False, repr=False)
+    _client_lock: LockType = field(factory=Lock, init=False, repr=False, eq=False)
 
-    token: str
+    token: str = field(repr=False)
     prefix: str = "Bearer"
     auth_header_name: str = "Authorization"
 
+    def _request(self, **kwargs: Any) -> httpx.Response:
+        budget = _ResponseBudget(self.max_response_bytes)
+        client = self.get_httpx_client()
+        try:
+            with client.stream(auth=_BudgetAuth(client.auth, budget), **kwargs) as response:
+                _limit_response(response)
+                return response
+        finally:
+            budget.active = False
+
+    async def _async_request(self, **kwargs: Any) -> httpx.Response:
+        budget = _ResponseBudget(self.max_response_bytes)
+        client = self.get_async_httpx_client()
+        try:
+            async with client.stream(auth=_BudgetAuth(client.auth, budget), **kwargs) as response:
+                await _limit_async_response(response)
+                return response
+        finally:
+            budget.active = False
+
+    def _get_headers(self) -> dict[str, str]:
+        for value in (self.token, self.prefix, self.auth_header_name):
+            if not isinstance(value, str) or any(ord(char) < 32 or ord(char) > 126 for char in value):
+                raise ValueError("Authentication fields must contain printable ASCII characters")
+        headers = {key: value for key, value in self._headers.items() if key.lower() != self.auth_header_name.lower()}
+        value = f"{self.prefix} {self.token}" if self.prefix else self.token
+        if value != value.strip(" "):
+            raise ValueError("Authentication header must not have surrounding whitespace")
+        headers[self.auth_header_name] = value
+        return headers
+
+    def _get_httpx_args(self, *, asynchronous: bool = False) -> dict[str, Any]:
+        args = dict(self._httpx_args)
+        if self.auth_header_name.lower() != "authorization":
+            base = httpx.URL(self._base_url)
+            origin = (base.scheme, base.host, base.port)
+            header_name = self.auth_header_name
+
+            def guard(request: httpx.Request) -> None:
+                url = request.url
+                if (url.scheme, url.host, url.port) != origin:
+                    request.headers.pop(header_name, None)
+
+            async def async_guard(request: httpx.Request) -> None:
+                guard(request)
+
+            hooks = dict(args.get("event_hooks") or {})
+            hooks["request"] = [async_guard if asynchronous else guard, *hooks.get("request", [])]
+            args["event_hooks"] = hooks
+        args["event_hooks"] = _response_hooks(args.get("event_hooks") or {}, asynchronous=asynchronous)
+        return args
+
+    def _ensure_copyable(self) -> None:
+        if self._has_manual_client:
+            raise ValueError("Cannot copy a manually supplied HTTPX client; configure that client directly")
+
     def with_headers(self, headers: dict[str, str]) -> "AuthenticatedClient":
         """Get a new client matching this one with additional headers"""
-        if self._client is not None:
-            self._client.headers.update(headers)
-        if self._async_client is not None:
-            self._async_client.headers.update(headers)
+        self._ensure_copyable()
         return evolve(self, headers={**self._headers, **headers})
 
     def with_cookies(self, cookies: dict[str, str]) -> "AuthenticatedClient":
         """Get a new client matching this one with additional cookies"""
-        if self._client is not None:
-            self._client.cookies.update(cookies)
-        if self._async_client is not None:
-            self._async_client.cookies.update(cookies)
+        self._ensure_copyable()
         return evolve(self, cookies={**self._cookies, **cookies})
 
     def with_timeout(self, timeout: httpx.Timeout) -> "AuthenticatedClient":
         """Get a new client matching this one with a new timeout configuration"""
-        if self._client is not None:
-            self._client.timeout = timeout
-        if self._async_client is not None:
-            self._async_client.timeout = timeout
+        self._ensure_copyable()
         return evolve(self, timeout=timeout)
 
-    def set_httpx_client(self, client: httpx.Client) -> "AuthenticatedClient":
+    def set_httpx_client(self, client: httpx.Client) -> Self:
         """Manually set the underlying httpx.Client
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
         """
-        self._client = client
+        with self._client_lock:
+            client.event_hooks = _response_hooks(client.event_hooks, asynchronous=False)
+            self._client = client
+            self._has_manual_client = True
         return self
 
     def get_httpx_client(self) -> httpx.Client:
         """Get the underlying httpx.Client, constructing a new one if not previously set"""
-        if self._client is None:
-            self._headers[self.auth_header_name] = f"{self.prefix} {self.token}" if self.prefix else self.token
-            self._client = httpx.Client(
-                base_url=self._base_url,
-                cookies=self._cookies,
-                headers=self._headers,
-                timeout=self._timeout,
-                verify=self._verify_ssl,
-                follow_redirects=self._follow_redirects,
-                **self._httpx_args,
-            )
-        return self._client
+        with self._client_lock:
+            if self._client is None:
+                self._client = httpx.Client(
+                    base_url=self._base_url,
+                    cookies=self._cookies,
+                    headers=self._get_headers(),
+                    timeout=self._timeout,
+                    verify=self._verify_ssl,
+                    follow_redirects=self._follow_redirects,
+                    **self._get_httpx_args(),
+                )
+            return self._client
 
-    def __enter__(self) -> "AuthenticatedClient":
+    def __enter__(self) -> Self:
         """Enter a context manager for self.client—you cannot enter twice (see httpx docs)"""
         self.get_httpx_client().__enter__()
         return self
@@ -235,30 +436,33 @@ class AuthenticatedClient:
         """Exit a context manager for internal httpx.Client (see httpx docs)"""
         self.get_httpx_client().__exit__(*args, **kwargs)
 
-    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> "AuthenticatedClient":
+    def set_async_httpx_client(self, async_client: httpx.AsyncClient) -> Self:
         """Manually set the underlying httpx.AsyncClient
 
         **NOTE**: This will override any other settings on the client, including cookies, headers, and timeout.
         """
-        self._async_client = async_client
+        with self._client_lock:
+            async_client.event_hooks = _response_hooks(async_client.event_hooks, asynchronous=True)
+            self._async_client = async_client
+            self._has_manual_client = True
         return self
 
     def get_async_httpx_client(self) -> httpx.AsyncClient:
         """Get the underlying httpx.AsyncClient, constructing a new one if not previously set"""
-        if self._async_client is None:
-            self._headers[self.auth_header_name] = f"{self.prefix} {self.token}" if self.prefix else self.token
-            self._async_client = httpx.AsyncClient(
-                base_url=self._base_url,
-                cookies=self._cookies,
-                headers=self._headers,
-                timeout=self._timeout,
-                verify=self._verify_ssl,
-                follow_redirects=self._follow_redirects,
-                **self._httpx_args,
-            )
-        return self._async_client
+        with self._client_lock:
+            if self._async_client is None:
+                self._async_client = httpx.AsyncClient(
+                    base_url=self._base_url,
+                    cookies=self._cookies,
+                    headers=self._get_headers(),
+                    timeout=self._timeout,
+                    verify=self._verify_ssl,
+                    follow_redirects=self._follow_redirects,
+                    **self._get_httpx_args(asynchronous=True),
+                )
+            return self._async_client
 
-    async def __aenter__(self) -> "AuthenticatedClient":
+    async def __aenter__(self) -> Self:
         """Enter a context manager for underlying httpx.AsyncClient—you cannot enter twice (see httpx docs)"""
         await self.get_async_httpx_client().__aenter__()
         return self

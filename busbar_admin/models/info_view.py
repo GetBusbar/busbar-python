@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="InfoView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class InfoView:
     """The compiled-in plugin catalog + topology + uptime returned by `GET /api/v1/admin/info`. Powers
     version negotiation for tooling AND the compliance-by-compilation proof: `auth_modules`/`hook_plugins` reflect
@@ -83,8 +83,8 @@ class InfoView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.build_info import BuildInfo
-        from ..models.topology_info import TopologyInfo
+        from ..models.build_info import BuildInfo  # noqa: PLC0415
+        from ..models.topology_info import TopologyInfo  # noqa: PLC0415
 
         d = dict(src_dict)
         build = BuildInfo.from_dict(d.pop("build"))

@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="PluginSchemaView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PluginSchemaView:
     """`GET /plugins/{name}/schema`: the generalized, all-kinds sibling of [`HookSchemaView`].
     Carries `trust`/`source`/`schema_error` on top of

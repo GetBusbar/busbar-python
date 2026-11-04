@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PutHooksNameBody")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PutHooksNameBody:
     """
     Attributes:
@@ -38,11 +38,13 @@ class PutHooksNameBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.put_hooks_name_body_config import PutHooksNameBodyConfig
+        from ..models.put_hooks_name_body_config import PutHooksNameBodyConfig  # noqa: PLC0415
 
         d = dict(src_dict)
         config = PutHooksNameBodyConfig.from_dict(d.pop("config"))
 
+        if d:
+            raise ValueError("Unexpected fields for PutHooksNameBody")
         put_hooks_name_body = cls(
             config=config,
         )

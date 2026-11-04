@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="HookView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class HookView:
     """A hook definition in the registry read (`GET /api/v1/admin/hooks`, `GET /api/v1/admin/hooks/{name}`): the
     plugin catalog read. Projects the DEFINITION (kind, transport, grants, ordering, stage), never a
@@ -22,15 +22,36 @@ class HookView:
     no `global_hooks:` config key to write: 1.5.3 deleted it, and a hook is now DEFINED once in the
     top-level `hooks:` named map (its `module:` naming the `kind: hook` plugin that backs it) and
     ATTACHED by bare name, at the reserved all-pools key `pools.hooks:`, which is what makes it
-    global, or at one pool's own `hooks:` list. `groups:` and `phase:` are the config-file selection
-    axes (which callers, which pipeline stages). On THIS API the same hook is written with
+    global, or at one pool's own `hooks:` list. On THIS API the same hook is written with
     `global: true`; the wire and the config file are deliberately different surfaces. Live connection
     status (`health`) is a separate endpoint. Additive-only.
 
+    `groups:` and `phase:` are the config-file SELECTION axes (which callers, which pipeline stages),
+    and this view used to omit both. That was not a decision to keep them file-only: both are
+    WRITABLE over this API (`POST`/`PUT /hooks` deserialize `config::HookCfg` verbatim, which is the
+    documented "paste a `hooks:` entry" contract), so omitting them made a field an operator can set
+    through the API one they could not read back through it. `groups` and the stage pair
+    (`phase` + `fires_at`) close that.
+
         Attributes:
-            at (None | str): TAP observation stage (`"request"`/`"candidate"`/`"routing"`/`"response"`), or `None` for a
-                gate.
+            at (None | str): The LEGACY single-valued tap stage (`"request"`/`"candidate"`/`"routing"`/`"response"`), or
+                `null`. Kept for back-compat and NOT the field to read: `null` here does NOT mean "a gate"
+                and does not mean "unscoped". Every hook written in the current top-level `hooks:` grammar
+                has `at: null` by construction (`config::hook_cfg_from_def` never sets it, and
+                `--migrate-config` rewrites a legacy `at:` into `phase:`), so this field is `null` for
+                essentially every hook a running deployment has. Read `fires_at`.
+                1.6.0 owner rule: a 1.5.5 client reading this view must see this field byte-for-byte, so it
+                is RESTORED alongside `phase`/`fires_at`.
+            fires_at (list[str]): The RESOLVED stage set: the stages this hook ACTUALLY fires at, in pipeline order, never
+                empty. This is the field that answers "when does this hook run", and it is computed by
+                `config::HookCfg::resolved_stages` through the same `fires_at_stage` predicate the firing
+                path uses, so it cannot disagree with runtime behavior. It reflects the frozen precedence
+                (a non-empty `phase:` wins, else the legacy single `at:`, else the four core stages) without
+                asking the reader to re-derive it from the two spellings above.
             global_ (bool): Whether this hook fires on every request (globally wired).
+            groups (list[str]): The `groups:` CALLER SCOPE exactly as configured: the caller groups this hook fires for,
+                empty meaning ALL callers (unscoped). The other half of "when does this hook run", and the
+                same writable-but-unreadable gap `phase` had.
             kind (str): `"tap"` (fire-and-forget) or `"gate"` (fire-and-wait).
             name (str):
             on_error (str): Gate fallback on timeout/error, a CLOSED, unambiguous string union: one of the
@@ -38,6 +59,10 @@ class HookView:
                 fallback hook the chain continues through. Unambiguous by construction: the terminal words
                 are ILLEGAL hook names on every write path (`config::RESERVED_HOOK_NAMES`), so a value in
                 the terminal set is always a terminal and anything else is always a hook reference.
+            phase (list[str]): The `phase:` STAGE LIST exactly as configured, empty when unset. The literal config echo,
+                for an operator diffing what they wrote against what busbar parsed. It is NOT the effective
+                answer on its own: empty means "fall back", and what it falls back TO is `at:` if set and the
+                four core stages otherwise. For the effective answer read `fires_at`.
             priority (int): Rewrite/reject ordering key (transform-chain order + reject tie-break).
             prompt (str): Prompt access grant: `"no"` | `"ro"` | `"rw"`.
             settings_keys (list[str]): The KEY NAMES of the hook's opaque settings bag, sorted, WITHOUT their values, the
@@ -60,10 +85,13 @@ class HookView:
     """
 
     at: None | str
+    fires_at: list[str]
     global_: bool
+    groups: list[str]
     kind: str
     name: str
     on_error: str
+    phase: list[str]
     priority: int
     prompt: str
     settings_keys: list[str]
@@ -76,13 +104,19 @@ class HookView:
         at: None | str
         at = self.at
 
+        fires_at = self.fires_at
+
         global_ = self.global_
+
+        groups = self.groups
 
         kind = self.kind
 
         name = self.name
 
         on_error = self.on_error
+
+        phase = self.phase
 
         priority = self.priority
 
@@ -101,10 +135,13 @@ class HookView:
         field_dict.update(
             {
                 "at": at,
+                "fires_at": fires_at,
                 "global": global_,
+                "groups": groups,
                 "kind": kind,
                 "name": name,
                 "on_error": on_error,
+                "phase": phase,
                 "priority": priority,
                 "prompt": prompt,
                 "settings_keys": settings_keys,
@@ -118,7 +155,7 @@ class HookView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.hook_transport_view import HookTransportView
+        from ..models.hook_transport_view import HookTransportView  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -129,13 +166,19 @@ class HookView:
 
         at = _parse_at(d.pop("at"))
 
+        fires_at = cast(list[str], d.pop("fires_at"))
+
         global_ = d.pop("global")
+
+        groups = cast(list[str], d.pop("groups"))
 
         kind = d.pop("kind")
 
         name = d.pop("name")
 
         on_error = d.pop("on_error")
+
+        phase = cast(list[str], d.pop("phase"))
 
         priority = d.pop("priority")
 
@@ -151,10 +194,13 @@ class HookView:
 
         hook_view = cls(
             at=at,
+            fires_at=fires_at,
             global_=global_,
+            groups=groups,
             kind=kind,
             name=name,
             on_error=on_error,
+            phase=phase,
             priority=priority,
             prompt=prompt,
             settings_keys=settings_keys,

@@ -11,7 +11,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="FlushCacheReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class FlushCacheReq:
     """The `POST /api/v1/admin/auth/cache/flush` body. An absent body (or an absent `module`) flushes
     every partition. Deliberately NOT `deny_unknown_fields`: the endpoint has always ignored extra

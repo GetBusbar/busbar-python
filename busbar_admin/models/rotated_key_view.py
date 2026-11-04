@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="RotatedKeyView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class RotatedKeyView:
     """`POST /keys/{id}/rotate`: the key metadata plus the ONCE-shown fresh CREDENTIAL. Exactly one of
     `token`+`expires_at` (a 1.5.0 signed-token key: a new token at a new binding generation, every
@@ -117,7 +117,7 @@ class RotatedKeyView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.rotated_key_view_labels import RotatedKeyViewLabels
+        from ..models.rotated_key_view_labels import RotatedKeyViewLabels  # noqa: PLC0415
 
         d = dict(src_dict)
 
@@ -132,7 +132,7 @@ class RotatedKeyView:
                 return allowed_pools_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(list[str] | None, data)
+            raise ValueError("Invalid value for allowed_pools")
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 

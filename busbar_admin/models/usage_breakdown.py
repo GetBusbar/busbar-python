@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.usage_breakdown_classes import UsageBreakdownClasses
+
+
 T = TypeVar("T", bound="UsageBreakdown")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class UsageBreakdown:
     """The raw consumption counts + the derived spend estimate: the one shape shared by `total`,
     `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
@@ -26,6 +32,10 @@ class UsageBreakdown:
             tokens_cache_read (int):
             tokens_input (int): Uncached input tokens (normalized additive-cache convention).
             tokens_output (int):
+            classes (UsageBreakdownClasses | Unset): THE PLANE-DECLARED CLASSES the row's ledger lines counted outside the
+                token split, keyed by
+                the class name the plane declares (new in 1.6.0, [`ClassUsage`]). Absent when the row carries
+                none, so a token-only row reads exactly as 1.5.5's.
     """
 
     requests: int
@@ -34,6 +44,7 @@ class UsageBreakdown:
     tokens_cache_read: int
     tokens_input: int
     tokens_output: int
+    classes: UsageBreakdownClasses | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -49,6 +60,10 @@ class UsageBreakdown:
 
         tokens_output = self.tokens_output
 
+        classes: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.classes, Unset):
+            classes = self.classes.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -61,11 +76,15 @@ class UsageBreakdown:
                 "tokens_output": tokens_output,
             }
         )
+        if classes is not UNSET:
+            field_dict["classes"] = classes
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.usage_breakdown_classes import UsageBreakdownClasses  # noqa: PLC0415
+
         d = dict(src_dict)
         requests = d.pop("requests")
 
@@ -79,6 +98,13 @@ class UsageBreakdown:
 
         tokens_output = d.pop("tokens_output")
 
+        _classes = d.pop("classes", UNSET)
+        classes: UsageBreakdownClasses | Unset
+        if isinstance(_classes, Unset):
+            classes = UNSET
+        else:
+            classes = UsageBreakdownClasses.from_dict(_classes)
+
         usage_breakdown = cls(
             requests=requests,
             spend_micros=spend_micros,
@@ -86,6 +112,7 @@ class UsageBreakdown:
             tokens_cache_read=tokens_cache_read,
             tokens_input=tokens_input,
             tokens_output=tokens_output,
+            classes=classes,
         )
 
         usage_breakdown.additional_properties = d

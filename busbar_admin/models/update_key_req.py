@@ -10,7 +10,7 @@ from ..types import UNSET, Unset
 T = TypeVar("T", bound="UpdateKeyReq")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class UpdateKeyReq:
     """Partial update to an existing key. Keys are PURE AUTH (1.5.0), so the mutable surface is
     auth-shaped only. Every field is optional; only the present ones change. The credential, name,
@@ -80,6 +80,8 @@ class UpdateKeyReq:
 
         group = _parse_group(d.pop("group", UNSET))
 
+        if d:
+            raise ValueError("Unexpected fields for UpdateKeyReq")
         update_key_req = cls(
             enabled=enabled,
             group=group,

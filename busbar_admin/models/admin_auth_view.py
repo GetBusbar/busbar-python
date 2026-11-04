@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 T = TypeVar("T", bound="AdminAuthView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class AdminAuthView:
     """The admin-plane auth read (`GET /api/v1/admin/admin-auth`): which modules guard the ADMIN surface
     (distinct from the ingress `auth` chain). `modules` is the live `admin_auth` chain (the SAME

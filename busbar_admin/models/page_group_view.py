@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="PageGroupView")
 
 
-@_attrs_define
+@_attrs_define(repr=False)
 class PageGroupView:
     """A cursor-paginated list envelope. `items` is this page; `next_cursor` is `Some` when more remain.
     Generic over the item view so every list endpoint shares one shape.
@@ -49,7 +49,7 @@ class PageGroupView:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.group_view import GroupView
+        from ..models.group_view import GroupView  # noqa: PLC0415
 
         d = dict(src_dict)
         items = []

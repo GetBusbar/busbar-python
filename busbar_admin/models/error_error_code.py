@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ErrorErrorCode(str, Enum):
+class ErrorErrorCode(StrEnum):
     CONFLICT = "conflict"
     FORBIDDEN = "forbidden"
     INTERNAL = "internal"
@@ -10,6 +10,8 @@ class ErrorErrorCode(str, Enum):
     NOT_FOUND = "not_found"
     RATE_LIMITED = "rate_limited"
     UNAUTHORIZED = "unauthorized"
+    UNAVAILABLE = "unavailable"
+    UNPRICED_CLASS = "unpriced_class"
     VERSION_CONFLICT = "version_conflict"
 
     def __str__(self) -> str:
