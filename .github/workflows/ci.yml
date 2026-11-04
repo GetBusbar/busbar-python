@@ -2,16 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
   pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -29,4 +29,33 @@ jobs:
       - name: Editable install + typed import smoke test
         run: |
           pip install -e .
-          python -c "from busbar_admin.api.default import get_info; from busbar_admin.models import InfoView; import attrs; print('typed InfoView fields:', [f.name for f in attrs.fields(InfoView)])"
+          python -c "from busbar_admin.api.default import get_api_v1_admin_info; from busbar_admin.models import InfoView; import attrs; print('typed InfoView fields:', [f.name for f in attrs.fields(InfoView)])"
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install project + coverage tooling
+        run: |
+          pip install -e .
+          pip install pytest pytest-cov
+
+      - name: Run pytest with coverage
+        run: |
+          # Non-required coverage job. Exit code 5 == "no tests collected"
+          # (the repo currently ships only a generated client); treat that as
+          # success so real test failures still fail while an empty suite does not.
+          pytest --cov=busbar_admin --cov-report=xml || [ $? -eq 5 ]
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          slug: GetBusbar/busbar-python
+          fail_ci_if_error: false
