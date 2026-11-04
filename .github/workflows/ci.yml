@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [dev, qa, main]
   pull_request:
 
 jobs:
@@ -22,9 +22,7 @@ jobs:
         run: make generate
 
       - name: Fail if the committed client is stale
-        run: |
-          git diff --exit-code -- busbar_admin setup.py \
-            || (echo "::error::Generated client is out of date. Run 'make generate' and commit." && exit 1)
+        run: bash scripts/check-generated.sh
 
       - name: Editable install + typed import smoke test
         run: |
@@ -47,10 +45,7 @@ jobs:
 
       - name: Run pytest with coverage
         run: |
-          # Non-required coverage job. Exit code 5 == "no tests collected"
-          # (the repo currently ships only a generated client); treat that as
-          # success so real test failures still fail while an empty suite does not.
-          pytest --cov=busbar_admin --cov-report=xml || [ $? -eq 5 ]
+          pytest --cov=busbar_admin --cov-report=xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
