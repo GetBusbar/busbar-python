@@ -1,0 +1,25 @@
+from enum import StrEnum
+{% if enum.class_info.name == "ErrorErrorCode" %}
+from typing import Self
+{% endif %}
+
+class {{ enum.class_info.name }}(StrEnum):
+    {% for key, value in enum.values|dictsort(true) %}
+    {{ key }} = "{{ value }}"
+    {% endfor %}
+
+    def __str__(self) -> str:
+        return str(self.value)
+{% if enum.class_info.name == "ErrorErrorCode" %}
+
+    @classmethod
+    def _missing_(cls, value: object) -> Self | None:
+        # Error.code is explicitly extensible; preserve unknown strings without
+        # adding arbitrary wire values to the class's named-member registry.
+        if isinstance(value, str):
+            member = str.__new__(cls, value)
+            member._name_ = None
+            member._value_ = value
+            return member
+        return None
+{% endif %}

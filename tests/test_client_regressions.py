@@ -66,12 +66,31 @@ class ClientRegressions(unittest.TestCase):
     def test_nonstandard_status_obeys_error_policy(self):
         response = httpx.Response(599, content=b"private-body")
         client = Client(base_url="https://example.test")
-        self.assertEqual(get_api_v1_admin_info._build_response(client=client, response=response).status_code, 599)
+        result = get_api_v1_admin_info._build_response(client=client, response=response)
+        self.assertEqual(result.status_code, 599)
+        self.assertIsNone(result.parsed)
         client.raise_on_unexpected_status = True
         with self.assertRaises(UnexpectedStatus) as raised:
             get_api_v1_admin_info._build_response(client=client, response=response)
         self.assertEqual(raised.exception.content, b"private-body")
         self.assertNotIn("private-body", str(raised.exception))
+
+    def test_nonstandard_status_preserves_a_valid_default_error(self):
+        response = httpx.Response(599, json={"error": {"code": "future_code", "message": "Unavailable"}})
+        for strict in (False, True):
+            client = Client(base_url="https://example.test", raise_on_unexpected_status=strict)
+            result = get_api_v1_admin_info._build_response(client=client, response=response)
+            self.assertEqual(result.status_code, 599)
+            self.assertEqual(result.parsed.error.code, "future_code")
+
+    def test_nonstandard_status_malformed_default_obeys_error_policy(self):
+        for body in ({"error": {}}, [], None):
+            response = httpx.Response(599, json=body)
+            client = Client(base_url="https://example.test")
+            self.assertIsNone(get_api_v1_admin_info._build_response(client=client, response=response).parsed)
+            client.raise_on_unexpected_status = True
+            with self.assertRaises(UnexpectedStatus):
+                get_api_v1_admin_info._build_response(client=client, response=response)
 
     def test_dot_path_segments_remain_resource_names(self):
         for name in (".", ".."):

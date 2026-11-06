@@ -71,11 +71,7 @@ def _get_kwargs(
 {% endif %}
     return _kwargs
 
-{% if endpoint.responses.default %}
-    {% set return_type = return_string | as_unembedded_code %}
-{% else %}
-    {% set return_type = (return_string | as_unembedded_code) + " | None" %}
-{% endif %}
+{% set return_type = (return_string | as_unembedded_code) + " | None" %}
 
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> {{return_type}}:
@@ -89,7 +85,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
         {{ parse_response(parsed_responses, response) | indent(8) }}
     {% endfor %}
     {% if endpoint.responses.default %}
-    {{ parse_response(parsed_responses, endpoint.responses.default) | indent(4) }}
+    try:
+        {{ parse_response(parsed_responses, endpoint.responses.default) | indent(8) }}
+    except (ValueError, KeyError, TypeError, AttributeError):
+        # An intermediary may return an undocumented non-JSON or malformed body.
+        # Preserve the raw response and the caller's unexpected-status policy.
+        if client.raise_on_unexpected_status:
+            raise errors.UnexpectedStatus(response.status_code, response.content) from None
+        return None
     {% else %}
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)

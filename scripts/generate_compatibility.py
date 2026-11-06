@@ -49,6 +49,9 @@ LEGACY_ENDPOINTS = {
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
     schema = json.loads((root / "openapi.json").read_text())
+    error_code = schema["components"]["schemas"]["Error"]["properties"]["error"]["properties"]["code"]
+    if error_code.get("x-busbar-extensible-enum") is not True:
+        raise RuntimeError("Review the ErrorErrorCode extensible-enum template against the current schema")
     target_dir = root / "busbar_admin/api/default"
     names = (
         "_build_response",

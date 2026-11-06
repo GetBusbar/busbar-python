@@ -3,6 +3,7 @@ from typing import Any, cast
 
 import httpx
 
+from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.store_restore_req import StoreRestoreReq
@@ -28,7 +29,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | Error:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | Error | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -68,9 +69,17 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    response_default = Error.from_dict(response.json())
+    try:
+        response_default = Error.from_dict(response.json())
 
-    return response_default
+        return response_default
+
+    except (ValueError, KeyError, TypeError, AttributeError):
+        # An intermediary may return an undocumented non-JSON or malformed body.
+        # Preserve the raw response and the caller's unexpected-status policy.
+        if client.raise_on_unexpected_status:
+            raise errors.UnexpectedStatus(response.status_code, response.content) from None
+        return None
 
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | Error]:

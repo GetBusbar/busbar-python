@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Self
 
 
 class ErrorErrorCode(StrEnum):
@@ -20,3 +21,14 @@ class ErrorErrorCode(StrEnum):
 
     def __str__(self) -> str:
         return str(self.value)
+
+    @classmethod
+    def _missing_(cls, value: object) -> Self | None:
+        # Error.code is explicitly extensible; preserve unknown strings without
+        # adding arbitrary wire values to the class's named-member registry.
+        if isinstance(value, str):
+            member = str.__new__(cls, value)
+            member._name_ = None
+            member._value_ = value
+            return member
+        return None

@@ -3,6 +3,7 @@ from typing import Any
 
 import httpx
 
+from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.signing_key_rotate_view import SigningKeyRotateView
@@ -19,7 +20,9 @@ def _get_kwargs() -> dict[str, Any]:
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | SigningKeyRotateView:
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Error | SigningKeyRotateView | None:
     if response.status_code == 200:
         response_200 = SigningKeyRotateView.from_dict(response.json())
 
@@ -60,9 +63,17 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    response_default = Error.from_dict(response.json())
+    try:
+        response_default = Error.from_dict(response.json())
 
-    return response_default
+        return response_default
+
+    except (ValueError, KeyError, TypeError, AttributeError):
+        # An intermediary may return an undocumented non-JSON or malformed body.
+        # Preserve the raw response and the caller's unexpected-status policy.
+        if client.raise_on_unexpected_status:
+            raise errors.UnexpectedStatus(response.status_code, response.content) from None
+        return None
 
 
 def _build_response(
