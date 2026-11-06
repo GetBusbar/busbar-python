@@ -34,37 +34,24 @@ class HookView:
     (`phase` + `fires_at`) close that.
 
         Attributes:
-            at (None | str): The LEGACY single-valued tap stage (`"request"`/`"candidate"`/`"routing"`/`"response"`), or
-                `null`. Kept for back-compat and NOT the field to read: `null` here does NOT mean "a gate"
-                and does not mean "unscoped". Every hook written in the current top-level `hooks:` grammar
-                has `at: null` by construction (`config::hook_cfg_from_def` never sets it, and
-                `--migrate-config` rewrites a legacy `at:` into `phase:`), so this field is `null` for
-                essentially every hook a running deployment has. Read `fires_at`.
-                1.6.0 owner rule: a 1.5.5 client reading this view must see this field byte-for-byte, so it
-                is RESTORED alongside `phase`/`fires_at`.
-            fires_at (list[str]): The RESOLVED stage set: the stages this hook ACTUALLY fires at, in pipeline order, never
-                empty. This is the field that answers "when does this hook run", and it is computed by
-                `config::HookCfg::resolved_stages` through the same `fires_at_stage` predicate the firing
-                path uses, so it cannot disagree with runtime behavior. It reflects the frozen precedence
-                (a non-empty `phase:` wins, else the legacy single `at:`, else the four core stages) without
-                asking the reader to re-derive it from the two spellings above.
-            global_ (bool): Whether this hook fires on every request (globally wired).
-            groups (list[str]): The `groups:` CALLER SCOPE exactly as configured: the caller groups this hook fires for,
-                empty meaning ALL callers (unscoped). The other half of "when does this hook run", and the
-                same writable-but-unreadable gap `phase` had.
-            kind (str): `"tap"` (fire-and-forget) or `"gate"` (fire-and-wait).
             name (str):
+            kind (str): `"tap"` (fire-and-forget) or `"gate"` (fire-and-wait).
+            transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
+                kind (no
+                transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
+                socket path or URL); the retired 1.4.x socket/webhook sidecar transports are gone.
+            prompt (str): Prompt access grant: `"no"` | `"ro"` | `"rw"`.
+            user (str): Caller-identity access grant: `"no"` | `"ro"`.
+            priority (int): Rewrite/reject ordering key (transform-chain order + reject tie-break).
             on_error (str): Gate fallback on timeout/error, a CLOSED, unambiguous string union: one of the
                 reserved terminals (`"weighted"` | `"reject"` | `"first"` | `"nothing"`) or the NAME of the
                 fallback hook the chain continues through. Unambiguous by construction: the terminal words
                 are ILLEGAL hook names on every write path (`config::RESERVED_HOOK_NAMES`), so a value in
                 the terminal set is always a terminal and anything else is always a hook reference.
-            phase (list[str]): The `phase:` STAGE LIST exactly as configured, empty when unset. The literal config echo,
-                for an operator diffing what they wrote against what busbar parsed. It is NOT the effective
-                answer on its own: empty means "fall back", and what it falls back TO is `at:` if set and the
-                four core stages otherwise. For the effective answer read `fires_at`.
-            priority (int): Rewrite/reject ordering key (transform-chain order + reject tie-break).
-            prompt (str): Prompt access grant: `"no"` | `"ro"` | `"rw"`.
+            on_empty (None | str): Configured empty-intersection fallback: `"weighted"` | `"reject"` | `"first"`.
+                `null` preserves an omitted override, whose runtime default is fail-closed.
+            signals (list[str]): Requested signal catalog names, in configured order.
+            timeout_ms (int): Gate decision deadline in milliseconds.
             settings_keys (list[str]): The KEY NAMES of the hook's opaque settings bag, sorted, WITHOUT their values, the
                 same
                 redacted projection [`NamedDefView::settings_keys`] carries, produced by the same helper.
@@ -76,78 +63,87 @@ class HookView:
                 non-object bag verbatim, so a literal credential is fully supported too. `GET /hooks` and
                 `GET /hooks/{name}` serve this at READ-ONLY admin scope. The values are readable only where
                 they are writable: the config file and the config overlay.
-            timeout_ms (int): Gate decision deadline in milliseconds.
-            transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
-                kind (no
-                transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
-                socket path or URL); the retired 1.4.x socket/webhook sidecar transports are gone.
-            user (str): Caller-identity access grant: `"no"` | `"ro"`.
+            global_ (bool): Whether this hook fires on every request (globally wired).
+            default (bool): Whether this hook replaces the default ordering hook for pools with no named base.
+            phase (list[str]): The canonical configured stage list. Empty selects the fixed core stages.
+            fires_at (list[str]): The effective stage set in pipeline order, computed by the runtime firing predicate.
+            groups (list[str]): The `groups:` CALLER SCOPE exactly as configured: the caller groups this hook fires for,
+                empty meaning ALL callers (unscoped). The other half of "when does this hook run", and the
+                same writable-but-unreadable gap `phase` had.
     """
 
-    at: None | str
-    fires_at: list[str]
-    global_: bool
-    groups: list[str]
-    kind: str
     name: str
-    on_error: str
-    phase: list[str]
-    priority: int
-    prompt: str
-    settings_keys: list[str]
-    timeout_ms: int
+    kind: str
     transport: HookTransportView
+    prompt: str
     user: str
+    priority: int
+    on_error: str
+    on_empty: None | str
+    signals: list[str]
+    timeout_ms: int
+    settings_keys: list[str]
+    global_: bool
+    default: bool
+    phase: list[str]
+    fires_at: list[str]
+    groups: list[str]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        at: None | str
-        at = self.at
-
-        fires_at = self.fires_at
-
-        global_ = self.global_
-
-        groups = self.groups
+        name = self.name
 
         kind = self.kind
 
-        name = self.name
-
-        on_error = self.on_error
-
-        phase = self.phase
-
-        priority = self.priority
+        transport = self.transport.to_dict()
 
         prompt = self.prompt
 
-        settings_keys = self.settings_keys
+        user = self.user
+
+        priority = self.priority
+
+        on_error = self.on_error
+
+        on_empty: None | str
+        on_empty = self.on_empty
+
+        signals = self.signals
 
         timeout_ms = self.timeout_ms
 
-        transport = self.transport.to_dict()
+        settings_keys = self.settings_keys
 
-        user = self.user
+        global_ = self.global_
+
+        default = self.default
+
+        phase = self.phase
+
+        fires_at = self.fires_at
+
+        groups = self.groups
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "at": at,
-                "fires_at": fires_at,
-                "global": global_,
-                "groups": groups,
-                "kind": kind,
                 "name": name,
-                "on_error": on_error,
-                "phase": phase,
-                "priority": priority,
-                "prompt": prompt,
-                "settings_keys": settings_keys,
-                "timeout_ms": timeout_ms,
+                "kind": kind,
                 "transport": transport,
+                "prompt": prompt,
                 "user": user,
+                "priority": priority,
+                "on_error": on_error,
+                "on_empty": on_empty,
+                "signals": signals,
+                "timeout_ms": timeout_ms,
+                "settings_keys": settings_keys,
+                "global": global_,
+                "default": default,
+                "phase": phase,
+                "fires_at": fires_at,
+                "groups": groups,
             }
         )
 
@@ -158,55 +154,60 @@ class HookView:
         from ..models.hook_transport_view import HookTransportView  # noqa: PLC0415
 
         d = dict(src_dict)
+        name = d.pop("name")
 
-        def _parse_at(data: object) -> None | str:
+        kind = d.pop("kind")
+
+        transport = HookTransportView.from_dict(d.pop("transport"))
+
+        prompt = d.pop("prompt")
+
+        user = d.pop("user")
+
+        priority = d.pop("priority")
+
+        on_error = d.pop("on_error")
+
+        def _parse_on_empty(data: object) -> None | str:
             if data is None:
                 return data
             return cast(None | str, data)
 
-        at = _parse_at(d.pop("at"))
+        on_empty = _parse_on_empty(d.pop("on_empty"))
 
-        fires_at = cast(list[str], d.pop("fires_at"))
-
-        global_ = d.pop("global")
-
-        groups = cast(list[str], d.pop("groups"))
-
-        kind = d.pop("kind")
-
-        name = d.pop("name")
-
-        on_error = d.pop("on_error")
-
-        phase = cast(list[str], d.pop("phase"))
-
-        priority = d.pop("priority")
-
-        prompt = d.pop("prompt")
-
-        settings_keys = cast(list[str], d.pop("settings_keys"))
+        signals = cast(list[str], d.pop("signals"))
 
         timeout_ms = d.pop("timeout_ms")
 
-        transport = HookTransportView.from_dict(d.pop("transport"))
+        settings_keys = cast(list[str], d.pop("settings_keys"))
 
-        user = d.pop("user")
+        global_ = d.pop("global")
+
+        default = d.pop("default")
+
+        phase = cast(list[str], d.pop("phase"))
+
+        fires_at = cast(list[str], d.pop("fires_at"))
+
+        groups = cast(list[str], d.pop("groups"))
 
         hook_view = cls(
-            at=at,
-            fires_at=fires_at,
-            global_=global_,
-            groups=groups,
-            kind=kind,
             name=name,
-            on_error=on_error,
-            phase=phase,
-            priority=priority,
-            prompt=prompt,
-            settings_keys=settings_keys,
-            timeout_ms=timeout_ms,
+            kind=kind,
             transport=transport,
+            prompt=prompt,
             user=user,
+            priority=priority,
+            on_error=on_error,
+            on_empty=on_empty,
+            signals=signals,
+            timeout_ms=timeout_ms,
+            settings_keys=settings_keys,
+            global_=global_,
+            default=default,
+            phase=phase,
+            fires_at=fires_at,
+            groups=groups,
         )
 
         hook_view.additional_properties = d

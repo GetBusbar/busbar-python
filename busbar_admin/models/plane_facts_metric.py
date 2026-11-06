@@ -14,30 +14,30 @@ class PlaneFactsMetric:
     """One metric family a plane emits.
 
     Attributes:
+        name (str):
         kind (str):
         label_keys (list[str]):
-        name (str):
     """
 
+    name: str
     kind: str
     label_keys: list[str]
-    name: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
         kind = self.kind
 
         label_keys = self.label_keys
-
-        name = self.name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "name": name,
                 "kind": kind,
                 "label_keys": label_keys,
-                "name": name,
             }
         )
 
@@ -46,16 +46,16 @@ class PlaneFactsMetric:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        name = d.pop("name")
+
         kind = d.pop("kind")
 
         label_keys = cast(list[str], d.pop("label_keys"))
 
-        name = d.pop("name")
-
         plane_facts_metric = cls(
+            name=name,
             kind=kind,
             label_keys=label_keys,
-            name=name,
         )
 
         plane_facts_metric.additional_properties = d

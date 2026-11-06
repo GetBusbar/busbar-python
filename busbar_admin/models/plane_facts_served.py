@@ -14,25 +14,25 @@ class PlaneFactsServed:
     """One operation class a plane serves one level down.
 
     Attributes:
-        name (str):
         op (str):
+        name (str):
     """
 
-    name: str
     op: str
+    name: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        name = self.name
-
         op = self.op
+
+        name = self.name
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "name": name,
                 "op": op,
+                "name": name,
             }
         )
 
@@ -41,13 +41,13 @@ class PlaneFactsServed:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name")
-
         op = d.pop("op")
 
+        name = d.pop("name")
+
         plane_facts_served = cls(
-            name=name,
             op=op,
+            name=name,
         )
 
         plane_facts_served.additional_properties = d

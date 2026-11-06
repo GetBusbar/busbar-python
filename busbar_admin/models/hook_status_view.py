@@ -23,10 +23,11 @@ class HookStatusView:
     is present when the hook did not answer (fail-open); `metrics` is invariantly an array.
 
         Attributes:
-            as_of (int):
+            name (str):
             desired (HookDesiredStatus): The DESIRED settings side of `hooks/{name}/status`: busbar's registry copy of the
                 hook's settings
                 (KEY NAMES only, see [`super::HookView::settings_keys`]) and their version.
+            reported (HookReportedStatus | None):
             drift (bool | None):
             drift_keys (list[str]): The DESIRED settings KEY NAMES the hook is not actually running: the actionable half of
                 `drift`, carrying names this body already serves and no value from either bag. Invariantly an
@@ -47,19 +48,18 @@ class HookStatusView:
                 `openapi-prep.py` already rewrites `items: true` into client-side. This is the only
                 `items: true` in the document; every other `additionalProperties: true` schemars emits
                 elsewhere is a boolean in a position `kin-openapi` handles fine and is deliberately untouched.
-            name (str):
-            reported (HookReportedStatus | None):
+            as_of (int):
             source (str): Always `"live"` (the read is a live transport query).
             note (None | str | Unset): A short human note present only on the fail-open (no-answer) branch.
     """
 
-    as_of: int
+    name: str
     desired: HookDesiredStatus
+    reported: HookReportedStatus | None
     drift: bool | None
     drift_keys: list[str]
     metrics: list[Any]
-    name: str
-    reported: HookReportedStatus | None
+    as_of: int
     source: str
     note: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -67,9 +67,15 @@ class HookStatusView:
     def to_dict(self) -> dict[str, Any]:
         from ..models.hook_reported_status import HookReportedStatus  # noqa: PLC0415
 
-        as_of = self.as_of
+        name = self.name
 
         desired = self.desired.to_dict()
+
+        reported: dict[str, Any] | None
+        if isinstance(self.reported, HookReportedStatus):
+            reported = self.reported.to_dict()
+        else:
+            reported = self.reported
 
         drift: bool | None
         drift = self.drift
@@ -78,13 +84,7 @@ class HookStatusView:
 
         metrics = self.metrics
 
-        name = self.name
-
-        reported: dict[str, Any] | None
-        if isinstance(self.reported, HookReportedStatus):
-            reported = self.reported.to_dict()
-        else:
-            reported = self.reported
+        as_of = self.as_of
 
         source = self.source
 
@@ -98,13 +98,13 @@ class HookStatusView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "as_of": as_of,
+                "name": name,
                 "desired": desired,
+                "reported": reported,
                 "drift": drift,
                 "drift_keys": drift_keys,
                 "metrics": metrics,
-                "name": name,
-                "reported": reported,
+                "as_of": as_of,
                 "source": source,
             }
         )
@@ -119,22 +119,9 @@ class HookStatusView:
         from ..models.hook_reported_status import HookReportedStatus  # noqa: PLC0415
 
         d = dict(src_dict)
-        as_of = d.pop("as_of")
+        name = d.pop("name")
 
         desired = HookDesiredStatus.from_dict(d.pop("desired"))
-
-        def _parse_drift(data: object) -> bool | None:
-            if data is None:
-                return data
-            return cast(bool | None, data)
-
-        drift = _parse_drift(d.pop("drift"))
-
-        drift_keys = cast(list[str], d.pop("drift_keys"))
-
-        metrics = cast(list[Any], d.pop("metrics"))
-
-        name = d.pop("name")
 
         def _parse_reported(data: object) -> HookReportedStatus | None:
             if data is None:
@@ -151,6 +138,19 @@ class HookStatusView:
 
         reported = _parse_reported(d.pop("reported"))
 
+        def _parse_drift(data: object) -> bool | None:
+            if data is None:
+                return data
+            return cast(bool | None, data)
+
+        drift = _parse_drift(d.pop("drift"))
+
+        drift_keys = cast(list[str], d.pop("drift_keys"))
+
+        metrics = cast(list[Any], d.pop("metrics"))
+
+        as_of = d.pop("as_of")
+
         source = d.pop("source")
 
         def _parse_note(data: object) -> None | str | Unset:
@@ -163,13 +163,13 @@ class HookStatusView:
         note = _parse_note(d.pop("note", UNSET))
 
         hook_status_view = cls(
-            as_of=as_of,
+            name=name,
             desired=desired,
+            reported=reported,
             drift=drift,
             drift_keys=drift_keys,
             metrics=metrics,
-            name=name,
-            reported=reported,
+            as_of=as_of,
             source=source,
             note=note,
         )

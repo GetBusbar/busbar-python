@@ -16,30 +16,30 @@ class SigningKeyRotateView:
 
         Attributes:
             current_kid (str): The current signing-key id (`kid`) that tokens are minted under.
-            message (str): Human-readable guidance for the operator-driven lockstep rotation.
             revoke_all (bool): Always `true`: rotating the signing key revokes every outstanding key (all must be re-
                 minted).
+            message (str): Human-readable guidance for the operator-driven lockstep rotation.
     """
 
     current_kid: str
-    message: str
     revoke_all: bool
+    message: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         current_kid = self.current_kid
 
-        message = self.message
-
         revoke_all = self.revoke_all
+
+        message = self.message
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "current_kid": current_kid,
-                "message": message,
                 "revoke_all": revoke_all,
+                "message": message,
             }
         )
 
@@ -50,14 +50,14 @@ class SigningKeyRotateView:
         d = dict(src_dict)
         current_kid = d.pop("current_kid")
 
-        message = d.pop("message")
-
         revoke_all = d.pop("revoke_all")
+
+        message = d.pop("message")
 
         signing_key_rotate_view = cls(
             current_kid=current_kid,
-            message=message,
             revoke_all=revoke_all,
+            message=message,
         )
 
         signing_key_rotate_view.additional_properties = d

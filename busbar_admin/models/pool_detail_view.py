@@ -21,28 +21,28 @@ class PoolDetailView:
     ranks on. No LLM content, no credentials.
 
         Attributes:
-            members (list[PoolMemberStatusView]):
             name (str):
+            members (list[PoolMemberStatusView]):
     """
 
-    members: list[PoolMemberStatusView]
     name: str
+    members: list[PoolMemberStatusView]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
         members = []
         for members_item_data in self.members:
             members_item = members_item_data.to_dict()
             members.append(members_item)
 
-        name = self.name
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "members": members,
                 "name": name,
+                "members": members,
             }
         )
 
@@ -53,6 +53,8 @@ class PoolDetailView:
         from ..models.pool_member_status_view import PoolMemberStatusView  # noqa: PLC0415
 
         d = dict(src_dict)
+        name = d.pop("name")
+
         members = []
         _members = d.pop("members")
         for members_item_data in _members:
@@ -60,11 +62,9 @@ class PoolDetailView:
 
             members.append(members_item)
 
-        name = d.pop("name")
-
         pool_detail_view = cls(
-            members=members,
             name=name,
+            members=members,
         )
 
         pool_detail_view.additional_properties = d

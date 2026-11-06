@@ -22,19 +22,19 @@ class LedgerDiscrepancy:
             bucket (str):
             day (int):
             lane (str):
-            ledger_fee_count (int): What the ledger's postings charged fees for on this row.
-            legacy_billable_requests (int): What the previous release's row says was billable.
             provider (str):
             residual (LedgerResidual): The spend residual of one row.
+            ledger_fee_count (int): What the ledger's postings charged fees for on this row.
+            legacy_billable_requests (int): What the previous release's row says was billable.
     """
 
     bucket: str
     day: int
     lane: str
-    ledger_fee_count: int
-    legacy_billable_requests: int
     provider: str
     residual: LedgerResidual
+    ledger_fee_count: int
+    legacy_billable_requests: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -44,13 +44,13 @@ class LedgerDiscrepancy:
 
         lane = self.lane
 
-        ledger_fee_count = self.ledger_fee_count
-
-        legacy_billable_requests = self.legacy_billable_requests
-
         provider = self.provider
 
         residual = self.residual.to_dict()
+
+        ledger_fee_count = self.ledger_fee_count
+
+        legacy_billable_requests = self.legacy_billable_requests
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -59,10 +59,10 @@ class LedgerDiscrepancy:
                 "bucket": bucket,
                 "day": day,
                 "lane": lane,
-                "ledger_fee_count": ledger_fee_count,
-                "legacy_billable_requests": legacy_billable_requests,
                 "provider": provider,
                 "residual": residual,
+                "ledger_fee_count": ledger_fee_count,
+                "legacy_billable_requests": legacy_billable_requests,
             }
         )
 
@@ -79,22 +79,22 @@ class LedgerDiscrepancy:
 
         lane = d.pop("lane")
 
-        ledger_fee_count = d.pop("ledger_fee_count")
-
-        legacy_billable_requests = d.pop("legacy_billable_requests")
-
         provider = d.pop("provider")
 
         residual = LedgerResidual.from_dict(d.pop("residual"))
+
+        ledger_fee_count = d.pop("ledger_fee_count")
+
+        legacy_billable_requests = d.pop("legacy_billable_requests")
 
         ledger_discrepancy = cls(
             bucket=bucket,
             day=day,
             lane=lane,
-            ledger_fee_count=ledger_fee_count,
-            legacy_billable_requests=legacy_billable_requests,
             provider=provider,
             residual=residual,
+            ledger_fee_count=ledger_fee_count,
+            legacy_billable_requests=legacy_billable_requests,
         )
 
         ledger_discrepancy.additional_properties = d

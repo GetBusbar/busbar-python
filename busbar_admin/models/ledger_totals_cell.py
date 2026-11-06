@@ -14,35 +14,37 @@ class LedgerTotalsCell:
     """One sealed balance, as the checkpoint holds it. Every money figure is an [`Amount`].
 
     Attributes:
-        adjustments (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
-            and
-            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
-            figure that silently lost its last digits would still look like money.
         bucket (str):
-        budget (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
-            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
-            figure that silently lost its last digits would still look like money.
-        cross_window_transfers (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in
-            128-bit integers and
-            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
-            figure that silently lost its last digits would still look like money.
         dimension (str):
-        disputed (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
-            and
+        scope (str):
+        window (int): The window's opening instant, in whole seconds.
+        budget (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
         drawn (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
-        oldest_dispute_age_secs (int):
-        oldest_open_hold_age_secs (int):
-        open_dispute_count (int):
+        released (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
+            and
+            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
+            figure that silently lost its last digits would still look like money.
+        settled (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
+            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
+            figure that silently lost its last digits would still look like money.
         open_holds (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
             and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
         open_slice_remainders (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in
             128-bit integers and
+            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
+            figure that silently lost its last digits would still look like money.
+        adjustments (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
+            and
+            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
+            figure that silently lost its last digits would still look like money.
+        unreconciled (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit
+            integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
         overdraft_carried_in (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit
@@ -53,104 +55,102 @@ class LedgerTotalsCell:
             128-bit integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
-        released (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
+        cross_window_transfers (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in
+            128-bit integers and
+            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
+            figure that silently lost its last digits would still look like money.
+        disputed (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers
             and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
-        scope (str):
-        settled (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
-            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
-            figure that silently lost its last digits would still look like money.
-        unreconciled (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit
-            integers and
-            JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
-            figure that silently lost its last digits would still look like money.
-        window (int): The window's opening instant, in whole seconds.
+        oldest_open_hold_age_secs (int):
+        open_dispute_count (int):
+        oldest_dispute_age_secs (int):
     """
 
-    adjustments: str
     bucket: str
-    budget: str
-    cross_window_transfers: str
     dimension: str
-    disputed: str
+    scope: str
+    window: int
+    budget: str
     drawn: str
-    oldest_dispute_age_secs: int
-    oldest_open_hold_age_secs: int
-    open_dispute_count: int
+    released: str
+    settled: str
     open_holds: str
     open_slice_remainders: str
+    adjustments: str
+    unreconciled: str
     overdraft_carried_in: str
     overdraft_carried_out: str
-    released: str
-    scope: str
-    settled: str
-    unreconciled: str
-    window: int
+    cross_window_transfers: str
+    disputed: str
+    oldest_open_hold_age_secs: int
+    open_dispute_count: int
+    oldest_dispute_age_secs: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        adjustments = self.adjustments
-
         bucket = self.bucket
-
-        budget = self.budget
-
-        cross_window_transfers = self.cross_window_transfers
 
         dimension = self.dimension
 
-        disputed = self.disputed
+        scope = self.scope
+
+        window = self.window
+
+        budget = self.budget
 
         drawn = self.drawn
 
-        oldest_dispute_age_secs = self.oldest_dispute_age_secs
+        released = self.released
 
-        oldest_open_hold_age_secs = self.oldest_open_hold_age_secs
-
-        open_dispute_count = self.open_dispute_count
+        settled = self.settled
 
         open_holds = self.open_holds
 
         open_slice_remainders = self.open_slice_remainders
 
+        adjustments = self.adjustments
+
+        unreconciled = self.unreconciled
+
         overdraft_carried_in = self.overdraft_carried_in
 
         overdraft_carried_out = self.overdraft_carried_out
 
-        released = self.released
+        cross_window_transfers = self.cross_window_transfers
 
-        scope = self.scope
+        disputed = self.disputed
 
-        settled = self.settled
+        oldest_open_hold_age_secs = self.oldest_open_hold_age_secs
 
-        unreconciled = self.unreconciled
+        open_dispute_count = self.open_dispute_count
 
-        window = self.window
+        oldest_dispute_age_secs = self.oldest_dispute_age_secs
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "adjustments": adjustments,
                 "bucket": bucket,
-                "budget": budget,
-                "cross_window_transfers": cross_window_transfers,
                 "dimension": dimension,
-                "disputed": disputed,
+                "scope": scope,
+                "window": window,
+                "budget": budget,
                 "drawn": drawn,
-                "oldest_dispute_age_secs": oldest_dispute_age_secs,
-                "oldest_open_hold_age_secs": oldest_open_hold_age_secs,
-                "open_dispute_count": open_dispute_count,
+                "released": released,
+                "settled": settled,
                 "open_holds": open_holds,
                 "open_slice_remainders": open_slice_remainders,
+                "adjustments": adjustments,
+                "unreconciled": unreconciled,
                 "overdraft_carried_in": overdraft_carried_in,
                 "overdraft_carried_out": overdraft_carried_out,
-                "released": released,
-                "scope": scope,
-                "settled": settled,
-                "unreconciled": unreconciled,
-                "window": window,
+                "cross_window_transfers": cross_window_transfers,
+                "disputed": disputed,
+                "oldest_open_hold_age_secs": oldest_open_hold_age_secs,
+                "open_dispute_count": open_dispute_count,
+                "oldest_dispute_age_secs": oldest_dispute_age_secs,
             }
         )
 
@@ -159,64 +159,64 @@ class LedgerTotalsCell:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        adjustments = d.pop("adjustments")
-
         bucket = d.pop("bucket")
-
-        budget = d.pop("budget")
-
-        cross_window_transfers = d.pop("cross_window_transfers")
 
         dimension = d.pop("dimension")
 
-        disputed = d.pop("disputed")
+        scope = d.pop("scope")
+
+        window = d.pop("window")
+
+        budget = d.pop("budget")
 
         drawn = d.pop("drawn")
 
-        oldest_dispute_age_secs = d.pop("oldest_dispute_age_secs")
+        released = d.pop("released")
 
-        oldest_open_hold_age_secs = d.pop("oldest_open_hold_age_secs")
-
-        open_dispute_count = d.pop("open_dispute_count")
+        settled = d.pop("settled")
 
         open_holds = d.pop("open_holds")
 
         open_slice_remainders = d.pop("open_slice_remainders")
 
+        adjustments = d.pop("adjustments")
+
+        unreconciled = d.pop("unreconciled")
+
         overdraft_carried_in = d.pop("overdraft_carried_in")
 
         overdraft_carried_out = d.pop("overdraft_carried_out")
 
-        released = d.pop("released")
+        cross_window_transfers = d.pop("cross_window_transfers")
 
-        scope = d.pop("scope")
+        disputed = d.pop("disputed")
 
-        settled = d.pop("settled")
+        oldest_open_hold_age_secs = d.pop("oldest_open_hold_age_secs")
 
-        unreconciled = d.pop("unreconciled")
+        open_dispute_count = d.pop("open_dispute_count")
 
-        window = d.pop("window")
+        oldest_dispute_age_secs = d.pop("oldest_dispute_age_secs")
 
         ledger_totals_cell = cls(
-            adjustments=adjustments,
             bucket=bucket,
-            budget=budget,
-            cross_window_transfers=cross_window_transfers,
             dimension=dimension,
-            disputed=disputed,
+            scope=scope,
+            window=window,
+            budget=budget,
             drawn=drawn,
-            oldest_dispute_age_secs=oldest_dispute_age_secs,
-            oldest_open_hold_age_secs=oldest_open_hold_age_secs,
-            open_dispute_count=open_dispute_count,
+            released=released,
+            settled=settled,
             open_holds=open_holds,
             open_slice_remainders=open_slice_remainders,
+            adjustments=adjustments,
+            unreconciled=unreconciled,
             overdraft_carried_in=overdraft_carried_in,
             overdraft_carried_out=overdraft_carried_out,
-            released=released,
-            scope=scope,
-            settled=settled,
-            unreconciled=unreconciled,
-            window=window,
+            cross_window_transfers=cross_window_transfers,
+            disputed=disputed,
+            oldest_open_hold_age_secs=oldest_open_hold_age_secs,
+            open_dispute_count=open_dispute_count,
+            oldest_dispute_age_secs=oldest_dispute_age_secs,
         )
 
         ledger_totals_cell.additional_properties = d

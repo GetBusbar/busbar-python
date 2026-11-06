@@ -22,36 +22,40 @@ class RotatedKeyView:
     prior token now rejected) or `secret` (a legacy hashed-secret key) is present.
 
         Attributes:
-            allowed_pools (list[str] | None):
-            created_at (int):
-            enabled (bool):
-            group (None | str):
             id (str):
-            labels (RotatedKeyViewLabels):
             name (str):
+            allowed_pools (list[str] | None):
+            group (None | str):
+            enabled (bool):
+            created_at (int):
+            labels (RotatedKeyViewLabels):
             state (str): Same field as `KeyView.state`; rotate does not change `enabled`/revoked/tombstoned
                 status, so this reflects whatever the key's disposition already was (rotating a `disabled` or
                 `revoked` key is legal and leaves it exactly that; only a `tombstoned` key refuses to rotate,
                 which surfaces as 404 instead of this response).
+            token (None | str | Unset): The fresh busbar-SIGNED token, shown EXACTLY once (signed-token keys).
             expires_at (int | None | Unset): Unix-seconds expiry of the re-minted signed token (present with `token`).
             secret (None | str | Unset): The fresh bearer secret, shown EXACTLY once (legacy hashed-secret keys only).
-            token (None | str | Unset): The fresh busbar-SIGNED token, shown EXACTLY once (signed-token keys).
     """
 
-    allowed_pools: list[str] | None
-    created_at: int
-    enabled: bool
-    group: None | str
     id: str
-    labels: RotatedKeyViewLabels
     name: str
+    allowed_pools: list[str] | None
+    group: None | str
+    enabled: bool
+    created_at: int
+    labels: RotatedKeyViewLabels
     state: str
+    token: None | str | Unset = UNSET
     expires_at: int | None | Unset = UNSET
     secret: None | str | Unset = UNSET
-    token: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        id = self.id
+
+        name = self.name
+
         allowed_pools: list[str] | None
         if isinstance(self.allowed_pools, list):
             allowed_pools = self.allowed_pools
@@ -59,20 +63,22 @@ class RotatedKeyView:
         else:
             allowed_pools = self.allowed_pools
 
-        created_at = self.created_at
-
-        enabled = self.enabled
-
         group: None | str
         group = self.group
 
-        id = self.id
+        enabled = self.enabled
+
+        created_at = self.created_at
 
         labels = self.labels.to_dict()
 
-        name = self.name
-
         state = self.state
+
+        token: None | str | Unset
+        if isinstance(self.token, Unset):
+            token = UNSET
+        else:
+            token = self.token
 
         expires_at: int | None | Unset
         if isinstance(self.expires_at, Unset):
@@ -86,32 +92,26 @@ class RotatedKeyView:
         else:
             secret = self.secret
 
-        token: None | str | Unset
-        if isinstance(self.token, Unset):
-            token = UNSET
-        else:
-            token = self.token
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "allowed_pools": allowed_pools,
-                "created_at": created_at,
-                "enabled": enabled,
-                "group": group,
                 "id": id,
-                "labels": labels,
                 "name": name,
+                "allowed_pools": allowed_pools,
+                "group": group,
+                "enabled": enabled,
+                "created_at": created_at,
+                "labels": labels,
                 "state": state,
             }
         )
+        if token is not UNSET:
+            field_dict["token"] = token
         if expires_at is not UNSET:
             field_dict["expires_at"] = expires_at
         if secret is not UNSET:
             field_dict["secret"] = secret
-        if token is not UNSET:
-            field_dict["token"] = token
 
         return field_dict
 
@@ -120,6 +120,9 @@ class RotatedKeyView:
         from ..models.rotated_key_view_labels import RotatedKeyViewLabels  # noqa: PLC0415
 
         d = dict(src_dict)
+        id = d.pop("id")
+
+        name = d.pop("name")
 
         def _parse_allowed_pools(data: object) -> list[str] | None:
             if data is None:
@@ -136,10 +139,6 @@ class RotatedKeyView:
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 
-        created_at = d.pop("created_at")
-
-        enabled = d.pop("enabled")
-
         def _parse_group(data: object) -> None | str:
             if data is None:
                 return data
@@ -147,13 +146,22 @@ class RotatedKeyView:
 
         group = _parse_group(d.pop("group"))
 
-        id = d.pop("id")
+        enabled = d.pop("enabled")
+
+        created_at = d.pop("created_at")
 
         labels = RotatedKeyViewLabels.from_dict(d.pop("labels"))
 
-        name = d.pop("name")
-
         state = d.pop("state")
+
+        def _parse_token(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        token = _parse_token(d.pop("token", UNSET))
 
         def _parse_expires_at(data: object) -> int | None | Unset:
             if data is None:
@@ -173,27 +181,18 @@ class RotatedKeyView:
 
         secret = _parse_secret(d.pop("secret", UNSET))
 
-        def _parse_token(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        token = _parse_token(d.pop("token", UNSET))
-
         rotated_key_view = cls(
-            allowed_pools=allowed_pools,
-            created_at=created_at,
-            enabled=enabled,
-            group=group,
             id=id,
-            labels=labels,
             name=name,
+            allowed_pools=allowed_pools,
+            group=group,
+            enabled=enabled,
+            created_at=created_at,
+            labels=labels,
             state=state,
+            token=token,
             expires_at=expires_at,
             secret=secret,
-            token=token,
         )
 
         rotated_key_view.additional_properties = d

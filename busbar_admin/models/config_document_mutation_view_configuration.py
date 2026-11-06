@@ -6,13 +6,13 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PatchGroupsNameBodyChildDefault")
+T = TypeVar("T", bound="ConfigDocumentMutationViewConfiguration")
 
 
 @_attrs_define(repr=False)
-class PatchGroupsNameBodyChildDefault:
-    """A `child_default:` template. The accepted shape is the config file's own, documented in the configuration reference;
-    it is not restated here because several of its types parse a wire shape that does not match their field layout.
+class ConfigDocumentMutationViewConfiguration:
+    """Sanitized installed configuration, bound to config_version/ETag. Configured values are not an acknowledgement of
+    physical listener, Store, or asynchronous plugin activation.
 
     """
 
@@ -28,10 +28,10 @@ class PatchGroupsNameBodyChildDefault:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        patch_groups_name_body_child_default = cls()
+        config_document_mutation_view_configuration = cls()
 
-        patch_groups_name_body_child_default.additional_properties = d
-        return patch_groups_name_body_child_default
+        config_document_mutation_view_configuration.additional_properties = d
+        return config_document_mutation_view_configuration
 
     @property
     def additional_keys(self) -> list[str]:

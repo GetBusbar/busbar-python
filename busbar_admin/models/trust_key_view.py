@@ -14,55 +14,55 @@ class TrustKeyView:
     """One trust key of the kernel's trust book and its state.
 
     Attributes:
-        approved (None | str): What it is approved at: the catalogue hash, or the item's digest.
-        counterparty (str): The counterparty, as the instance's configuration names it.
-        instance (str): The plane instance label.
-        item (None | str): The item at the counterparty, for an item key.
         key (str): The key, `<instance>/<counterparty>[/<item>]`: what `POST /trust/approve` and `/revoke` name.
-        seen (None | str): What it was last sighted at.
+        instance (str): The plane instance label.
+        counterparty (str): The counterparty, as the instance's configuration names it.
+        item (None | str): The item at the counterparty, for an item key.
         state (str): `new` (sighted and never approved, or revoked: refused), `approved` (approved, not sighted
             since), `same` (sighted as approved), `drifted` (sighted other than approved: refused until
             re-approved) or `quarantined` (the counterparty's catalogue moved: refused until re-approved).
+        approved (None | str): What it is approved at: the catalogue hash, or the item's digest.
+        seen (None | str): What it was last sighted at.
     """
 
-    approved: None | str
-    counterparty: str
-    instance: str
-    item: None | str
     key: str
-    seen: None | str
+    instance: str
+    counterparty: str
+    item: None | str
     state: str
+    approved: None | str
+    seen: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        approved: None | str
-        approved = self.approved
-
-        counterparty = self.counterparty
+        key = self.key
 
         instance = self.instance
+
+        counterparty = self.counterparty
 
         item: None | str
         item = self.item
 
-        key = self.key
+        state = self.state
+
+        approved: None | str
+        approved = self.approved
 
         seen: None | str
         seen = self.seen
-
-        state = self.state
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "approved": approved,
-                "counterparty": counterparty,
-                "instance": instance,
-                "item": item,
                 "key": key,
-                "seen": seen,
+                "instance": instance,
+                "counterparty": counterparty,
+                "item": item,
                 "state": state,
+                "approved": approved,
+                "seen": seen,
             }
         )
 
@@ -71,17 +71,11 @@ class TrustKeyView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-
-        def _parse_approved(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        approved = _parse_approved(d.pop("approved"))
-
-        counterparty = d.pop("counterparty")
+        key = d.pop("key")
 
         instance = d.pop("instance")
+
+        counterparty = d.pop("counterparty")
 
         def _parse_item(data: object) -> None | str:
             if data is None:
@@ -90,7 +84,14 @@ class TrustKeyView:
 
         item = _parse_item(d.pop("item"))
 
-        key = d.pop("key")
+        state = d.pop("state")
+
+        def _parse_approved(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        approved = _parse_approved(d.pop("approved"))
 
         def _parse_seen(data: object) -> None | str:
             if data is None:
@@ -99,16 +100,14 @@ class TrustKeyView:
 
         seen = _parse_seen(d.pop("seen"))
 
-        state = d.pop("state")
-
         trust_key_view = cls(
-            approved=approved,
-            counterparty=counterparty,
-            instance=instance,
-            item=item,
             key=key,
-            seen=seen,
+            instance=instance,
+            counterparty=counterparty,
+            item=item,
             state=state,
+            approved=approved,
+            seen=seen,
         )
 
         trust_key_view.additional_properties = d

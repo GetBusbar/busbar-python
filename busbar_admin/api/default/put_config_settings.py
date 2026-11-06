@@ -3,17 +3,18 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.config_document_mutation_view import ConfigDocumentMutationView
 from ...models.config_settings_view import ConfigSettingsView
 from ...models.error import Error
-from ...models.put_config_settings_body import PutConfigSettingsBody
+from ...models.put_config_settings_body_type_0 import PutConfigSettingsBodyType0
+from ...models.put_config_settings_body_type_1 import PutConfigSettingsBodyType1
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    body: PutConfigSettingsBody,
+    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -25,7 +26,10 @@ def _get_kwargs(
         "url": "/api/v1/admin/config/settings",
     }
 
-    _kwargs["json"] = body.to_dict()
+    if isinstance(body, PutConfigSettingsBodyType0):
+        _kwargs["json"] = body.to_dict()
+    else:
+        _kwargs["json"] = body.to_dict()
 
     headers["Content-Type"] = "application/json"
 
@@ -35,9 +39,26 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ConfigSettingsView | Error | None:
+) -> ConfigDocumentMutationView | ConfigSettingsView | Error:
     if response.status_code == 200:
-        response_200 = ConfigSettingsView.from_dict(response.json())
+
+        def _parse_response_200(data: object) -> ConfigDocumentMutationView | ConfigSettingsView:
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                componentsschemas_config_settings_mutation_view_type_0 = ConfigSettingsView.from_dict(data)
+
+                return componentsschemas_config_settings_mutation_view_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            componentsschemas_config_settings_mutation_view_type_1 = ConfigDocumentMutationView.from_dict(data)
+
+            return componentsschemas_config_settings_mutation_view_type_1
+            raise ValueError("Invalid value for response_200")
+
+        response_200 = _parse_response_200(response.json())
 
         return response_200
 
@@ -61,6 +82,11 @@ def _parse_response(
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -76,15 +102,14 @@ def _parse_response(
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ConfigSettingsView | Error]:
+) -> Response[ConfigDocumentMutationView | ConfigSettingsView | Error]:
     return Response(
         status_code=HTTPStatus(response.status_code)
         if response.status_code in HTTPStatus._value2member_map_
@@ -98,9 +123,9 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBody,
+    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
     if_match: str | Unset = UNSET,
-) -> Response[ConfigSettingsView | Error]:
+) -> Response[ConfigDocumentMutationView | ConfigSettingsView | Error]:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
@@ -109,23 +134,14 @@ def sync_detailed(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
-            Durable by default (1.5.3): a mutable config always stores the change in its overlay
-            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
-            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
-            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
-            the field), but its value has NO effect: persistence is unconditional on a mutable config
-            and refusal is unconditional on a locked one. Every other top-level key must be a known
-            settings section; an unknown key is a 400. The accepted shape is the config file's own,
-            documented in the configuration reference; it is not restated here because several of its
-            types parse a wire shape that does not match their field layout.
+        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ConfigSettingsView | Error]
+        Response[ConfigDocumentMutationView | ConfigSettingsView | Error]
     """
 
     kwargs = _get_kwargs(
@@ -143,9 +159,9 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBody,
+    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
     if_match: str | Unset = UNSET,
-) -> ConfigSettingsView | Error | None:
+) -> ConfigDocumentMutationView | ConfigSettingsView | Error | None:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
@@ -154,23 +170,14 @@ def sync(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
-            Durable by default (1.5.3): a mutable config always stores the change in its overlay
-            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
-            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
-            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
-            the field), but its value has NO effect: persistence is unconditional on a mutable config
-            and refusal is unconditional on a locked one. Every other top-level key must be a known
-            settings section; an unknown key is a 400. The accepted shape is the config file's own,
-            documented in the configuration reference; it is not restated here because several of its
-            types parse a wire shape that does not match their field layout.
+        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ConfigSettingsView | Error
+        ConfigDocumentMutationView | ConfigSettingsView | Error
     """
 
     return sync_detailed(
@@ -183,9 +190,9 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBody,
+    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
     if_match: str | Unset = UNSET,
-) -> Response[ConfigSettingsView | Error]:
+) -> Response[ConfigDocumentMutationView | ConfigSettingsView | Error]:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
@@ -194,23 +201,14 @@ async def asyncio_detailed(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
-            Durable by default (1.5.3): a mutable config always stores the change in its overlay
-            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
-            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
-            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
-            the field), but its value has NO effect: persistence is unconditional on a mutable config
-            and refusal is unconditional on a locked one. Every other top-level key must be a known
-            settings section; an unknown key is a 400. The accepted shape is the config file's own,
-            documented in the configuration reference; it is not restated here because several of its
-            types parse a wire shape that does not match their field layout.
+        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ConfigSettingsView | Error]
+        Response[ConfigDocumentMutationView | ConfigSettingsView | Error]
     """
 
     kwargs = _get_kwargs(
@@ -226,9 +224,9 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBody,
+    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
     if_match: str | Unset = UNSET,
-) -> ConfigSettingsView | Error | None:
+) -> ConfigDocumentMutationView | ConfigSettingsView | Error | None:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
     merged onto the overlay, re-resolved + validated, swapped in.
     rate_card/per_request_fee/security/limits/… go live;
@@ -237,23 +235,14 @@ async def asyncio(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBody): The settings sections to replace, keyed by section name.
-            Durable by default (1.5.3): a mutable config always stores the change in its overlay
-            (survives restart), and a locked config (`config.locked: true`) refuses ANY change with
-            `400`. There is no "apply in memory only" outcome. The optional top-level boolean
-            `persist` is accepted for back-compat and boolean-validated (a non-boolean is a 400 naming
-            the field), but its value has NO effect: persistence is unconditional on a mutable config
-            and refusal is unconditional on a locked one. Every other top-level key must be a known
-            settings section; an unknown key is a 400. The accepted shape is the config file's own,
-            documented in the configuration reference; it is not restated here because several of its
-            types parse a wire shape that does not match their field layout.
+        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        ConfigSettingsView | Error
+        ConfigDocumentMutationView | ConfigSettingsView | Error
     """
 
     return (

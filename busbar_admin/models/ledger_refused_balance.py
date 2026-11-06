@@ -17,44 +17,44 @@ class LedgerRefusedBalance:
 
         Attributes:
             bucket (str): The balance's bucket.
-            day (int): The balance's window, as the unix second it opens at: the `day` of the withheld row.
             dimension (str): The balance's dimension.
+            scope (str): The balance's scope.
+            day (int): The balance's window, as the unix second it opens at: the `day` of the withheld row.
             lane (str): The lane that served the unit whose counts refused.
             refusal (str): Why the pricing refused, in its own words.
-            scope (str): The balance's scope.
     """
 
     bucket: str
-    day: int
     dimension: str
+    scope: str
+    day: int
     lane: str
     refusal: str
-    scope: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         bucket = self.bucket
 
-        day = self.day
-
         dimension = self.dimension
+
+        scope = self.scope
+
+        day = self.day
 
         lane = self.lane
 
         refusal = self.refusal
-
-        scope = self.scope
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "bucket": bucket,
-                "day": day,
                 "dimension": dimension,
+                "scope": scope,
+                "day": day,
                 "lane": lane,
                 "refusal": refusal,
-                "scope": scope,
             }
         )
 
@@ -65,23 +65,23 @@ class LedgerRefusedBalance:
         d = dict(src_dict)
         bucket = d.pop("bucket")
 
-        day = d.pop("day")
-
         dimension = d.pop("dimension")
+
+        scope = d.pop("scope")
+
+        day = d.pop("day")
 
         lane = d.pop("lane")
 
         refusal = d.pop("refusal")
 
-        scope = d.pop("scope")
-
         ledger_refused_balance = cls(
             bucket=bucket,
-            day=day,
             dimension=dimension,
+            scope=scope,
+            day=day,
             lane=lane,
             refusal=refusal,
-            scope=scope,
         )
 
         ledger_refused_balance.additional_properties = d

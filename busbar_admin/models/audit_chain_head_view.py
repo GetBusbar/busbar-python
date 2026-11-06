@@ -18,25 +18,31 @@ class AuditChainHeadView:
     """`GET /audit/head`: where the audit record chain is now, and the recipe a verifier applies.
 
     Attributes:
-        algorithm (str): The signature algorithm.
-        head (AuditChainSignedHead | None): The tip, or null when the chain has sealed nothing (a true answer, not an
-            error).
-        next_seq (int): The position the NEXT record will take.
         recipe (str): The name of the published digest recipe.
         signature_domain (str): The signature domain-separation string.
+        algorithm (str): The signature algorithm.
+        next_seq (int): The position the NEXT record will take.
+        head (AuditChainSignedHead | None): The tip, or null when the chain has sealed nothing (a true answer, not an
+            error).
     """
 
-    algorithm: str
-    head: AuditChainSignedHead | None
-    next_seq: int
     recipe: str
     signature_domain: str
+    algorithm: str
+    next_seq: int
+    head: AuditChainSignedHead | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.audit_chain_signed_head import AuditChainSignedHead  # noqa: PLC0415
 
+        recipe = self.recipe
+
+        signature_domain = self.signature_domain
+
         algorithm = self.algorithm
+
+        next_seq = self.next_seq
 
         head: dict[str, Any] | None
         if isinstance(self.head, AuditChainSignedHead):
@@ -44,21 +50,15 @@ class AuditChainHeadView:
         else:
             head = self.head
 
-        next_seq = self.next_seq
-
-        recipe = self.recipe
-
-        signature_domain = self.signature_domain
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "algorithm": algorithm,
-                "head": head,
-                "next_seq": next_seq,
                 "recipe": recipe,
                 "signature_domain": signature_domain,
+                "algorithm": algorithm,
+                "next_seq": next_seq,
+                "head": head,
             }
         )
 
@@ -69,7 +69,13 @@ class AuditChainHeadView:
         from ..models.audit_chain_signed_head import AuditChainSignedHead  # noqa: PLC0415
 
         d = dict(src_dict)
+        recipe = d.pop("recipe")
+
+        signature_domain = d.pop("signature_domain")
+
         algorithm = d.pop("algorithm")
+
+        next_seq = d.pop("next_seq")
 
         def _parse_head(data: object) -> AuditChainSignedHead | None:
             if data is None:
@@ -86,18 +92,12 @@ class AuditChainHeadView:
 
         head = _parse_head(d.pop("head"))
 
-        next_seq = d.pop("next_seq")
-
-        recipe = d.pop("recipe")
-
-        signature_domain = d.pop("signature_domain")
-
         audit_chain_head_view = cls(
-            algorithm=algorithm,
-            head=head,
-            next_seq=next_seq,
             recipe=recipe,
             signature_domain=signature_domain,
+            algorithm=algorithm,
+            next_seq=next_seq,
+            head=head,
         )
 
         audit_chain_head_view.additional_properties = d

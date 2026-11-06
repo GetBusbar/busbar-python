@@ -3,19 +3,21 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.commit_upgrade_req import CommitUpgradeReq
 from ...models.commit_upgrade_view import CommitUpgradeView
 from ...models.error import Error
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     body: CommitUpgradeReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
+    if not isinstance(idempotency_key, Unset):
+        headers["Idempotency-Key"] = idempotency_key
 
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -30,9 +32,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> CommitUpgradeView | Error | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> CommitUpgradeView | Error:
     if response.status_code == 200:
         response_200 = CommitUpgradeView.from_dict(response.json())
 
@@ -58,15 +58,24 @@ def _parse_response(
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
+    if response.status_code == 429:
+        response_429 = Error.from_dict(response.json())
+
+        return response_429
+
     if response.status_code == 503:
         response_503 = Error.from_dict(response.json())
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
@@ -86,6 +95,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     body: CommitUpgradeReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Response[CommitUpgradeView | Error]:
     """Commit the fleet to the release this node runs
 
@@ -95,6 +105,7 @@ def sync_detailed(
     the first commit and seals nothing again.
 
     Args:
+        idempotency_key (str | Unset):
         body (CommitUpgradeReq): `POST /commit-upgrade`: the release the fleet commits to.
 
     Raises:
@@ -107,6 +118,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = client._request(
@@ -120,6 +132,7 @@ def sync(
     *,
     client: AuthenticatedClient,
     body: CommitUpgradeReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> CommitUpgradeView | Error | None:
     """Commit the fleet to the release this node runs
 
@@ -129,6 +142,7 @@ def sync(
     the first commit and seals nothing again.
 
     Args:
+        idempotency_key (str | Unset):
         body (CommitUpgradeReq): `POST /commit-upgrade`: the release the fleet commits to.
 
     Raises:
@@ -142,6 +156,7 @@ def sync(
     return sync_detailed(
         client=client,
         body=body,
+        idempotency_key=idempotency_key,
     ).parsed
 
 
@@ -149,6 +164,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     body: CommitUpgradeReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Response[CommitUpgradeView | Error]:
     """Commit the fleet to the release this node runs
 
@@ -158,6 +174,7 @@ async def asyncio_detailed(
     the first commit and seals nothing again.
 
     Args:
+        idempotency_key (str | Unset):
         body (CommitUpgradeReq): `POST /commit-upgrade`: the release the fleet commits to.
 
     Raises:
@@ -170,6 +187,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = await client._async_request(**kwargs)
@@ -181,6 +199,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     body: CommitUpgradeReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> CommitUpgradeView | Error | None:
     """Commit the fleet to the release this node runs
 
@@ -190,6 +209,7 @@ async def asyncio(
     the first commit and seals nothing again.
 
     Args:
+        idempotency_key (str | Unset):
         body (CommitUpgradeReq): `POST /commit-upgrade`: the release the fleet commits to.
 
     Raises:
@@ -204,5 +224,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             body=body,
+            idempotency_key=idempotency_key,
         )
     ).parsed

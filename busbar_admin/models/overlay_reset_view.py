@@ -16,32 +16,32 @@ class OverlayResetView:
     an idempotent no-op).
 
         Attributes:
-            changed (bool): `true` when the reset discarded overlay mutations; `false` for an already-empty section.
-            config_version (int):
             reset (str): The section that was reset. This endpoint's `section` path parameter enumerates the valid
                 set; it is deliberately not restated here, because the hand-written copy that used to sit on
                 this line went stale the moment a section was added.
+            config_version (int):
+            changed (bool): `true` when the reset discarded overlay mutations; `false` for an already-empty section.
     """
 
-    changed: bool
-    config_version: int
     reset: str
+    config_version: int
+    changed: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        changed = self.changed
+        reset = self.reset
 
         config_version = self.config_version
 
-        reset = self.reset
+        changed = self.changed
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "changed": changed,
-                "config_version": config_version,
                 "reset": reset,
+                "config_version": config_version,
+                "changed": changed,
             }
         )
 
@@ -50,16 +50,16 @@ class OverlayResetView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        changed = d.pop("changed")
+        reset = d.pop("reset")
 
         config_version = d.pop("config_version")
 
-        reset = d.pop("reset")
+        changed = d.pop("changed")
 
         overlay_reset_view = cls(
-            changed=changed,
-            config_version=config_version,
             reset=reset,
+            config_version=config_version,
+            changed=changed,
         )
 
         overlay_reset_view.additional_properties = d

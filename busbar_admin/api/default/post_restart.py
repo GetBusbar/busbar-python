@@ -3,7 +3,6 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.restart_req import RestartReq
@@ -14,8 +13,11 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     *,
     body: RestartReq | Unset = UNSET,
+    if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
+    if not isinstance(if_match, Unset):
+        headers["If-Match"] = if_match
 
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -31,7 +33,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | RestartView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | RestartView:
     if response.status_code == 202:
         response_202 = RestartView.from_dict(response.json())
 
@@ -57,6 +59,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -72,10 +79,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | RestartView]:
@@ -93,11 +99,13 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     body: RestartReq | Unset = UNSET,
+    if_match: str | Unset = UNSET,
 ) -> Response[Error | RestartView]:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
     admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
+        if_match (str | Unset):
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
             `{}`.
 
@@ -111,6 +119,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        if_match=if_match,
     )
 
     response = client._request(
@@ -124,11 +133,13 @@ def sync(
     *,
     client: AuthenticatedClient,
     body: RestartReq | Unset = UNSET,
+    if_match: str | Unset = UNSET,
 ) -> Error | RestartView | None:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
     admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
+        if_match (str | Unset):
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
             `{}`.
 
@@ -143,6 +154,7 @@ def sync(
     return sync_detailed(
         client=client,
         body=body,
+        if_match=if_match,
     ).parsed
 
 
@@ -150,11 +162,13 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     body: RestartReq | Unset = UNSET,
+    if_match: str | Unset = UNSET,
 ) -> Response[Error | RestartView]:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
     admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
+        if_match (str | Unset):
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
             `{}`.
 
@@ -168,6 +182,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        if_match=if_match,
     )
 
     response = await client._async_request(**kwargs)
@@ -179,11 +194,13 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     body: RestartReq | Unset = UNSET,
+    if_match: str | Unset = UNSET,
 ) -> Error | RestartView | None:
     """Restart busbar to apply the restart-scoped settings (listen, admin_listen, tls, admin_tls,
     admin_require_mtls, store). Drains first; the supervisor brings it back
 
     Args:
+        if_match (str | Unset):
         body (RestartReq | Unset): The `POST /api/v1/admin/restart` body. Absent is the same as
             `{}`.
 
@@ -199,5 +216,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             body=body,
+            if_match=if_match,
         )
     ).parsed

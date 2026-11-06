@@ -3,26 +3,34 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.adjust_req import AdjustReq
 from ...models.adjust_view import AdjustView
+from ...models.adjustment_action_in_flight_error import AdjustmentActionInFlightError
+from ...models.adjustment_action_view import AdjustmentActionView
 from ...models.error import Error
-from ...types import Response
+from ...models.exact_adjust_req import ExactAdjustReq
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    body: AdjustReq,
+    body: AdjustReq | ExactAdjustReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
+    if not isinstance(idempotency_key, Unset):
+        headers["Idempotency-Key"] = idempotency_key
 
     _kwargs: dict[str, Any] = {
         "method": "post",
         "url": "/api/v1/admin/adjust",
     }
 
-    _kwargs["json"] = body.to_dict()
+    if isinstance(body, AdjustReq):
+        _kwargs["json"] = body.to_dict()
+    else:
+        _kwargs["json"] = body.to_dict()
 
     headers["Content-Type"] = "application/json"
 
@@ -30,14 +38,58 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> AdjustView | Error | None:
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error:
     if response.status_code == 200:
-        response_200 = AdjustView.from_dict(response.json())
+
+        def _parse_response_200(data: object) -> AdjustmentActionView | AdjustView:
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                componentsschemas_adjustment_response_type_0 = AdjustView.from_dict(data)
+
+                return componentsschemas_adjustment_response_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            componentsschemas_adjustment_response_type_1 = AdjustmentActionView.from_dict(data)
+
+            return componentsschemas_adjustment_response_type_1
+            raise ValueError("Invalid value for response_200")
+
+        response_200 = _parse_response_200(response.json())
 
         return response_200
 
     if response.status_code == 400:
-        response_400 = Error.from_dict(response.json())
+
+        def _parse_response_400(data: object) -> AdjustmentActionInFlightError | AdjustmentActionView | Error:
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_400_type_0 = Error.from_dict(data)
+
+                return response_400_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_400_type_1 = AdjustmentActionView.from_dict(data)
+
+                return response_400_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            response_400_type_2 = AdjustmentActionInFlightError.from_dict(data)
+
+            return response_400_type_2
+            raise ValueError("Invalid value for response_400")
+
+        response_400 = _parse_response_400(response.json())
 
         return response_400
 
@@ -56,18 +108,84 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_404
 
+    if response.status_code == 409:
+
+        def _parse_response_409(data: object) -> AdjustmentActionInFlightError | AdjustmentActionView | Error:
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_409_type_0 = Error.from_dict(data)
+
+                return response_409_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_409_type_1 = AdjustmentActionView.from_dict(data)
+
+                return response_409_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            response_409_type_2 = AdjustmentActionInFlightError.from_dict(data)
+
+            return response_409_type_2
+            raise ValueError("Invalid value for response_409")
+
+        response_409 = _parse_response_409(response.json())
+
+        return response_409
+
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
+    if response.status_code == 429:
+        response_429 = Error.from_dict(response.json())
+
+        return response_429
+
     if response.status_code == 503:
-        response_503 = Error.from_dict(response.json())
+
+        def _parse_response_503(data: object) -> AdjustmentActionInFlightError | AdjustmentActionView | Error:
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_503_type_0 = Error.from_dict(data)
+
+                return response_503_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                response_503_type_1 = AdjustmentActionView.from_dict(data)
+
+                return response_503_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            response_503_type_2 = AdjustmentActionInFlightError.from_dict(data)
+
+            return response_503_type_2
+            raise ValueError("Invalid value for response_503")
+
+        response_503 = _parse_response_503(response.json())
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[AdjustView | Error]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error]:
     return Response(
         status_code=HTTPStatus(response.status_code)
         if response.status_code in HTTPStatus._value2member_map_
@@ -81,34 +199,33 @@ def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: AdjustReq,
-) -> Response[AdjustView | Error]:
+    body: AdjustReq | ExactAdjustReq,
+    idempotency_key: str | Unset = UNSET,
+) -> Response[AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error]:
     """Correct a key's COUNTS by a signed delta, never a money figure
 
-     Money is the one ledger's counts x the rate card, so a correction moves counts: a signed delta per
-    class on the key's counts for one lane and one history entry, applied at once, all or nothing, to
-    the key's own budget bucket and each group bucket the named pool takes part in, and kept beside the
-    day's metering rows so `GET /admin/usage` serves the counts as adjusted. A delta that would take any
-    count below zero, or names counts the day's metering does not hold, is refused and nothing is
-    applied.
+     Correct counts at the original card epoch. With Idempotency-Key, the durable exact-Count profile
+    binds actor/action to exact bytes and returns AdjustmentActionView. Without it, retain legacy
+    signed-integer/nonretryable semantics. Applied, not_applied and unknown are distinct outcomes; never
+    infer no effect from a failed response.
 
     Args:
-        body (AdjustReq): `POST /adjust`: a SIGNED correction to a key's COUNTS on the one ledger,
-            never to a money
-            figure. It names the key, the lane the counts were earned on, the rate-card history entry
-            they
-            were priced with, and the pool the unit was dispatched through.
+        idempotency_key (str | Unset):
+        body (AdjustReq | ExactAdjustReq): Header-selective profiles: AdjustReq without
+            Idempotency-Key, ExactAdjustReq with it. OpenAPI body union alone cannot validate the
+            cross-header condition.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[AdjustView | Error]
+        Response[AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error]
     """
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = client._request(
@@ -121,69 +238,67 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: AdjustReq,
-) -> AdjustView | Error | None:
+    body: AdjustReq | ExactAdjustReq,
+    idempotency_key: str | Unset = UNSET,
+) -> AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error | None:
     """Correct a key's COUNTS by a signed delta, never a money figure
 
-     Money is the one ledger's counts x the rate card, so a correction moves counts: a signed delta per
-    class on the key's counts for one lane and one history entry, applied at once, all or nothing, to
-    the key's own budget bucket and each group bucket the named pool takes part in, and kept beside the
-    day's metering rows so `GET /admin/usage` serves the counts as adjusted. A delta that would take any
-    count below zero, or names counts the day's metering does not hold, is refused and nothing is
-    applied.
+     Correct counts at the original card epoch. With Idempotency-Key, the durable exact-Count profile
+    binds actor/action to exact bytes and returns AdjustmentActionView. Without it, retain legacy
+    signed-integer/nonretryable semantics. Applied, not_applied and unknown are distinct outcomes; never
+    infer no effect from a failed response.
 
     Args:
-        body (AdjustReq): `POST /adjust`: a SIGNED correction to a key's COUNTS on the one ledger,
-            never to a money
-            figure. It names the key, the lane the counts were earned on, the rate-card history entry
-            they
-            were priced with, and the pool the unit was dispatched through.
+        idempotency_key (str | Unset):
+        body (AdjustReq | ExactAdjustReq): Header-selective profiles: AdjustReq without
+            Idempotency-Key, ExactAdjustReq with it. OpenAPI body union alone cannot validate the
+            cross-header condition.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        AdjustView | Error
+        AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error
     """
 
     return sync_detailed(
         client=client,
         body=body,
+        idempotency_key=idempotency_key,
     ).parsed
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: AdjustReq,
-) -> Response[AdjustView | Error]:
+    body: AdjustReq | ExactAdjustReq,
+    idempotency_key: str | Unset = UNSET,
+) -> Response[AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error]:
     """Correct a key's COUNTS by a signed delta, never a money figure
 
-     Money is the one ledger's counts x the rate card, so a correction moves counts: a signed delta per
-    class on the key's counts for one lane and one history entry, applied at once, all or nothing, to
-    the key's own budget bucket and each group bucket the named pool takes part in, and kept beside the
-    day's metering rows so `GET /admin/usage` serves the counts as adjusted. A delta that would take any
-    count below zero, or names counts the day's metering does not hold, is refused and nothing is
-    applied.
+     Correct counts at the original card epoch. With Idempotency-Key, the durable exact-Count profile
+    binds actor/action to exact bytes and returns AdjustmentActionView. Without it, retain legacy
+    signed-integer/nonretryable semantics. Applied, not_applied and unknown are distinct outcomes; never
+    infer no effect from a failed response.
 
     Args:
-        body (AdjustReq): `POST /adjust`: a SIGNED correction to a key's COUNTS on the one ledger,
-            never to a money
-            figure. It names the key, the lane the counts were earned on, the rate-card history entry
-            they
-            were priced with, and the pool the unit was dispatched through.
+        idempotency_key (str | Unset):
+        body (AdjustReq | ExactAdjustReq): Header-selective profiles: AdjustReq without
+            Idempotency-Key, ExactAdjustReq with it. OpenAPI body union alone cannot validate the
+            cross-header condition.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[AdjustView | Error]
+        Response[AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error]
     """
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = await client._async_request(**kwargs)
@@ -194,35 +309,34 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: AdjustReq,
-) -> AdjustView | Error | None:
+    body: AdjustReq | ExactAdjustReq,
+    idempotency_key: str | Unset = UNSET,
+) -> AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error | None:
     """Correct a key's COUNTS by a signed delta, never a money figure
 
-     Money is the one ledger's counts x the rate card, so a correction moves counts: a signed delta per
-    class on the key's counts for one lane and one history entry, applied at once, all or nothing, to
-    the key's own budget bucket and each group bucket the named pool takes part in, and kept beside the
-    day's metering rows so `GET /admin/usage` serves the counts as adjusted. A delta that would take any
-    count below zero, or names counts the day's metering does not hold, is refused and nothing is
-    applied.
+     Correct counts at the original card epoch. With Idempotency-Key, the durable exact-Count profile
+    binds actor/action to exact bytes and returns AdjustmentActionView. Without it, retain legacy
+    signed-integer/nonretryable semantics. Applied, not_applied and unknown are distinct outcomes; never
+    infer no effect from a failed response.
 
     Args:
-        body (AdjustReq): `POST /adjust`: a SIGNED correction to a key's COUNTS on the one ledger,
-            never to a money
-            figure. It names the key, the lane the counts were earned on, the rate-card history entry
-            they
-            were priced with, and the pool the unit was dispatched through.
+        idempotency_key (str | Unset):
+        body (AdjustReq | ExactAdjustReq): Header-selective profiles: AdjustReq without
+            Idempotency-Key, ExactAdjustReq with it. OpenAPI body union alone cannot validate the
+            cross-header condition.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        AdjustView | Error
+        AdjustmentActionInFlightError | AdjustmentActionView | Error | AdjustmentActionView | AdjustView | Error
     """
 
     return (
         await asyncio_detailed(
             client=client,
             body=body,
+            idempotency_key=idempotency_key,
         )
     ).parsed

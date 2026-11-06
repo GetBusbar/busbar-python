@@ -95,8 +95,10 @@ class SchemaContract(unittest.TestCase):
                 "prompt": "no",
                 "user": "no",
                 "priority": 0,
-                "at": None,
                 "on_error": "nothing",
+                "on_empty": None,
+                "signals": ["requested_model", "latency"],
+                "default": True,
                 "timeout_ms": 1000,
                 "settings_keys": ["token"],
                 "global": False,
@@ -107,6 +109,10 @@ class SchemaContract(unittest.TestCase):
         )
         self.assertEqual(hook.settings_keys, ["token"])
         self.assertEqual(hook.fires_at, ["request"])
+        self.assertIsNone(hook.to_dict()["on_empty"])
+        self.assertEqual(hook.to_dict()["signals"], ["requested_model", "latency"])
+        self.assertIs(hook.to_dict()["default"], True)
+        self.assertNotIn("at", hook.to_dict())
 
     def test_documented_error_envelopes_are_preserved(self):
         for status in (400, 500):

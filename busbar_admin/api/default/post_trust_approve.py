@@ -3,7 +3,6 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.trust_key_req import TrustKeyReq
@@ -30,7 +29,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | TrustKeyView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | TrustKeyView:
     if response.status_code == 200:
         response_200 = TrustKeyView.from_dict(response.json())
 
@@ -61,15 +60,24 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
+    if response.status_code == 429:
+        response_429 = Error.from_dict(response.json())
+
+        return response_429
+
     if response.status_code == 503:
         response_503 = Error.from_dict(response.json())
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
@@ -94,7 +102,8 @@ def sync_detailed(
 
      A counterparty is approved at the catalogue hash it last reported, which clears its quarantine; an
     item at the digest it was last sighted at. The decision is kept durably and outlives a restart.
-    Idempotent: the same key twice answers the same row.
+    Optional `expected_digest` compares the current `seen` digest atomically before writing; a stale
+    review conflicts. Without it, the key is approved at execution-time sighting.
 
     Args:
         body (TrustKeyReq): `POST /trust/approve` and `/trust/revoke`: the trust key decided.
@@ -127,7 +136,8 @@ def sync(
 
      A counterparty is approved at the catalogue hash it last reported, which clears its quarantine; an
     item at the digest it was last sighted at. The decision is kept durably and outlives a restart.
-    Idempotent: the same key twice answers the same row.
+    Optional `expected_digest` compares the current `seen` digest atomically before writing; a stale
+    review conflicts. Without it, the key is approved at execution-time sighting.
 
     Args:
         body (TrustKeyReq): `POST /trust/approve` and `/trust/revoke`: the trust key decided.
@@ -155,7 +165,8 @@ async def asyncio_detailed(
 
      A counterparty is approved at the catalogue hash it last reported, which clears its quarantine; an
     item at the digest it was last sighted at. The decision is kept durably and outlives a restart.
-    Idempotent: the same key twice answers the same row.
+    Optional `expected_digest` compares the current `seen` digest atomically before writing; a stale
+    review conflicts. Without it, the key is approved at execution-time sighting.
 
     Args:
         body (TrustKeyReq): `POST /trust/approve` and `/trust/revoke`: the trust key decided.
@@ -186,7 +197,8 @@ async def asyncio(
 
      A counterparty is approved at the catalogue hash it last reported, which clears its quarantine; an
     item at the digest it was last sighted at. The decision is kept durably and outlives a restart.
-    Idempotent: the same key twice answers the same row.
+    Optional `expected_digest` compares the current `seen` digest atomically before writing; a stale
+    review conflicts. Without it, the key is approved at execution-time sighting.
 
     Args:
         body (TrustKeyReq): `POST /trust/approve` and `/trust/revoke`: the trust key decided.

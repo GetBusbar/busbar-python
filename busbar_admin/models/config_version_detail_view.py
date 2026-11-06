@@ -19,45 +19,45 @@ class ConfigVersionDetailView:
     (projected through the wire `HookView`, keyed by hook name) and the global wiring at that version.
 
         Attributes:
-            global_hooks (list[str]):
-            hooks (ConfigVersionDetailViewHooks):
+            version (int):
+            ts (int):
             principal (str):
             summary (str):
-            ts (int):
-            version (int):
+            hooks (ConfigVersionDetailViewHooks):
+            global_hooks (list[str]):
     """
 
-    global_hooks: list[str]
-    hooks: ConfigVersionDetailViewHooks
+    version: int
+    ts: int
     principal: str
     summary: str
-    ts: int
-    version: int
+    hooks: ConfigVersionDetailViewHooks
+    global_hooks: list[str]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        global_hooks = self.global_hooks
+        version = self.version
 
-        hooks = self.hooks.to_dict()
+        ts = self.ts
 
         principal = self.principal
 
         summary = self.summary
 
-        ts = self.ts
+        hooks = self.hooks.to_dict()
 
-        version = self.version
+        global_hooks = self.global_hooks
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "global_hooks": global_hooks,
-                "hooks": hooks,
+                "version": version,
+                "ts": ts,
                 "principal": principal,
                 "summary": summary,
-                "ts": ts,
-                "version": version,
+                "hooks": hooks,
+                "global_hooks": global_hooks,
             }
         )
 
@@ -68,25 +68,25 @@ class ConfigVersionDetailView:
         from ..models.config_version_detail_view_hooks import ConfigVersionDetailViewHooks  # noqa: PLC0415
 
         d = dict(src_dict)
-        global_hooks = cast(list[str], d.pop("global_hooks"))
+        version = d.pop("version")
 
-        hooks = ConfigVersionDetailViewHooks.from_dict(d.pop("hooks"))
+        ts = d.pop("ts")
 
         principal = d.pop("principal")
 
         summary = d.pop("summary")
 
-        ts = d.pop("ts")
+        hooks = ConfigVersionDetailViewHooks.from_dict(d.pop("hooks"))
 
-        version = d.pop("version")
+        global_hooks = cast(list[str], d.pop("global_hooks"))
 
         config_version_detail_view = cls(
-            global_hooks=global_hooks,
-            hooks=hooks,
+            version=version,
+            ts=ts,
             principal=principal,
             summary=summary,
-            ts=ts,
-            version=version,
+            hooks=hooks,
+            global_hooks=global_hooks,
         )
 
         config_version_detail_view.additional_properties = d

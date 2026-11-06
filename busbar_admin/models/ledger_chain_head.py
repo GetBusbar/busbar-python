@@ -14,30 +14,30 @@ class LedgerChainHead:
     """One node's journal head, as a checkpoint sealed it.
 
     Attributes:
-        hash_ (str): A 32-byte digest as 64 lower-case hex characters.
         node (int):
         node_seq (int):
+        hash_ (str): A 32-byte digest as 64 lower-case hex characters.
     """
 
-    hash_: str
     node: int
     node_seq: int
+    hash_: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        hash_ = self.hash_
-
         node = self.node
 
         node_seq = self.node_seq
+
+        hash_ = self.hash_
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "hash": hash_,
                 "node": node,
                 "node_seq": node_seq,
+                "hash": hash_,
             }
         )
 
@@ -46,16 +46,16 @@ class LedgerChainHead:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        hash_ = d.pop("hash")
-
         node = d.pop("node")
 
         node_seq = d.pop("node_seq")
 
+        hash_ = d.pop("hash")
+
         ledger_chain_head = cls(
-            hash_=hash_,
             node=node,
             node_seq=node_seq,
+            hash_=hash_,
         )
 
         ledger_chain_head.additional_properties = d

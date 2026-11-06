@@ -18,9 +18,9 @@ class McpCapabilityView:
     approved" would hide the operator's whole worklist.
 
         Attributes:
-            approved_digest (None | str): The digest the operator approved, when there is one. A rejected or pending
-                capability has
-                none, and reporting the last OBSERVED digest here would read as an approval.
+            approved_digest (None | str): The digest held by the kernel, when there is one. Rejection or pending status does
+                not imply
+                that this historical or configured approval currently permits serving.
             status (str): `approved`, `rejected` or `pending`.
             tool (str): The bare tool name, as the upstream spells it.
     """

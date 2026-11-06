@@ -14,25 +14,25 @@ class UsageWindow:
     """A metering window: `[start, end)` epoch seconds.
 
     Attributes:
-        end (int):
         start (int):
+        end (int):
     """
 
-    end: int
     start: int
+    end: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        end = self.end
-
         start = self.start
+
+        end = self.end
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "end": end,
                 "start": start,
+                "end": end,
             }
         )
 
@@ -41,13 +41,13 @@ class UsageWindow:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        end = d.pop("end")
-
         start = d.pop("start")
 
+        end = d.pop("end")
+
         usage_window = cls(
-            end=end,
             start=start,
+            end=end,
         )
 
         usage_window.additional_properties = d

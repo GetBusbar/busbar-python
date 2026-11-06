@@ -4,10 +4,9 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
-from ...models.named_def_view import NamedDefView
+from ...models.mutated_def_view import MutatedDefView
 from ...types import Response
 
 
@@ -25,11 +24,16 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | NamedDefView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | MutatedDefView:
     if response.status_code == 200:
-        response_200 = NamedDefView.from_dict(response.json())
+        response_200 = MutatedDefView.from_dict(response.json())
 
         return response_200
+
+    if response.status_code == 400:
+        response_400 = Error.from_dict(response.json())
+
+        return response_400
 
     if response.status_code == 401:
         response_401 = Error.from_dict(response.json())
@@ -46,6 +50,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_404
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 500:
         response_500 = Error.from_dict(response.json())
 
@@ -56,15 +65,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Error | NamedDefView]:
+) -> Response[Error | MutatedDefView]:
     return Response(
         status_code=HTTPStatus(response.status_code)
         if response.status_code in HTTPStatus._value2member_map_
@@ -79,7 +87,7 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-) -> Response[Error | NamedDefView]:
+) -> Response[Error | MutatedDefView]:
     """One `export:` definition
 
     Args:
@@ -90,7 +98,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | NamedDefView]
+        Response[Error | MutatedDefView]
     """
 
     kwargs = _get_kwargs(
@@ -108,7 +116,7 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient,
-) -> Error | NamedDefView | None:
+) -> Error | MutatedDefView | None:
     """One `export:` definition
 
     Args:
@@ -119,7 +127,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | NamedDefView
+        Error | MutatedDefView
     """
 
     return sync_detailed(
@@ -132,7 +140,7 @@ async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-) -> Response[Error | NamedDefView]:
+) -> Response[Error | MutatedDefView]:
     """One `export:` definition
 
     Args:
@@ -143,7 +151,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | NamedDefView]
+        Response[Error | MutatedDefView]
     """
 
     kwargs = _get_kwargs(
@@ -159,7 +167,7 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient,
-) -> Error | NamedDefView | None:
+) -> Error | MutatedDefView | None:
     """One `export:` definition
 
     Args:
@@ -170,7 +178,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | NamedDefView
+        Error | MutatedDefView
     """
 
     return (

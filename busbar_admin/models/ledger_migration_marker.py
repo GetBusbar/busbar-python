@@ -14,50 +14,50 @@ class LedgerMigrationMarker:
     """The marker the first boot after the upgrade sealed.
 
     Attributes:
-        balances (int): How many balances the opening carries.
-        body_hash (str): A 32-byte digest as 64 lower-case hex characters.
-        cells_read (int): How many of the previous release's cells were read to arrive at them.
         checkpoint_seq (int): The checkpoint the migration sealed.
         node (int): Which node sealed it.
-        rate_card_version (int): Which card version the opening entries were priced under.
         sealed_at (int): When, in whole seconds.
+        body_hash (str): A 32-byte digest as 64 lower-case hex characters.
+        balances (int): How many balances the opening carries.
+        cells_read (int): How many of the previous release's cells were read to arrive at them.
+        rate_card_version (int): Which card version the opening entries were priced under.
     """
 
-    balances: int
-    body_hash: str
-    cells_read: int
     checkpoint_seq: int
     node: int
-    rate_card_version: int
     sealed_at: int
+    body_hash: str
+    balances: int
+    cells_read: int
+    rate_card_version: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        balances = self.balances
-
-        body_hash = self.body_hash
-
-        cells_read = self.cells_read
-
         checkpoint_seq = self.checkpoint_seq
 
         node = self.node
 
-        rate_card_version = self.rate_card_version
-
         sealed_at = self.sealed_at
+
+        body_hash = self.body_hash
+
+        balances = self.balances
+
+        cells_read = self.cells_read
+
+        rate_card_version = self.rate_card_version
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "balances": balances,
-                "body_hash": body_hash,
-                "cells_read": cells_read,
                 "checkpoint_seq": checkpoint_seq,
                 "node": node,
-                "rate_card_version": rate_card_version,
                 "sealed_at": sealed_at,
+                "body_hash": body_hash,
+                "balances": balances,
+                "cells_read": cells_read,
+                "rate_card_version": rate_card_version,
             }
         )
 
@@ -66,28 +66,28 @@ class LedgerMigrationMarker:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        balances = d.pop("balances")
-
-        body_hash = d.pop("body_hash")
-
-        cells_read = d.pop("cells_read")
-
         checkpoint_seq = d.pop("checkpoint_seq")
 
         node = d.pop("node")
 
-        rate_card_version = d.pop("rate_card_version")
-
         sealed_at = d.pop("sealed_at")
 
+        body_hash = d.pop("body_hash")
+
+        balances = d.pop("balances")
+
+        cells_read = d.pop("cells_read")
+
+        rate_card_version = d.pop("rate_card_version")
+
         ledger_migration_marker = cls(
-            balances=balances,
-            body_hash=body_hash,
-            cells_read=cells_read,
             checkpoint_seq=checkpoint_seq,
             node=node,
-            rate_card_version=rate_card_version,
             sealed_at=sealed_at,
+            body_hash=body_hash,
+            balances=balances,
+            cells_read=cells_read,
+            rate_card_version=rate_card_version,
         )
 
         ledger_migration_marker.additional_properties = d

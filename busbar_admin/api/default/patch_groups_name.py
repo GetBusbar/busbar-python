@@ -4,7 +4,6 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.group_view import GroupView
@@ -37,7 +36,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | GroupView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | GroupView:
     if response.status_code == 200:
         response_200 = GroupView.from_dict(response.json())
 
@@ -68,6 +67,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -83,10 +87,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | GroupView]:
@@ -112,8 +115,10 @@ def sync_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (PatchGroupsNameBody): A partial update: only the fields present are changed.
-            `limits` and `child_default` REPLACE their whole value when present.
+        body (PatchGroupsNameBody): Omitted and null legacy fields preserve their current value.
+            Non-null limits and child_default replace the entire value. clear explicitly removes
+            parent or child_default; do not also set that field. An empty child_default is a present
+            empty template, not removal.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -148,8 +153,10 @@ def sync(
     Args:
         name (str):
         if_match (str | Unset):
-        body (PatchGroupsNameBody): A partial update: only the fields present are changed.
-            `limits` and `child_default` REPLACE their whole value when present.
+        body (PatchGroupsNameBody): Omitted and null legacy fields preserve their current value.
+            Non-null limits and child_default replace the entire value. clear explicitly removes
+            parent or child_default; do not also set that field. An empty child_default is a present
+            empty template, not removal.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -179,8 +186,10 @@ async def asyncio_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (PatchGroupsNameBody): A partial update: only the fields present are changed.
-            `limits` and `child_default` REPLACE their whole value when present.
+        body (PatchGroupsNameBody): Omitted and null legacy fields preserve their current value.
+            Non-null limits and child_default replace the entire value. clear explicitly removes
+            parent or child_default; do not also set that field. An empty child_default is a present
+            empty template, not removal.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -213,8 +222,10 @@ async def asyncio(
     Args:
         name (str):
         if_match (str | Unset):
-        body (PatchGroupsNameBody): A partial update: only the fields present are changed.
-            `limits` and `child_default` REPLACE their whole value when present.
+        body (PatchGroupsNameBody): Omitted and null legacy fields preserve their current value.
+            Non-null limits and child_default replace the entire value. clear explicitly removes
+            parent or child_default; do not also set that field. An empty child_default is a present
+            empty template, not removal.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

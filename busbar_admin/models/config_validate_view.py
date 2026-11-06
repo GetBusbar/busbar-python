@@ -19,25 +19,25 @@ class ConfigValidateView:
     cross-reference resolution, not runtime secret presence.
 
         Attributes:
-            errors (list[str]):
             ok (bool):
+            errors (list[str]):
     """
 
-    errors: list[str]
     ok: bool
+    errors: list[str]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        errors = self.errors
-
         ok = self.ok
+
+        errors = self.errors
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "errors": errors,
                 "ok": ok,
+                "errors": errors,
             }
         )
 
@@ -46,13 +46,13 @@ class ConfigValidateView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        errors = cast(list[str], d.pop("errors"))
-
         ok = d.pop("ok")
 
+        errors = cast(list[str], d.pop("errors"))
+
         config_validate_view = cls(
-            errors=errors,
             ok=ok,
+            errors=errors,
         )
 
         config_validate_view.additional_properties = d

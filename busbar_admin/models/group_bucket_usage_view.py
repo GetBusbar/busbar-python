@@ -16,60 +16,48 @@ class GroupBucketUsageView:
     """One `(window, pool?)` enforcement bucket's usage vs caps inside a [`GroupUsageView`].
 
     Attributes:
-        requests (int): Requests admitted this window (the requests-limit truth: failures are not refunded).
-        spend_cents (int): Spend derived at read time (tokens x current rate card), abstract cents.
-        tokens (int): Total tokens ledgered this window (all tiers).
         window (str): The accounting window: `minute` | `hour` | `day` | `month` | `total`.
-        budget_cap (int | None | Unset):
-        budget_remaining_cents (int | None | Unset): Cents left under `budget_cap` (floored at 0); absent when no budget
-            cap is set.
+        requests (int): Requests admitted this window (the requests-limit truth: failures are not refunded).
+        tokens (float): Total tokens ledgered this window (all tiers).
+        spend_cents (int): Spend derived at read time (tokens x current rate card), abstract cents.
         pool (None | str | Unset): The pool scope for a pool-qualified bucket; absent for a group-wide bucket.
         requests_cap (int | None | Unset): The bucket's caps, when configured (absent = uncapped on that metric).
-        tokens_cache_read_cap (int | None | Unset):
-        tokens_cache_write_cap (int | None | Unset):
         tokens_cap (int | None | Unset):
         tokens_input_cap (int | None | Unset): Per-tier token caps mirroring the cost tiers, when configured (absent =
             uncapped on that
             tier): `tokens_input` = uncached input, `tokens_output` = output, `tokens_cache_read`,
             `tokens_cache_write` = cache creation.
         tokens_output_cap (int | None | Unset):
+        tokens_cache_read_cap (int | None | Unset):
+        tokens_cache_write_cap (int | None | Unset):
+        budget_cap (int | None | Unset):
+        budget_remaining_cents (int | None | Unset): Cents left under `budget_cap` (floored at 0); absent when no budget
+            cap is set.
     """
 
-    requests: int
-    spend_cents: int
-    tokens: int
     window: str
-    budget_cap: int | None | Unset = UNSET
-    budget_remaining_cents: int | None | Unset = UNSET
+    requests: int
+    tokens: float
+    spend_cents: int
     pool: None | str | Unset = UNSET
     requests_cap: int | None | Unset = UNSET
-    tokens_cache_read_cap: int | None | Unset = UNSET
-    tokens_cache_write_cap: int | None | Unset = UNSET
     tokens_cap: int | None | Unset = UNSET
     tokens_input_cap: int | None | Unset = UNSET
     tokens_output_cap: int | None | Unset = UNSET
+    tokens_cache_read_cap: int | None | Unset = UNSET
+    tokens_cache_write_cap: int | None | Unset = UNSET
+    budget_cap: int | None | Unset = UNSET
+    budget_remaining_cents: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        requests = self.requests
+        window = self.window
 
-        spend_cents = self.spend_cents
+        requests = self.requests
 
         tokens = self.tokens
 
-        window = self.window
-
-        budget_cap: int | None | Unset
-        if isinstance(self.budget_cap, Unset):
-            budget_cap = UNSET
-        else:
-            budget_cap = self.budget_cap
-
-        budget_remaining_cents: int | None | Unset
-        if isinstance(self.budget_remaining_cents, Unset):
-            budget_remaining_cents = UNSET
-        else:
-            budget_remaining_cents = self.budget_remaining_cents
+        spend_cents = self.spend_cents
 
         pool: None | str | Unset
         if isinstance(self.pool, Unset):
@@ -82,18 +70,6 @@ class GroupBucketUsageView:
             requests_cap = UNSET
         else:
             requests_cap = self.requests_cap
-
-        tokens_cache_read_cap: int | None | Unset
-        if isinstance(self.tokens_cache_read_cap, Unset):
-            tokens_cache_read_cap = UNSET
-        else:
-            tokens_cache_read_cap = self.tokens_cache_read_cap
-
-        tokens_cache_write_cap: int | None | Unset
-        if isinstance(self.tokens_cache_write_cap, Unset):
-            tokens_cache_write_cap = UNSET
-        else:
-            tokens_cache_write_cap = self.tokens_cache_write_cap
 
         tokens_cap: int | None | Unset
         if isinstance(self.tokens_cap, Unset):
@@ -113,65 +89,71 @@ class GroupBucketUsageView:
         else:
             tokens_output_cap = self.tokens_output_cap
 
+        tokens_cache_read_cap: int | None | Unset
+        if isinstance(self.tokens_cache_read_cap, Unset):
+            tokens_cache_read_cap = UNSET
+        else:
+            tokens_cache_read_cap = self.tokens_cache_read_cap
+
+        tokens_cache_write_cap: int | None | Unset
+        if isinstance(self.tokens_cache_write_cap, Unset):
+            tokens_cache_write_cap = UNSET
+        else:
+            tokens_cache_write_cap = self.tokens_cache_write_cap
+
+        budget_cap: int | None | Unset
+        if isinstance(self.budget_cap, Unset):
+            budget_cap = UNSET
+        else:
+            budget_cap = self.budget_cap
+
+        budget_remaining_cents: int | None | Unset
+        if isinstance(self.budget_remaining_cents, Unset):
+            budget_remaining_cents = UNSET
+        else:
+            budget_remaining_cents = self.budget_remaining_cents
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "requests": requests,
-                "spend_cents": spend_cents,
-                "tokens": tokens,
                 "window": window,
+                "requests": requests,
+                "tokens": tokens,
+                "spend_cents": spend_cents,
             }
         )
-        if budget_cap is not UNSET:
-            field_dict["budget_cap"] = budget_cap
-        if budget_remaining_cents is not UNSET:
-            field_dict["budget_remaining_cents"] = budget_remaining_cents
         if pool is not UNSET:
             field_dict["pool"] = pool
         if requests_cap is not UNSET:
             field_dict["requests_cap"] = requests_cap
-        if tokens_cache_read_cap is not UNSET:
-            field_dict["tokens_cache_read_cap"] = tokens_cache_read_cap
-        if tokens_cache_write_cap is not UNSET:
-            field_dict["tokens_cache_write_cap"] = tokens_cache_write_cap
         if tokens_cap is not UNSET:
             field_dict["tokens_cap"] = tokens_cap
         if tokens_input_cap is not UNSET:
             field_dict["tokens_input_cap"] = tokens_input_cap
         if tokens_output_cap is not UNSET:
             field_dict["tokens_output_cap"] = tokens_output_cap
+        if tokens_cache_read_cap is not UNSET:
+            field_dict["tokens_cache_read_cap"] = tokens_cache_read_cap
+        if tokens_cache_write_cap is not UNSET:
+            field_dict["tokens_cache_write_cap"] = tokens_cache_write_cap
+        if budget_cap is not UNSET:
+            field_dict["budget_cap"] = budget_cap
+        if budget_remaining_cents is not UNSET:
+            field_dict["budget_remaining_cents"] = budget_remaining_cents
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        requests = d.pop("requests")
+        window = d.pop("window")
 
-        spend_cents = d.pop("spend_cents")
+        requests = d.pop("requests")
 
         tokens = d.pop("tokens")
 
-        window = d.pop("window")
-
-        def _parse_budget_cap(data: object) -> int | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
-
-        budget_cap = _parse_budget_cap(d.pop("budget_cap", UNSET))
-
-        def _parse_budget_remaining_cents(data: object) -> int | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
-
-        budget_remaining_cents = _parse_budget_remaining_cents(d.pop("budget_remaining_cents", UNSET))
+        spend_cents = d.pop("spend_cents")
 
         def _parse_pool(data: object) -> None | str | Unset:
             if data is None:
@@ -190,24 +172,6 @@ class GroupBucketUsageView:
             return cast(int | None | Unset, data)
 
         requests_cap = _parse_requests_cap(d.pop("requests_cap", UNSET))
-
-        def _parse_tokens_cache_read_cap(data: object) -> int | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
-
-        tokens_cache_read_cap = _parse_tokens_cache_read_cap(d.pop("tokens_cache_read_cap", UNSET))
-
-        def _parse_tokens_cache_write_cap(data: object) -> int | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
-
-        tokens_cache_write_cap = _parse_tokens_cache_write_cap(d.pop("tokens_cache_write_cap", UNSET))
 
         def _parse_tokens_cap(data: object) -> int | None | Unset:
             if data is None:
@@ -236,20 +200,56 @@ class GroupBucketUsageView:
 
         tokens_output_cap = _parse_tokens_output_cap(d.pop("tokens_output_cap", UNSET))
 
+        def _parse_tokens_cache_read_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_cache_read_cap = _parse_tokens_cache_read_cap(d.pop("tokens_cache_read_cap", UNSET))
+
+        def _parse_tokens_cache_write_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        tokens_cache_write_cap = _parse_tokens_cache_write_cap(d.pop("tokens_cache_write_cap", UNSET))
+
+        def _parse_budget_cap(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        budget_cap = _parse_budget_cap(d.pop("budget_cap", UNSET))
+
+        def _parse_budget_remaining_cents(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        budget_remaining_cents = _parse_budget_remaining_cents(d.pop("budget_remaining_cents", UNSET))
+
         group_bucket_usage_view = cls(
-            requests=requests,
-            spend_cents=spend_cents,
-            tokens=tokens,
             window=window,
-            budget_cap=budget_cap,
-            budget_remaining_cents=budget_remaining_cents,
+            requests=requests,
+            tokens=tokens,
+            spend_cents=spend_cents,
             pool=pool,
             requests_cap=requests_cap,
-            tokens_cache_read_cap=tokens_cache_read_cap,
-            tokens_cache_write_cap=tokens_cache_write_cap,
             tokens_cap=tokens_cap,
             tokens_input_cap=tokens_input_cap,
             tokens_output_cap=tokens_output_cap,
+            tokens_cache_read_cap=tokens_cache_read_cap,
+            tokens_cache_write_cap=tokens_cache_write_cap,
+            budget_cap=budget_cap,
+            budget_remaining_cents=budget_remaining_cents,
         )
 
         group_bucket_usage_view.additional_properties = d

@@ -20,25 +20,25 @@ class LedgerReconciliation:
     release's rows, and every row on which they do not.
 
         Attributes:
-            discrepancies (list[LedgerDiscrepancy]):
             holds (bool): True when every row reconciles. `discrepancies` and `refused` are then empty.
+            discrepancies (list[LedgerDiscrepancy]):
             refused (list[LedgerRefusedBalance]): Every balance whose counts a present rate card refused to price: its row
                 is withheld from
                 both sides of the identity, which was not measured over it. Empty is the good answer.
     """
 
-    discrepancies: list[LedgerDiscrepancy]
     holds: bool
+    discrepancies: list[LedgerDiscrepancy]
     refused: list[LedgerRefusedBalance]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        holds = self.holds
+
         discrepancies = []
         for discrepancies_item_data in self.discrepancies:
             discrepancies_item = discrepancies_item_data.to_dict()
             discrepancies.append(discrepancies_item)
-
-        holds = self.holds
 
         refused = []
         for refused_item_data in self.refused:
@@ -49,8 +49,8 @@ class LedgerReconciliation:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "discrepancies": discrepancies,
                 "holds": holds,
+                "discrepancies": discrepancies,
                 "refused": refused,
             }
         )
@@ -63,14 +63,14 @@ class LedgerReconciliation:
         from ..models.ledger_refused_balance import LedgerRefusedBalance  # noqa: PLC0415
 
         d = dict(src_dict)
+        holds = d.pop("holds")
+
         discrepancies = []
         _discrepancies = d.pop("discrepancies")
         for discrepancies_item_data in _discrepancies:
             discrepancies_item = LedgerDiscrepancy.from_dict(discrepancies_item_data)
 
             discrepancies.append(discrepancies_item)
-
-        holds = d.pop("holds")
 
         refused = []
         _refused = d.pop("refused")
@@ -80,8 +80,8 @@ class LedgerReconciliation:
             refused.append(refused_item)
 
         ledger_reconciliation = cls(
-            discrepancies=discrepancies,
             holds=holds,
+            discrepancies=discrepancies,
             refused=refused,
         )
 

@@ -22,40 +22,40 @@ class GroupUsageView:
     tool consumes this per group (`user:<sub>` leaf = one person's view) and re-scopes it.
 
         Attributes:
-            as_of (int): Epoch seconds the read was taken at (the windows below are current AS OF this instant).
+            group (str): The group name (echoed from the path).
+            enabled (bool): `false` = the group is FROZEN (`enabled: false`): every request through it rejects.
             buckets (list[GroupBucketUsageView]): One row per enforcement bucket, in the group's resolved bucket order.
                 Empty for a group
                 with only a `concurrent` limit (or none); there is no windowed ledger to read.
-            enabled (bool): `false` = the group is FROZEN (`enabled: false`): every request through it rejects.
-            group (str): The group name (echoed from the path).
+            as_of (int): Epoch seconds the read was taken at (the windows below are current AS OF this instant).
     """
 
-    as_of: int
-    buckets: list[GroupBucketUsageView]
-    enabled: bool
     group: str
+    enabled: bool
+    buckets: list[GroupBucketUsageView]
+    as_of: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        as_of = self.as_of
+        group = self.group
+
+        enabled = self.enabled
 
         buckets = []
         for buckets_item_data in self.buckets:
             buckets_item = buckets_item_data.to_dict()
             buckets.append(buckets_item)
 
-        enabled = self.enabled
-
-        group = self.group
+        as_of = self.as_of
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "as_of": as_of,
-                "buckets": buckets,
-                "enabled": enabled,
                 "group": group,
+                "enabled": enabled,
+                "buckets": buckets,
+                "as_of": as_of,
             }
         )
 
@@ -66,7 +66,9 @@ class GroupUsageView:
         from ..models.group_bucket_usage_view import GroupBucketUsageView  # noqa: PLC0415
 
         d = dict(src_dict)
-        as_of = d.pop("as_of")
+        group = d.pop("group")
+
+        enabled = d.pop("enabled")
 
         buckets = []
         _buckets = d.pop("buckets")
@@ -75,15 +77,13 @@ class GroupUsageView:
 
             buckets.append(buckets_item)
 
-        enabled = d.pop("enabled")
-
-        group = d.pop("group")
+        as_of = d.pop("as_of")
 
         group_usage_view = cls(
-            as_of=as_of,
-            buckets=buckets,
-            enabled=enabled,
             group=group,
+            enabled=enabled,
+            buckets=buckets,
+            as_of=as_of,
         )
 
         group_usage_view.additional_properties = d

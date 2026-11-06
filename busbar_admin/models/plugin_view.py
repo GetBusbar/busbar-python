@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.plugin_configuration import PluginConfiguration
+
 
 T = TypeVar("T", bound="PluginView")
 
@@ -23,50 +27,33 @@ class PluginView:
     summarized here (compiled-in ranking policies). Additive-only.
 
         Attributes:
+            name (str):
+            type_ (str): Plugin kind: `auth`, `hooks`/`hook`, `store`, `secret`, `export`, `plane`, or `transport`.
+            loader (str): `"compiled-in"` or `"plugin"` (a dlopen'd dynamic-library plugin: auth, hook, and store
+                kinds alike as of 1.5.0's signed plugin ABI).
             active (bool | None): Whether the plugin is currently active, where tracked; `None` when activation is not
                 summarized
                 at this level.
-            has_schema (bool): `true` iff `GET /plugins/{file}/schema` would resolve this row's `file` to a manifest that
-                declares `settings_schema` at all, i.e. iff `schema_url` below is non-null, so a plugin
-                catalog can render which rows are configurable in one list call instead of a fetch per row.
-                Mirrors `schema_url.is_some()`; kept as its own boolean rather than requiring the
-                caller to null-check `schema_url` for the same fact. `false` for compiled-in/external rows
-                (no manifest to carry a schema) and for a dynamic-library row whose manifest never set
-                `settings_schema`. Additive.
-            loader (str): `"compiled-in"` or `"plugin"` (a dlopen'd dynamic-library plugin: auth, hook, and store
-                kinds alike as of 1.5.0's signed plugin ABI).
-            name (str):
             target (None | str): For a dynamic-library plugin, its NAME (not a socket path or URL, the retired 1.4.x
                 transport target). `None` for compiled-in.
-            type_ (str): `"auth"`, `"hooks"`, or `"store"`: the plugin TYPE (each a distinct engine contract).
-            error (None | str | Unset): Why a dynamic-library plugin did not validate (`valid: false`): a short, secret-free
-                reason.
+            has_schema (bool): Whether the plugin publishes a schema at `schema_url`. The canonical Statement schema
+                takes precedence over the legacy manifest field. Linked plugins can publish schemas too.
+                Malformed legacy schema text reports `schema_error`; an unreadable installed archive
+                instead reports unavailable and cannot publish a verifiable URL.
             file (None | str | Unset): The artifact FILENAME in `plugins.dir`: the `{file}` path segment `DELETE
                 /plugins/{file}` and `GET /plugins/{file}/schema` key off (a list row previously
                 carried no field a client could feed straight back into either sibling endpoint; `target`
                 is documented as the manifest NAME, not necessarily the on-disk filename, and is not a
                 reliable substitute). `None` for compiled-in/external rows, which have no backing artifact
                 to name. Additive; existing consumers reading only the pre-1.5.1 fields are unaffected.
+            archive_sha256 (None | str | Unset): SHA-256 of the complete on-disk archive bytes, not the library inside it.
+                Absent for rows without a readable backing archive. Use as an optional mutation preimage.
+            version (None | str | Unset): The registered plugin version, or the signed manifest version for a dropped-in
+                artifact.
+            publisher (None | str | Unset): The manifest's declared publisher (dynamic-library plugins with a manifest).
             interface_version (int | None | Unset): The store C-ABI (`interface_version`) the manifest declares (dynamic-
                 library plugins with a
                 manifest). Operator-facing name for the "ABI" the engine speaks.
-            publisher (None | str | Unset): The manifest's declared publisher (dynamic-library plugins with a manifest).
-            schema_error (None | str | Unset): A manifest that SET `settings_schema` but whose value fails to parse (carried
-                onto the
-                list row too), distinct from a manifest that never set the
-                field at all (`schema_url: null`, this field also `None`). `schema_url` stays non-null in
-                this case; the operator sees the row is degraded from the list alone, before ever following
-                the URL.
-            schema_url (None | str | Unset): Server-resolved path to this plugin's `GET /plugins/{name}/schema` endpoint:
-                ALWAYS a
-                relative path under the admin origin
-                (the client MUST reject an absolute/cross-origin value rather than fetch it; this endpoint
-                only ever emits the admin-prefixed relative form, never anything else). Non-null whenever the
-                manifest declared a `settings_schema` AT ALL, even if it's unparseable (following it then
-                surfaces `schema_error`: a present-but-corrupt schema is a worse, distinct
-                condition from "no schema declared", never folded into the same `null`).
-                `null` for a compiled-in/external row (no manifest to carry a schema at all) and for any
-                dynamic-library row whose manifest never set `settings_schema`.
             trust (None | str | Unset): The server-side trust verdict for a dynamic-library plugin, re-evaluated against the
                 running
                 `plugins.trust` posture: `"trusted"` (signed by an allowlisted publisher), `"unverified"`
@@ -75,48 +62,58 @@ class PluginView:
             valid (bool | None | Unset): For a dynamic-library plugin: whether the library validated as a busbar store
                 plugin the engine
                 can load (ABI handshake). `None` for compiled-in/external.
-            version (None | str | Unset): The plugin's semantic version, from its signed sidecar manifest (dynamic-library
-                plugins only).
-                `None` for compiled-in/external, or a dynamic plugin with no/invalid manifest.
+            error (None | str | Unset): Why a dynamic-library plugin did not validate (`valid: false`): a short, secret-free
+                reason.
+            schema_url (None | str | Unset): Relative schema URL under the admin origin. Artifact URLs include
+                source=installed_archive
+                and expected_archive_sha256 to inspect the exact disk bytes, not an older loaded generation.
+                A malformed legacy schema keeps a URL and reports schema_error. Absent when no schema
+                is published, or the archive cannot be read within the admission cap (an unavailable error).
+                Linked rows use their registered name and do not need a backing file. Cached linked
+                plane/transport URLs specify source=linked_statement to avoid archive/name shadowing.
+            configuration (None | PluginConfiguration | Unset): Configuration ownership and declaration availability; no
+                plugin settings values.
+            schema_error (None | str | Unset): A malformed legacy schema, or an unavailable installed-archive schema.
+                Distinct from
+                an absent schema. Malformed legacy schema text keeps its URL; an unreadable archive
+                omits the URL because the engine cannot bind a schema lookup to its bytes.
     """
 
-    active: bool | None
-    has_schema: bool
-    loader: str
     name: str
-    target: None | str
     type_: str
-    error: None | str | Unset = UNSET
+    loader: str
+    active: bool | None
+    target: None | str
+    has_schema: bool
     file: None | str | Unset = UNSET
-    interface_version: int | None | Unset = UNSET
+    archive_sha256: None | str | Unset = UNSET
+    version: None | str | Unset = UNSET
     publisher: None | str | Unset = UNSET
-    schema_error: None | str | Unset = UNSET
-    schema_url: None | str | Unset = UNSET
+    interface_version: int | None | Unset = UNSET
     trust: None | str | Unset = UNSET
     valid: bool | None | Unset = UNSET
-    version: None | str | Unset = UNSET
+    error: None | str | Unset = UNSET
+    schema_url: None | str | Unset = UNSET
+    configuration: None | PluginConfiguration | Unset = UNSET
+    schema_error: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        active: bool | None
-        active = self.active
+        from ..models.plugin_configuration import PluginConfiguration  # noqa: PLC0415
 
-        has_schema = self.has_schema
+        name = self.name
+
+        type_ = self.type_
 
         loader = self.loader
 
-        name = self.name
+        active: bool | None
+        active = self.active
 
         target: None | str
         target = self.target
 
-        type_ = self.type_
-
-        error: None | str | Unset
-        if isinstance(self.error, Unset):
-            error = UNSET
-        else:
-            error = self.error
+        has_schema = self.has_schema
 
         file: None | str | Unset
         if isinstance(self.file, Unset):
@@ -124,11 +121,17 @@ class PluginView:
         else:
             file = self.file
 
-        interface_version: int | None | Unset
-        if isinstance(self.interface_version, Unset):
-            interface_version = UNSET
+        archive_sha256: None | str | Unset
+        if isinstance(self.archive_sha256, Unset):
+            archive_sha256 = UNSET
         else:
-            interface_version = self.interface_version
+            archive_sha256 = self.archive_sha256
+
+        version: None | str | Unset
+        if isinstance(self.version, Unset):
+            version = UNSET
+        else:
+            version = self.version
 
         publisher: None | str | Unset
         if isinstance(self.publisher, Unset):
@@ -136,17 +139,11 @@ class PluginView:
         else:
             publisher = self.publisher
 
-        schema_error: None | str | Unset
-        if isinstance(self.schema_error, Unset):
-            schema_error = UNSET
+        interface_version: int | None | Unset
+        if isinstance(self.interface_version, Unset):
+            interface_version = UNSET
         else:
-            schema_error = self.schema_error
-
-        schema_url: None | str | Unset
-        if isinstance(self.schema_url, Unset):
-            schema_url = UNSET
-        else:
-            schema_url = self.schema_url
+            interface_version = self.interface_version
 
         trust: None | str | Unset
         if isinstance(self.trust, Unset):
@@ -160,48 +157,79 @@ class PluginView:
         else:
             valid = self.valid
 
-        version: None | str | Unset
-        if isinstance(self.version, Unset):
-            version = UNSET
+        error: None | str | Unset
+        if isinstance(self.error, Unset):
+            error = UNSET
         else:
-            version = self.version
+            error = self.error
+
+        schema_url: None | str | Unset
+        if isinstance(self.schema_url, Unset):
+            schema_url = UNSET
+        else:
+            schema_url = self.schema_url
+
+        configuration: dict[str, Any] | None | Unset
+        if isinstance(self.configuration, Unset):
+            configuration = UNSET
+        elif isinstance(self.configuration, PluginConfiguration):
+            configuration = self.configuration.to_dict()
+        else:
+            configuration = self.configuration
+
+        schema_error: None | str | Unset
+        if isinstance(self.schema_error, Unset):
+            schema_error = UNSET
+        else:
+            schema_error = self.schema_error
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "active": active,
-                "has_schema": has_schema,
-                "loader": loader,
                 "name": name,
-                "target": target,
                 "type": type_,
+                "loader": loader,
+                "active": active,
+                "target": target,
+                "has_schema": has_schema,
             }
         )
-        if error is not UNSET:
-            field_dict["error"] = error
         if file is not UNSET:
             field_dict["file"] = file
-        if interface_version is not UNSET:
-            field_dict["interface_version"] = interface_version
+        if archive_sha256 is not UNSET:
+            field_dict["archive_sha256"] = archive_sha256
+        if version is not UNSET:
+            field_dict["version"] = version
         if publisher is not UNSET:
             field_dict["publisher"] = publisher
-        if schema_error is not UNSET:
-            field_dict["schema_error"] = schema_error
-        if schema_url is not UNSET:
-            field_dict["schema_url"] = schema_url
+        if interface_version is not UNSET:
+            field_dict["interface_version"] = interface_version
         if trust is not UNSET:
             field_dict["trust"] = trust
         if valid is not UNSET:
             field_dict["valid"] = valid
-        if version is not UNSET:
-            field_dict["version"] = version
+        if error is not UNSET:
+            field_dict["error"] = error
+        if schema_url is not UNSET:
+            field_dict["schema_url"] = schema_url
+        if configuration is not UNSET:
+            field_dict["configuration"] = configuration
+        if schema_error is not UNSET:
+            field_dict["schema_error"] = schema_error
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.plugin_configuration import PluginConfiguration  # noqa: PLC0415
+
         d = dict(src_dict)
+        name = d.pop("name")
+
+        type_ = d.pop("type")
+
+        loader = d.pop("loader")
 
         def _parse_active(data: object) -> bool | None:
             if data is None:
@@ -210,12 +238,6 @@ class PluginView:
 
         active = _parse_active(d.pop("active"))
 
-        has_schema = d.pop("has_schema")
-
-        loader = d.pop("loader")
-
-        name = d.pop("name")
-
         def _parse_target(data: object) -> None | str:
             if data is None:
                 return data
@@ -223,16 +245,7 @@ class PluginView:
 
         target = _parse_target(d.pop("target"))
 
-        type_ = d.pop("type")
-
-        def _parse_error(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        error = _parse_error(d.pop("error", UNSET))
+        has_schema = d.pop("has_schema")
 
         def _parse_file(data: object) -> None | str | Unset:
             if data is None:
@@ -243,14 +256,23 @@ class PluginView:
 
         file = _parse_file(d.pop("file", UNSET))
 
-        def _parse_interface_version(data: object) -> int | None | Unset:
+        def _parse_archive_sha256(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            return cast(int | None | Unset, data)
+            return cast(None | str | Unset, data)
 
-        interface_version = _parse_interface_version(d.pop("interface_version", UNSET))
+        archive_sha256 = _parse_archive_sha256(d.pop("archive_sha256", UNSET))
+
+        def _parse_version(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        version = _parse_version(d.pop("version", UNSET))
 
         def _parse_publisher(data: object) -> None | str | Unset:
             if data is None:
@@ -261,23 +283,14 @@ class PluginView:
 
         publisher = _parse_publisher(d.pop("publisher", UNSET))
 
-        def _parse_schema_error(data: object) -> None | str | Unset:
+        def _parse_interface_version(data: object) -> int | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
-            return cast(None | str | Unset, data)
+            return cast(int | None | Unset, data)
 
-        schema_error = _parse_schema_error(d.pop("schema_error", UNSET))
-
-        def _parse_schema_url(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        schema_url = _parse_schema_url(d.pop("schema_url", UNSET))
+        interface_version = _parse_interface_version(d.pop("interface_version", UNSET))
 
         def _parse_trust(data: object) -> None | str | Unset:
             if data is None:
@@ -297,31 +310,68 @@ class PluginView:
 
         valid = _parse_valid(d.pop("valid", UNSET))
 
-        def _parse_version(data: object) -> None | str | Unset:
+        def _parse_error(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(None | str | Unset, data)
 
-        version = _parse_version(d.pop("version", UNSET))
+        error = _parse_error(d.pop("error", UNSET))
+
+        def _parse_schema_url(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        schema_url = _parse_schema_url(d.pop("schema_url", UNSET))
+
+        def _parse_configuration(data: object) -> None | PluginConfiguration | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                configuration_type_0 = PluginConfiguration.from_dict(data)
+
+                return configuration_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            raise ValueError("Invalid value for configuration")
+
+        configuration = _parse_configuration(d.pop("configuration", UNSET))
+
+        def _parse_schema_error(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        schema_error = _parse_schema_error(d.pop("schema_error", UNSET))
 
         plugin_view = cls(
-            active=active,
-            has_schema=has_schema,
-            loader=loader,
             name=name,
-            target=target,
             type_=type_,
-            error=error,
+            loader=loader,
+            active=active,
+            target=target,
+            has_schema=has_schema,
             file=file,
-            interface_version=interface_version,
+            archive_sha256=archive_sha256,
+            version=version,
             publisher=publisher,
-            schema_error=schema_error,
-            schema_url=schema_url,
+            interface_version=interface_version,
             trust=trust,
             valid=valid,
-            version=version,
+            error=error,
+            schema_url=schema_url,
+            configuration=configuration,
+            schema_error=schema_error,
         )
 
         plugin_view.additional_properties = d

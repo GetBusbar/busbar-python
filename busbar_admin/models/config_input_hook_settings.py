@@ -6,16 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PatchGroupsNameBodyLimitsType0Item")
+T = TypeVar("T", bound="ConfigInputHookSettings")
 
 
 @_attrs_define(repr=False)
-class PatchGroupsNameBodyLimitsType0Item:
-    """A `limits:` entry. The accepted shape is the config file's own, documented in the configuration reference; it is not
-    restated here because several of its types parse a wire shape that does not match their field layout.
-
-    """
-
+class ConfigInputHookSettings:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -28,10 +23,10 @@ class PatchGroupsNameBodyLimitsType0Item:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        patch_groups_name_body_limits_type_0_item = cls()
+        config_input_hook_settings = cls()
 
-        patch_groups_name_body_limits_type_0_item.additional_properties = d
-        return patch_groups_name_body_limits_type_0_item
+        config_input_hook_settings.additional_properties = d
+        return config_input_hook_settings
 
     @property
     def additional_keys(self) -> list[str]:

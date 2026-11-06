@@ -23,27 +23,11 @@ class CreateKeyReq:
 
         Attributes:
             name (str):
-            allowed_pools (list[str] | None | Unset): Pools this key may target. OMITTED = ALL pools; an explicit `[]` = NO
-                pools.
-            audience (None | str | Unset): Optional exact resource audience for this bearer; omitted preserves ordinary key
-                tokens.
-            expires_at (int | None | Unset): Token expiry as an absolute Unix-seconds timestamp. Mutually exclusive with
-                `expires_in`.
-            expires_in (None | str | Unset): Token lifetime as a duration string (`7d`, `24h`, `30m`, `3600s`) - the token's
-                `exp` is
-                `now + expires_in`. Mutually exclusive with `expires_at`. Absent (and no `expires_at`) => a
-                sane long default (see `DEFAULT_KEY_TTL_SECS`).
             group (None | str | Unset): The `groups:` bucket this key binds to (at most one). A key with NO group is authed
                 +
                 unlimited (access only). If the named group EXISTS, the key binds to it. If it does NOT
                 exist, the mint 400s UNLESS `parent` is given, in which case it is AUTO-PROVISIONED as a leaf under
                 `parent` (self-service; see `parent`).
-            issue_aws_credential (bool | Unset): When true, ALSO issue an AWS-style access-key-id + secret access key (the
-                MinIO/S3-compatible
-                model) so a Bedrock-SDK client can authenticate via inbound SigV4. Both are returned ONCE. Default: False.
-            labels (CreateKeyReqLabels | Unset): Optional mint-time labels echoed onto this key's metric series; never
-                interpreted by
-                enforcement.
             parent (None | str | Unset): AUTO-PROVISION target: the EXISTING parent group under which to create
                 `group` as a leaf when `group` does not yet exist: the first-self-mint materialization of a
                 `user:<sub>` personal budget bucket. The new leaf's limits come from the nearest-ancestor
@@ -51,20 +35,48 @@ class CreateKeyReq:
                 validate-at-the-door path as `POST /groups`. If `group` ALREADY exists, `parent` must equal
                 its actual parent (else 409); a mint never re-homes an existing group. Ignored when `group`
                 is absent (a key with no group has nothing to provision).
+            allowed_pools (list[str] | None | Unset): Pools this key may target. OMITTED = ALL pools; an explicit `[]` = NO
+                pools.
+            labels (CreateKeyReqLabels | Unset): Optional mint-time labels echoed onto this key's metric series; never
+                interpreted by
+                enforcement.
+            expires_in (None | str | Unset): Token lifetime as a duration string (`7d`, `24h`, `30m`, `3600s`) - the token's
+                `exp` is
+                `now + expires_in`. Mutually exclusive with `expires_at`. Absent (and no `expires_at`) => a
+                sane long default (see `DEFAULT_KEY_TTL_SECS`).
+            expires_at (int | None | Unset): Token expiry as an absolute Unix-seconds timestamp. Mutually exclusive with
+                `expires_in`.
+            audience (None | str | Unset): Optional exact resource audience for this bearer; omitted preserves ordinary key
+                tokens.
+            issue_aws_credential (bool | Unset): When true, ALSO issue an AWS-style access-key-id + secret access key (the
+                MinIO/S3-compatible
+                model) so a Bedrock-SDK client can authenticate via inbound SigV4. Both are returned ONCE. Default: False.
     """
 
     name: str
-    allowed_pools: list[str] | None | Unset = UNSET
-    audience: None | str | Unset = UNSET
-    expires_at: int | None | Unset = UNSET
-    expires_in: None | str | Unset = UNSET
     group: None | str | Unset = UNSET
-    issue_aws_credential: bool | Unset = False
-    labels: CreateKeyReqLabels | Unset = UNSET
     parent: None | str | Unset = UNSET
+    allowed_pools: list[str] | None | Unset = UNSET
+    labels: CreateKeyReqLabels | Unset = UNSET
+    expires_in: None | str | Unset = UNSET
+    expires_at: int | None | Unset = UNSET
+    audience: None | str | Unset = UNSET
+    issue_aws_credential: bool | Unset = False
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
+
+        group: None | str | Unset
+        if isinstance(self.group, Unset):
+            group = UNSET
+        else:
+            group = self.group
+
+        parent: None | str | Unset
+        if isinstance(self.parent, Unset):
+            parent = UNSET
+        else:
+            parent = self.parent
 
         allowed_pools: list[str] | None | Unset
         if isinstance(self.allowed_pools, Unset):
@@ -75,17 +87,9 @@ class CreateKeyReq:
         else:
             allowed_pools = self.allowed_pools
 
-        audience: None | str | Unset
-        if isinstance(self.audience, Unset):
-            audience = UNSET
-        else:
-            audience = self.audience
-
-        expires_at: int | None | Unset
-        if isinstance(self.expires_at, Unset):
-            expires_at = UNSET
-        else:
-            expires_at = self.expires_at
+        labels: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.labels, Unset):
+            labels = self.labels.to_dict()
 
         expires_in: None | str | Unset
         if isinstance(self.expires_in, Unset):
@@ -93,23 +97,19 @@ class CreateKeyReq:
         else:
             expires_in = self.expires_in
 
-        group: None | str | Unset
-        if isinstance(self.group, Unset):
-            group = UNSET
+        expires_at: int | None | Unset
+        if isinstance(self.expires_at, Unset):
+            expires_at = UNSET
         else:
-            group = self.group
+            expires_at = self.expires_at
+
+        audience: None | str | Unset
+        if isinstance(self.audience, Unset):
+            audience = UNSET
+        else:
+            audience = self.audience
 
         issue_aws_credential = self.issue_aws_credential
-
-        labels: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.labels, Unset):
-            labels = self.labels.to_dict()
-
-        parent: None | str | Unset
-        if isinstance(self.parent, Unset):
-            parent = UNSET
-        else:
-            parent = self.parent
 
         field_dict: dict[str, Any] = {}
 
@@ -118,22 +118,22 @@ class CreateKeyReq:
                 "name": name,
             }
         )
-        if allowed_pools is not UNSET:
-            field_dict["allowed_pools"] = allowed_pools
-        if audience is not UNSET:
-            field_dict["audience"] = audience
-        if expires_at is not UNSET:
-            field_dict["expires_at"] = expires_at
-        if expires_in is not UNSET:
-            field_dict["expires_in"] = expires_in
         if group is not UNSET:
             field_dict["group"] = group
-        if issue_aws_credential is not UNSET:
-            field_dict["issue_aws_credential"] = issue_aws_credential
-        if labels is not UNSET:
-            field_dict["labels"] = labels
         if parent is not UNSET:
             field_dict["parent"] = parent
+        if allowed_pools is not UNSET:
+            field_dict["allowed_pools"] = allowed_pools
+        if labels is not UNSET:
+            field_dict["labels"] = labels
+        if expires_in is not UNSET:
+            field_dict["expires_in"] = expires_in
+        if expires_at is not UNSET:
+            field_dict["expires_at"] = expires_at
+        if audience is not UNSET:
+            field_dict["audience"] = audience
+        if issue_aws_credential is not UNSET:
+            field_dict["issue_aws_credential"] = issue_aws_credential
 
         return field_dict
 
@@ -143,6 +143,24 @@ class CreateKeyReq:
 
         d = dict(src_dict)
         name = d.pop("name")
+
+        def _parse_group(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        group = _parse_group(d.pop("group", UNSET))
+
+        def _parse_parent(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        parent = _parse_parent(d.pop("parent", UNSET))
 
         def _parse_allowed_pools(data: object) -> list[str] | None | Unset:
             if data is None:
@@ -161,23 +179,12 @@ class CreateKeyReq:
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools", UNSET))
 
-        def _parse_audience(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        audience = _parse_audience(d.pop("audience", UNSET))
-
-        def _parse_expires_at(data: object) -> int | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(int | None | Unset, data)
-
-        expires_at = _parse_expires_at(d.pop("expires_at", UNSET))
+        _labels = d.pop("labels", UNSET)
+        labels: CreateKeyReqLabels | Unset
+        if isinstance(_labels, Unset):
+            labels = UNSET
+        else:
+            labels = CreateKeyReqLabels.from_dict(_labels)
 
         def _parse_expires_in(data: object) -> None | str | Unset:
             if data is None:
@@ -188,45 +195,38 @@ class CreateKeyReq:
 
         expires_in = _parse_expires_in(d.pop("expires_in", UNSET))
 
-        def _parse_group(data: object) -> None | str | Unset:
+        def _parse_expires_at(data: object) -> int | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(int | None | Unset, data)
+
+        expires_at = _parse_expires_at(d.pop("expires_at", UNSET))
+
+        def _parse_audience(data: object) -> None | str | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
                 return data
             return cast(None | str | Unset, data)
 
-        group = _parse_group(d.pop("group", UNSET))
+        audience = _parse_audience(d.pop("audience", UNSET))
 
         issue_aws_credential = d.pop("issue_aws_credential", UNSET)
-
-        _labels = d.pop("labels", UNSET)
-        labels: CreateKeyReqLabels | Unset
-        if isinstance(_labels, Unset):
-            labels = UNSET
-        else:
-            labels = CreateKeyReqLabels.from_dict(_labels)
-
-        def _parse_parent(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        parent = _parse_parent(d.pop("parent", UNSET))
 
         if d:
             raise ValueError("Unexpected fields for CreateKeyReq")
         create_key_req = cls(
             name=name,
-            allowed_pools=allowed_pools,
-            audience=audience,
-            expires_at=expires_at,
-            expires_in=expires_in,
             group=group,
-            issue_aws_credential=issue_aws_credential,
-            labels=labels,
             parent=parent,
+            allowed_pools=allowed_pools,
+            labels=labels,
+            expires_in=expires_in,
+            expires_at=expires_at,
+            audience=audience,
+            issue_aws_credential=issue_aws_credential,
         )
 
         return create_key_req

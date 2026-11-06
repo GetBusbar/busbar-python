@@ -1,37 +1,58 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, Literal, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PutGroupsNameBodyConfig")
+T = TypeVar("T", bound="AdjustmentActionInFlightErrorError")
 
 
 @_attrs_define(repr=False)
-class PutGroupsNameBodyConfig:
-    """A `groups:` entry, as JSON. The accepted shape is the config file's own, documented in the configuration reference;
-    it is not restated here because several of its types parse a wire shape that does not match their field layout.
-
+class AdjustmentActionInFlightErrorError:
+    """
+    Attributes:
+        code (Literal['action_in_flight']):
+        message (str):
     """
 
+    code: Literal["action_in_flight"]
+    message: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        code = self.code
+
+        message = self.message
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "code": code,
+                "message": message,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        put_groups_name_body_config = cls()
+        code = cast(Literal["action_in_flight"], d.pop("code"))
+        if code != "action_in_flight":
+            raise ValueError(f"code must match const 'action_in_flight', got '{code}'")
 
-        put_groups_name_body_config.additional_properties = d
-        return put_groups_name_body_config
+        message = d.pop("message")
+
+        adjustment_action_in_flight_error_error = cls(
+            code=code,
+            message=message,
+        )
+
+        adjustment_action_in_flight_error_error.additional_properties = d
+        return adjustment_action_in_flight_error_error
 
     @property
     def additional_keys(self) -> list[str]:

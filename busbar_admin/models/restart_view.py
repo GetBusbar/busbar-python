@@ -14,31 +14,31 @@ class RestartView:
     """`POST /restart`: accepted-and-draining result.
 
     Attributes:
-        note (str):
         restarting (bool):
         supervisor_detected (bool): Whether a process supervisor was detected. False means the caller confirmed
             explicitly.
+        note (str):
     """
 
-    note: str
     restarting: bool
     supervisor_detected: bool
+    note: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        note = self.note
-
         restarting = self.restarting
 
         supervisor_detected = self.supervisor_detected
+
+        note = self.note
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "note": note,
                 "restarting": restarting,
                 "supervisor_detected": supervisor_detected,
+                "note": note,
             }
         )
 
@@ -47,16 +47,16 @@ class RestartView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        note = d.pop("note")
-
         restarting = d.pop("restarting")
 
         supervisor_detected = d.pop("supervisor_detected")
 
+        note = d.pop("note")
+
         restart_view = cls(
-            note=note,
             restarting=restarting,
             supervisor_detected=supervisor_detected,
+            note=note,
         )
 
         restart_view.additional_properties = d

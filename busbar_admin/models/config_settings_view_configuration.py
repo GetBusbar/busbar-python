@@ -6,11 +6,16 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PatchSettingsReqSettings")
+T = TypeVar("T", bound="ConfigSettingsViewConfiguration")
 
 
 @_attrs_define(repr=False)
-class PatchSettingsReqSettings:
+class ConfigSettingsViewConfiguration:
+    """Sanitized values captured from the installed config generation, bound to the response ETag; configured does not mean
+    physically active.
+
+    """
+
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -23,10 +28,10 @@ class PatchSettingsReqSettings:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        patch_settings_req_settings = cls()
+        config_settings_view_configuration = cls()
 
-        patch_settings_req_settings.additional_properties = d
-        return patch_settings_req_settings
+        config_settings_view_configuration.additional_properties = d
+        return config_settings_view_configuration
 
     @property
     def additional_keys(self) -> list[str]:

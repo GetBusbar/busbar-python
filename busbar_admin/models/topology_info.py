@@ -14,20 +14,20 @@ class TopologyInfo:
     """Pool/model/provider counts (`InfoView.topology`).
 
     Attributes:
-        models (int):
         pools (int):
+        models (int):
         providers (int):
     """
 
-    models: int
     pools: int
+    models: int
     providers: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        models = self.models
-
         pools = self.pools
+
+        models = self.models
 
         providers = self.providers
 
@@ -35,8 +35,8 @@ class TopologyInfo:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "models": models,
                 "pools": pools,
+                "models": models,
                 "providers": providers,
             }
         )
@@ -46,15 +46,15 @@ class TopologyInfo:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        models = d.pop("models")
-
         pools = d.pop("pools")
+
+        models = d.pop("models")
 
         providers = d.pop("providers")
 
         topology_info = cls(
-            models=models,
             pools=pools,
+            models=models,
             providers=providers,
         )
 

@@ -3,7 +3,6 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.config_version_page_view import ConfigVersionPageView
 from ...models.error import Error
@@ -33,9 +32,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ConfigVersionPageView | Error | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> ConfigVersionPageView | Error:
     if response.status_code == 200:
         response_200 = ConfigVersionPageView.from_dict(response.json())
 
@@ -56,6 +53,11 @@ def _parse_response(
 
         return response_403
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 500:
         response_500 = Error.from_dict(response.json())
 
@@ -66,10 +68,9 @@ def _parse_response(
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(

@@ -19,45 +19,45 @@ class PluginRollbackView:
     audited action lowered the floor). Additive-only; never a secret.
 
         Attributes:
-            config_version (int): The now-live config version after the hot swap (the ETag the response also carries).
-            file (str): The library FILENAME the rollback selected in the plugins directory.
             name (str): The plugin's canonical manifest name that was pinned.
-            note (str): A human note on the rollback's semantics + durability.
-            publisher (str): The manifest publisher of the pinned artifact (`busbar` = first-party).
+            file (str): The library FILENAME the rollback selected in the plugins directory.
             version (str): The version the plugin was pinned DOWN to (now serving), from the target artifact's manifest.
+            publisher (str): The manifest publisher of the pinned artifact (`busbar` = first-party).
+            config_version (int): The now-live config version after the hot swap (the ETag the response also carries).
+            note (str): A human note on the rollback's semantics + durability.
     """
 
-    config_version: int
-    file: str
     name: str
-    note: str
-    publisher: str
+    file: str
     version: str
+    publisher: str
+    config_version: int
+    note: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        config_version = self.config_version
+        name = self.name
 
         file = self.file
 
-        name = self.name
-
-        note = self.note
+        version = self.version
 
         publisher = self.publisher
 
-        version = self.version
+        config_version = self.config_version
+
+        note = self.note
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "config_version": config_version,
-                "file": file,
                 "name": name,
-                "note": note,
-                "publisher": publisher,
+                "file": file,
                 "version": version,
+                "publisher": publisher,
+                "config_version": config_version,
+                "note": note,
             }
         )
 
@@ -66,25 +66,25 @@ class PluginRollbackView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        config_version = d.pop("config_version")
+        name = d.pop("name")
 
         file = d.pop("file")
 
-        name = d.pop("name")
-
-        note = d.pop("note")
+        version = d.pop("version")
 
         publisher = d.pop("publisher")
 
-        version = d.pop("version")
+        config_version = d.pop("config_version")
+
+        note = d.pop("note")
 
         plugin_rollback_view = cls(
-            config_version=config_version,
-            file=file,
             name=name,
-            note=note,
-            publisher=publisher,
+            file=file,
             version=version,
+            publisher=publisher,
+            config_version=config_version,
+            note=note,
         )
 
         plugin_rollback_view.additional_properties = d

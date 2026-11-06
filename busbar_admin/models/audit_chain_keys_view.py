@@ -18,19 +18,23 @@ class AuditChainKeysView:
     """`GET /audit/keys`: the public keys the chain is signed with.
 
     Attributes:
-        algorithm (str):
-        keys (list[AuditChainKeyView]): Every public key this node signs records under; empty when it signs none.
         recipe (str):
         signature_domain (str):
+        algorithm (str):
+        keys (list[AuditChainKeyView]): Every public key this node signs records under; empty when it signs none.
     """
 
-    algorithm: str
-    keys: list[AuditChainKeyView]
     recipe: str
     signature_domain: str
+    algorithm: str
+    keys: list[AuditChainKeyView]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        recipe = self.recipe
+
+        signature_domain = self.signature_domain
+
         algorithm = self.algorithm
 
         keys = []
@@ -38,18 +42,14 @@ class AuditChainKeysView:
             keys_item = keys_item_data.to_dict()
             keys.append(keys_item)
 
-        recipe = self.recipe
-
-        signature_domain = self.signature_domain
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "algorithm": algorithm,
-                "keys": keys,
                 "recipe": recipe,
                 "signature_domain": signature_domain,
+                "algorithm": algorithm,
+                "keys": keys,
             }
         )
 
@@ -60,6 +60,10 @@ class AuditChainKeysView:
         from ..models.audit_chain_key_view import AuditChainKeyView  # noqa: PLC0415
 
         d = dict(src_dict)
+        recipe = d.pop("recipe")
+
+        signature_domain = d.pop("signature_domain")
+
         algorithm = d.pop("algorithm")
 
         keys = []
@@ -69,15 +73,11 @@ class AuditChainKeysView:
 
             keys.append(keys_item)
 
-        recipe = d.pop("recipe")
-
-        signature_domain = d.pop("signature_domain")
-
         audit_chain_keys_view = cls(
-            algorithm=algorithm,
-            keys=keys,
             recipe=recipe,
             signature_domain=signature_domain,
+            algorithm=algorithm,
+            keys=keys,
         )
 
         audit_chain_keys_view.additional_properties = d

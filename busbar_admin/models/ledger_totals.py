@@ -19,35 +19,35 @@ class LedgerTotals:
     """`GET /ledger/totals`: what the ledger's lines come to, per bucket, day, lane and provider.
 
     Attributes:
+        rows (list[LedgerTotalsRow]): The rows, in bucket, day, lane and provider order. A row a `refused` entry names
+            is absent.
         refused (list[LedgerRefusedBalance]): Every balance whose counts a present rate card refused to price: its row
             has no figure, so
             it is withheld from `rows` rather than served as the priced remainder. Empty is the good
             answer.
-        rows (list[LedgerTotalsRow]): The rows, in bucket, day, lane and provider order. A row a `refused` entry names
-            is absent.
     """
 
-    refused: list[LedgerRefusedBalance]
     rows: list[LedgerTotalsRow]
+    refused: list[LedgerRefusedBalance]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        refused = []
-        for refused_item_data in self.refused:
-            refused_item = refused_item_data.to_dict()
-            refused.append(refused_item)
-
         rows = []
         for rows_item_data in self.rows:
             rows_item = rows_item_data.to_dict()
             rows.append(rows_item)
 
+        refused = []
+        for refused_item_data in self.refused:
+            refused_item = refused_item_data.to_dict()
+            refused.append(refused_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "refused": refused,
                 "rows": rows,
+                "refused": refused,
             }
         )
 
@@ -59,13 +59,6 @@ class LedgerTotals:
         from ..models.ledger_totals_row import LedgerTotalsRow  # noqa: PLC0415
 
         d = dict(src_dict)
-        refused = []
-        _refused = d.pop("refused")
-        for refused_item_data in _refused:
-            refused_item = LedgerRefusedBalance.from_dict(refused_item_data)
-
-            refused.append(refused_item)
-
         rows = []
         _rows = d.pop("rows")
         for rows_item_data in _rows:
@@ -73,9 +66,16 @@ class LedgerTotals:
 
             rows.append(rows_item)
 
+        refused = []
+        _refused = d.pop("refused")
+        for refused_item_data in _refused:
+            refused_item = LedgerRefusedBalance.from_dict(refused_item_data)
+
+            refused.append(refused_item)
+
         ledger_totals = cls(
-            refused=refused,
             rows=rows,
+            refused=refused,
         )
 
         ledger_totals.additional_properties = d

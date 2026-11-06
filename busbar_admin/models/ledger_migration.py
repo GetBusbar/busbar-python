@@ -19,16 +19,18 @@ class LedgerMigration:
     `migrated` is a field of its own rather than inferred from a null marker.
 
         Attributes:
-            marker (LedgerMigrationMarker | None):
             migrated (bool):
+            marker (LedgerMigrationMarker | None):
     """
 
-    marker: LedgerMigrationMarker | None
     migrated: bool
+    marker: LedgerMigrationMarker | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.ledger_migration_marker import LedgerMigrationMarker  # noqa: PLC0415
+
+        migrated = self.migrated
 
         marker: dict[str, Any] | None
         if isinstance(self.marker, LedgerMigrationMarker):
@@ -36,14 +38,12 @@ class LedgerMigration:
         else:
             marker = self.marker
 
-        migrated = self.migrated
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "marker": marker,
                 "migrated": migrated,
+                "marker": marker,
             }
         )
 
@@ -54,6 +54,7 @@ class LedgerMigration:
         from ..models.ledger_migration_marker import LedgerMigrationMarker  # noqa: PLC0415
 
         d = dict(src_dict)
+        migrated = d.pop("migrated")
 
         def _parse_marker(data: object) -> LedgerMigrationMarker | None:
             if data is None:
@@ -70,11 +71,9 @@ class LedgerMigration:
 
         marker = _parse_marker(d.pop("marker"))
 
-        migrated = d.pop("migrated")
-
         ledger_migration = cls(
-            marker=marker,
             migrated=migrated,
+            marker=marker,
         )
 
         ledger_migration.additional_properties = d

@@ -22,14 +22,8 @@ T = TypeVar("T", bound="UsageView")
 class UsageView:
     """
     Attributes:
+        window (UsageWindow): A metering window: `[start, end)` epoch seconds.
         as_of (int): Freshness marker: the epoch this read was computed at (counters accumulate live).
-        by_key (list[KeyUsageView]): Per-key aggregation (same raw-split shape). CAPPED at the top 1000 rows by spend
-            (the
-            FinOps-relevant ordering); `by_key_truncated` says the cap fired, never a silent cut.
-        by_key_truncated (bool): True when `by_key` was truncated to the cap (a deployment with more active keys than
-            the
-            cap). `by_model` is never capped (bounded by the configured model fleet).
-        by_model (list[ModelUsageView]): Per-(model, provider) aggregation: cost attribution by model (the FinOps unit).
         currency (str): The denomination of every `spend_micros` in this response (`USAGE_CURRENCY`, currently
             `"USD"`). A single-const source of truth so removal is one line. Emitted only here.
         rate_card_version (None | str): The highest history entry key used to price this read, as 40 lowercase
@@ -39,40 +33,36 @@ class UsageView:
         total (UsageBreakdown): The raw consumption counts + the derived spend estimate: the one shape shared by
             `total`,
             `by_model` rows, and `by_key` rows, so a consumer writes ONE aggregation reader.
-        window (UsageWindow): A metering window: `[start, end)` epoch seconds.
+        by_model (list[ModelUsageView]): Per-(model, provider) aggregation: cost attribution by model (the FinOps unit).
+        by_key (list[KeyUsageView]): Per-key aggregation (same raw-split shape). CAPPED at the top 1000 rows by spend
+            (the
+            FinOps-relevant ordering); `by_key_truncated` says the cap fired, never a silent cut.
+        by_key_truncated (bool): True when `by_key` was truncated to the cap (a deployment with more active keys than
+            the
+            cap). `by_model` is never capped (bounded by the configured model fleet).
         others (None | Unset | UsageBreakdown): The summed remainder BEYOND the `by_key` cap, present exactly when
             `by_key_truncated`, so
             every unit of consumption is attributable at least to "others" (FinOps completeness:
             `total == sum(by_key) + others`).
     """
 
+    window: UsageWindow
     as_of: int
-    by_key: list[KeyUsageView]
-    by_key_truncated: bool
-    by_model: list[ModelUsageView]
     currency: str
     rate_card_version: None | str
     total: UsageBreakdown
-    window: UsageWindow
+    by_model: list[ModelUsageView]
+    by_key: list[KeyUsageView]
+    by_key_truncated: bool
     others: None | Unset | UsageBreakdown = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
 
+        window = self.window.to_dict()
+
         as_of = self.as_of
-
-        by_key = []
-        for by_key_item_data in self.by_key:
-            by_key_item = by_key_item_data.to_dict()
-            by_key.append(by_key_item)
-
-        by_key_truncated = self.by_key_truncated
-
-        by_model = []
-        for by_model_item_data in self.by_model:
-            by_model_item = by_model_item_data.to_dict()
-            by_model.append(by_model_item)
 
         currency = self.currency
 
@@ -81,7 +71,17 @@ class UsageView:
 
         total = self.total.to_dict()
 
-        window = self.window.to_dict()
+        by_model = []
+        for by_model_item_data in self.by_model:
+            by_model_item = by_model_item_data.to_dict()
+            by_model.append(by_model_item)
+
+        by_key = []
+        for by_key_item_data in self.by_key:
+            by_key_item = by_key_item_data.to_dict()
+            by_key.append(by_key_item)
+
+        by_key_truncated = self.by_key_truncated
 
         others: dict[str, Any] | None | Unset
         if isinstance(self.others, Unset):
@@ -95,14 +95,14 @@ class UsageView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "window": window,
                 "as_of": as_of,
-                "by_key": by_key,
-                "by_key_truncated": by_key_truncated,
-                "by_model": by_model,
                 "currency": currency,
                 "rate_card_version": rate_card_version,
                 "total": total,
-                "window": window,
+                "by_model": by_model,
+                "by_key": by_key,
+                "by_key_truncated": by_key_truncated,
             }
         )
         if others is not UNSET:
@@ -118,23 +118,9 @@ class UsageView:
         from ..models.usage_window import UsageWindow  # noqa: PLC0415
 
         d = dict(src_dict)
+        window = UsageWindow.from_dict(d.pop("window"))
+
         as_of = d.pop("as_of")
-
-        by_key = []
-        _by_key = d.pop("by_key")
-        for by_key_item_data in _by_key:
-            by_key_item = KeyUsageView.from_dict(by_key_item_data)
-
-            by_key.append(by_key_item)
-
-        by_key_truncated = d.pop("by_key_truncated")
-
-        by_model = []
-        _by_model = d.pop("by_model")
-        for by_model_item_data in _by_model:
-            by_model_item = ModelUsageView.from_dict(by_model_item_data)
-
-            by_model.append(by_model_item)
 
         currency = d.pop("currency")
 
@@ -147,7 +133,21 @@ class UsageView:
 
         total = UsageBreakdown.from_dict(d.pop("total"))
 
-        window = UsageWindow.from_dict(d.pop("window"))
+        by_model = []
+        _by_model = d.pop("by_model")
+        for by_model_item_data in _by_model:
+            by_model_item = ModelUsageView.from_dict(by_model_item_data)
+
+            by_model.append(by_model_item)
+
+        by_key = []
+        _by_key = d.pop("by_key")
+        for by_key_item_data in _by_key:
+            by_key_item = KeyUsageView.from_dict(by_key_item_data)
+
+            by_key.append(by_key_item)
+
+        by_key_truncated = d.pop("by_key_truncated")
 
         def _parse_others(data: object) -> None | Unset | UsageBreakdown:
             if data is None:
@@ -167,14 +167,14 @@ class UsageView:
         others = _parse_others(d.pop("others", UNSET))
 
         usage_view = cls(
+            window=window,
             as_of=as_of,
-            by_key=by_key,
-            by_key_truncated=by_key_truncated,
-            by_model=by_model,
             currency=currency,
             rate_card_version=rate_card_version,
             total=total,
-            window=window,
+            by_model=by_model,
+            by_key=by_key,
+            by_key_truncated=by_key_truncated,
             others=others,
         )
 

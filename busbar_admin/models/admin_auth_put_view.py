@@ -15,28 +15,28 @@ class AdminAuthPutView:
     `GET /admin-auth` returns) plus apply metadata, so a client uses the PUT response as post-state.
 
         Attributes:
-            applied (bool):
-            config_version (int):
             configured (bool):
             modules (list[str]):
+            applied (bool):
+            config_version (int):
             note (str):
     """
 
-    applied: bool
-    config_version: int
     configured: bool
     modules: list[str]
+    applied: bool
+    config_version: int
     note: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        applied = self.applied
-
-        config_version = self.config_version
-
         configured = self.configured
 
         modules = self.modules
+
+        applied = self.applied
+
+        config_version = self.config_version
 
         note = self.note
 
@@ -44,10 +44,10 @@ class AdminAuthPutView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "applied": applied,
-                "config_version": config_version,
                 "configured": configured,
                 "modules": modules,
+                "applied": applied,
+                "config_version": config_version,
                 "note": note,
             }
         )
@@ -57,21 +57,21 @@ class AdminAuthPutView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        applied = d.pop("applied")
-
-        config_version = d.pop("config_version")
-
         configured = d.pop("configured")
 
         modules = cast(list[str], d.pop("modules"))
 
+        applied = d.pop("applied")
+
+        config_version = d.pop("config_version")
+
         note = d.pop("note")
 
         admin_auth_put_view = cls(
-            applied=applied,
-            config_version=config_version,
             configured=configured,
             modules=modules,
+            applied=applied,
+            config_version=config_version,
             note=note,
         )
 

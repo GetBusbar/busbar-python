@@ -23,16 +23,16 @@ class ConfigDiffView:
 
         Attributes:
             from_ (int):
+            to (int):
             hooks (ConfigDiffHooks): The `hooks` object of a `GET /config/diff`: hook names added / removed / changed
                 between the two
                 versions.
-            to (int):
             global_hooks (ConfigDiffGlobalHooks | None | Unset):
     """
 
     from_: int
-    hooks: ConfigDiffHooks
     to: int
+    hooks: ConfigDiffHooks
     global_hooks: ConfigDiffGlobalHooks | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -41,9 +41,9 @@ class ConfigDiffView:
 
         from_ = self.from_
 
-        hooks = self.hooks.to_dict()
-
         to = self.to
+
+        hooks = self.hooks.to_dict()
 
         global_hooks: dict[str, Any] | None | Unset
         if isinstance(self.global_hooks, Unset):
@@ -58,8 +58,8 @@ class ConfigDiffView:
         field_dict.update(
             {
                 "from": from_,
-                "hooks": hooks,
                 "to": to,
+                "hooks": hooks,
             }
         )
         if global_hooks is not UNSET:
@@ -75,9 +75,9 @@ class ConfigDiffView:
         d = dict(src_dict)
         from_ = d.pop("from")
 
-        hooks = ConfigDiffHooks.from_dict(d.pop("hooks"))
-
         to = d.pop("to")
+
+        hooks = ConfigDiffHooks.from_dict(d.pop("hooks"))
 
         def _parse_global_hooks(data: object) -> ConfigDiffGlobalHooks | None | Unset:
             if data is None:
@@ -98,8 +98,8 @@ class ConfigDiffView:
 
         config_diff_view = cls(
             from_=from_,
-            hooks=hooks,
             to=to,
+            hooks=hooks,
             global_hooks=global_hooks,
         )
 

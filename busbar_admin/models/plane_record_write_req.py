@@ -16,30 +16,30 @@ class PlaneRecordWriteReq:
     """`POST /plane-record-write`: one plane record, upserted by `(kind, id)`.
 
     Attributes:
-        body (Any): The record's row, stored as its JSON bytes and never decoded by the store.
-        id (str): The record's identity within its kind.
-        kind (str): The record kind.
         plane (str): The key of a plane this node serves.
+        kind (str): The record kind.
+        id (str): The record's identity within its kind.
+        body (Any): The record's row, stored as its JSON bytes and never decoded by the store.
         parent (None | str | Unset): The parent the record hangs off, for a child kind.
         terminal (bool | None | Unset): Whether retention may drop the record once it is old (default false).
     """
 
-    body: Any
-    id: str
-    kind: str
     plane: str
+    kind: str
+    id: str
+    body: Any
     parent: None | str | Unset = UNSET
     terminal: bool | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        body = self.body
-
-        id = self.id
+        plane = self.plane
 
         kind = self.kind
 
-        plane = self.plane
+        id = self.id
+
+        body = self.body
 
         parent: None | str | Unset
         if isinstance(self.parent, Unset):
@@ -57,10 +57,10 @@ class PlaneRecordWriteReq:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "body": body,
-                "id": id,
-                "kind": kind,
                 "plane": plane,
+                "kind": kind,
+                "id": id,
+                "body": body,
             }
         )
         if parent is not UNSET:
@@ -73,13 +73,13 @@ class PlaneRecordWriteReq:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        body = d.pop("body")
-
-        id = d.pop("id")
+        plane = d.pop("plane")
 
         kind = d.pop("kind")
 
-        plane = d.pop("plane")
+        id = d.pop("id")
+
+        body = d.pop("body")
 
         def _parse_parent(data: object) -> None | str | Unset:
             if data is None:
@@ -100,10 +100,10 @@ class PlaneRecordWriteReq:
         terminal = _parse_terminal(d.pop("terminal", UNSET))
 
         plane_record_write_req = cls(
-            body=body,
-            id=id,
-            kind=kind,
             plane=plane,
+            kind=kind,
+            id=id,
+            body=body,
             parent=parent,
             terminal=terminal,
         )

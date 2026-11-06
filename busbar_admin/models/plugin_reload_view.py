@@ -21,28 +21,28 @@ class PluginReloadView:
     A store change still applies on the next store (re)load, not as a hot swap.
 
         Attributes:
-            note (str): A human note on when a store change actually takes effect.
             plugins (list[PluginView]): The dynamic-library plugins now present in the directory, sorted by filename.
+            note (str): A human note on when a store change actually takes effect.
     """
 
-    note: str
     plugins: list[PluginView]
+    note: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        note = self.note
-
         plugins = []
         for plugins_item_data in self.plugins:
             plugins_item = plugins_item_data.to_dict()
             plugins.append(plugins_item)
 
+        note = self.note
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "note": note,
                 "plugins": plugins,
+                "note": note,
             }
         )
 
@@ -53,8 +53,6 @@ class PluginReloadView:
         from ..models.plugin_view import PluginView  # noqa: PLC0415
 
         d = dict(src_dict)
-        note = d.pop("note")
-
         plugins = []
         _plugins = d.pop("plugins")
         for plugins_item_data in _plugins:
@@ -62,9 +60,11 @@ class PluginReloadView:
 
             plugins.append(plugins_item)
 
+        note = d.pop("note")
+
         plugin_reload_view = cls(
-            note=note,
             plugins=plugins,
+            note=note,
         )
 
         plugin_reload_view.additional_properties = d

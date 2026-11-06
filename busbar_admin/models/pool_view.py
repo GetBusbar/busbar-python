@@ -21,28 +21,28 @@ class PoolView:
     only grows.
 
         Attributes:
-            members (list[PoolMemberView]):
             name (str):
+            members (list[PoolMemberView]):
     """
 
-    members: list[PoolMemberView]
     name: str
+    members: list[PoolMemberView]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
         members = []
         for members_item_data in self.members:
             members_item = members_item_data.to_dict()
             members.append(members_item)
 
-        name = self.name
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "members": members,
                 "name": name,
+                "members": members,
             }
         )
 
@@ -53,6 +53,8 @@ class PoolView:
         from ..models.pool_member_view import PoolMemberView  # noqa: PLC0415
 
         d = dict(src_dict)
+        name = d.pop("name")
+
         members = []
         _members = d.pop("members")
         for members_item_data in _members:
@@ -60,11 +62,9 @@ class PoolView:
 
             members.append(members_item)
 
-        name = d.pop("name")
-
         pool_view = cls(
-            members=members,
             name=name,
+            members=members,
         )
 
         pool_view.additional_properties = d

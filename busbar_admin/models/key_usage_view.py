@@ -23,6 +23,10 @@ class KeyUsageView:
         id (str):
         name (None | str): The key's display name; `None` when the key was deleted after metering accumulated (history
             outlives the key; the id still attributes it).
+        tokens_input (float): Uncached input tokens (normalized additive-cache convention).
+        tokens_output (float):
+        tokens_cache_read (float):
+        tokens_cache_creation (float):
         requests (int):
         spend_micros (int): Busbar's derived cost estimate in MICRO-units of the ABSTRACT cost unit (1e-6 unit -
             integer math, sub-cent precise, no float drift), recomputed at read time from the raw token
@@ -30,24 +34,19 @@ class KeyUsageView:
             card's numbers are whatever unit the operator priced in; display/denomination is entirely
             the consumer's concern. A consumer with its own per-model catalog recomputes from the raw
             token split instead.
-        tokens_cache_creation (int):
-        tokens_cache_read (int):
-        tokens_input (int): Uncached input tokens (normalized additive-cache convention).
-        tokens_output (int):
-        classes (KeyUsageViewClasses | Unset): THE PLANE-DECLARED CLASSES the row's ledger lines counted outside the
-            token split, keyed by
-            the class name the plane declares (new in 1.6.0, [`ClassUsage`]). Absent when the row carries
-            none, so a token-only row reads exactly as 1.5.5's.
+        classes (KeyUsageViewClasses | Unset): Every ledgered class outside the reserved token split, keyed by class
+            name ([`ClassUsage`]).
+            Includes open classes from every provider and plane. Absent when the row carries none.
     """
 
     id: str
     name: None | str
+    tokens_input: float
+    tokens_output: float
+    tokens_cache_read: float
+    tokens_cache_creation: float
     requests: int
     spend_micros: int
-    tokens_cache_creation: int
-    tokens_cache_read: int
-    tokens_input: int
-    tokens_output: int
     classes: KeyUsageViewClasses | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -57,17 +56,17 @@ class KeyUsageView:
         name: None | str
         name = self.name
 
-        requests = self.requests
-
-        spend_micros = self.spend_micros
-
-        tokens_cache_creation = self.tokens_cache_creation
-
-        tokens_cache_read = self.tokens_cache_read
-
         tokens_input = self.tokens_input
 
         tokens_output = self.tokens_output
+
+        tokens_cache_read = self.tokens_cache_read
+
+        tokens_cache_creation = self.tokens_cache_creation
+
+        requests = self.requests
+
+        spend_micros = self.spend_micros
 
         classes: dict[str, Any] | Unset = UNSET
         if not isinstance(self.classes, Unset):
@@ -79,12 +78,12 @@ class KeyUsageView:
             {
                 "id": id,
                 "name": name,
-                "requests": requests,
-                "spend_micros": spend_micros,
-                "tokens_cache_creation": tokens_cache_creation,
-                "tokens_cache_read": tokens_cache_read,
                 "tokens_input": tokens_input,
                 "tokens_output": tokens_output,
+                "tokens_cache_read": tokens_cache_read,
+                "tokens_cache_creation": tokens_cache_creation,
+                "requests": requests,
+                "spend_micros": spend_micros,
             }
         )
         if classes is not UNSET:
@@ -106,17 +105,17 @@ class KeyUsageView:
 
         name = _parse_name(d.pop("name"))
 
-        requests = d.pop("requests")
-
-        spend_micros = d.pop("spend_micros")
-
-        tokens_cache_creation = d.pop("tokens_cache_creation")
-
-        tokens_cache_read = d.pop("tokens_cache_read")
-
         tokens_input = d.pop("tokens_input")
 
         tokens_output = d.pop("tokens_output")
+
+        tokens_cache_read = d.pop("tokens_cache_read")
+
+        tokens_cache_creation = d.pop("tokens_cache_creation")
+
+        requests = d.pop("requests")
+
+        spend_micros = d.pop("spend_micros")
 
         _classes = d.pop("classes", UNSET)
         classes: KeyUsageViewClasses | Unset
@@ -128,12 +127,12 @@ class KeyUsageView:
         key_usage_view = cls(
             id=id,
             name=name,
-            requests=requests,
-            spend_micros=spend_micros,
-            tokens_cache_creation=tokens_cache_creation,
-            tokens_cache_read=tokens_cache_read,
             tokens_input=tokens_input,
             tokens_output=tokens_output,
+            tokens_cache_read=tokens_cache_read,
+            tokens_cache_creation=tokens_cache_creation,
+            requests=requests,
+            spend_micros=spend_micros,
             classes=classes,
         )
 

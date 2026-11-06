@@ -6,16 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PostGroupsBodyConfig")
+T = TypeVar("T", bound="PutConfigSettingsBodyType1ProvidersPatchSet")
 
 
 @_attrs_define(repr=False)
-class PostGroupsBodyConfig:
-    """A `groups:` entry, as JSON. The accepted shape is the config file's own, documented in the configuration reference;
-    it is not restated here because several of its types parse a wire shape that does not match their field layout.
-
-    """
-
+class PutConfigSettingsBodyType1ProvidersPatchSet:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -28,10 +23,10 @@ class PostGroupsBodyConfig:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        post_groups_body_config = cls()
+        put_config_settings_body_type_1_providers_patch_set = cls()
 
-        post_groups_body_config.additional_properties = d
-        return post_groups_body_config
+        put_config_settings_body_type_1_providers_patch_set.additional_properties = d
+        return put_config_settings_body_type_1_providers_patch_set
 
     @property
     def additional_keys(self) -> list[str]:

@@ -4,9 +4,10 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.post_hooks_body_config import PostHooksBodyConfig
+    from ..models.config_input_hook import ConfigInputHook
 
 
 T = TypeVar("T", bound="PostHooksBody")
@@ -16,26 +17,27 @@ T = TypeVar("T", bound="PostHooksBody")
 class PostHooksBody:
     """
     Attributes:
-        config (PostHooksBodyConfig): A `hooks:` entry, as JSON. The accepted shape is the config file's own, documented
-            in the configuration reference; it is not restated here because several of its types parse a wire shape that
-            does not match their field layout.
         name (str): The hook name.
+        config (ConfigInputHook): Admin hook POST/PUT input. module and phase are the canonical names; use phase:[stage]
+            for a single stage. This differs from the deploy HookDefinition wrapper. Settings may contain hidden values and
+            must never be reconstructed from HookView.
     """
 
-    config: PostHooksBodyConfig
     name: str
+    config: ConfigInputHook
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        config = self.config.to_dict()
-
         name = self.name
 
-        field_dict: dict[str, Any] = {}
+        config = self.config.to_dict()
 
+        field_dict: dict[str, Any] = {}
+        field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "config": config,
                 "name": name,
+                "config": config,
             }
         )
 
@@ -43,18 +45,33 @@ class PostHooksBody:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.post_hooks_body_config import PostHooksBodyConfig  # noqa: PLC0415
+        from ..models.config_input_hook import ConfigInputHook  # noqa: PLC0415
 
         d = dict(src_dict)
-        config = PostHooksBodyConfig.from_dict(d.pop("config"))
-
         name = d.pop("name")
 
-        if d:
-            raise ValueError("Unexpected fields for PostHooksBody")
+        config = ConfigInputHook.from_dict(d.pop("config"))
+
         post_hooks_body = cls(
-            config=config,
             name=name,
+            config=config,
         )
 
+        post_hooks_body.additional_properties = d
         return post_hooks_body
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties

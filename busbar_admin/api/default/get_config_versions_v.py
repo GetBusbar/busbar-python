@@ -4,7 +4,6 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.config_version_detail_view import ConfigVersionDetailView
 from ...models.error import Error
@@ -27,7 +26,7 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ConfigVersionDetailView | Error | None:
+) -> ConfigVersionDetailView | Error:
     if response.status_code == 200:
         response_200 = ConfigVersionDetailView.from_dict(response.json())
 
@@ -53,6 +52,11 @@ def _parse_response(
 
         return response_404
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 500:
         response_500 = Error.from_dict(response.json())
 
@@ -63,10 +67,9 @@ def _parse_response(
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(

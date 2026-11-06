@@ -29,63 +29,63 @@ class EffectiveConfigView:
     overlay) lands with the config overlay substrate.
 
         Attributes:
+            version (int): The monotonic config version at the time of this read (see `InfoView.config_version`), so a
+                drift-detection read gets the config AND its version in one call.
             auth (AuthView): The ingress auth chain read (`GET /api/v1/admin/auth`): the ordered module names that
                 authenticate
                 callers + the upstream-credential mode. Never a secret: module names and the mode are config
                 identifiers, not credentials. An empty `chain` is the open front door (admits every request).
+            pools (list[PoolView]):
+            models (list[ModelView]):
+            providers (list[ProviderView]):
+            hooks (list[HookView]):
             global_hooks (list[str]): Names fired on EVERY request: the hooks attached at the reserved all-pools key
                 `pools.hooks:`
                 in `config.yaml` (the 1.5.3 replacement for the DELETED `global_hooks:` key; that key no
                 longer parses), plus any hook this API declares with `global: true`. The response FIELD name
                 stays `global_hooks`; only the config-file spelling changed.
-            hooks (list[HookView]):
-            models (list[ModelView]):
-            pools (list[PoolView]):
-            providers (list[ProviderView]):
-            version (int): The monotonic config version at the time of this read (see `InfoView.config_version`), so a
-                drift-detection read gets the config AND its version in one call.
             reload_to_apply (list[str] | Unset): The plane sections the running configuration writes whose plane the process
                 did not open at
                 boot: a plane is opened once, at process start, when its section is configured, so each is
                 stored and validated but serves nothing until the next RESTART. Omitted when none.
     """
 
-    auth: AuthView
-    global_hooks: list[str]
-    hooks: list[HookView]
-    models: list[ModelView]
-    pools: list[PoolView]
-    providers: list[ProviderView]
     version: int
+    auth: AuthView
+    pools: list[PoolView]
+    models: list[ModelView]
+    providers: list[ProviderView]
+    hooks: list[HookView]
+    global_hooks: list[str]
     reload_to_apply: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        version = self.version
+
         auth = self.auth.to_dict()
-
-        global_hooks = self.global_hooks
-
-        hooks = []
-        for hooks_item_data in self.hooks:
-            hooks_item = hooks_item_data.to_dict()
-            hooks.append(hooks_item)
-
-        models = []
-        for models_item_data in self.models:
-            models_item = models_item_data.to_dict()
-            models.append(models_item)
 
         pools = []
         for pools_item_data in self.pools:
             pools_item = pools_item_data.to_dict()
             pools.append(pools_item)
 
+        models = []
+        for models_item_data in self.models:
+            models_item = models_item_data.to_dict()
+            models.append(models_item)
+
         providers = []
         for providers_item_data in self.providers:
             providers_item = providers_item_data.to_dict()
             providers.append(providers_item)
 
-        version = self.version
+        hooks = []
+        for hooks_item_data in self.hooks:
+            hooks_item = hooks_item_data.to_dict()
+            hooks.append(hooks_item)
+
+        global_hooks = self.global_hooks
 
         reload_to_apply: list[str] | Unset = UNSET
         if not isinstance(self.reload_to_apply, Unset):
@@ -95,13 +95,13 @@ class EffectiveConfigView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "auth": auth,
-                "global_hooks": global_hooks,
-                "hooks": hooks,
-                "models": models,
-                "pools": pools,
-                "providers": providers,
                 "version": version,
+                "auth": auth,
+                "pools": pools,
+                "models": models,
+                "providers": providers,
+                "hooks": hooks,
+                "global_hooks": global_hooks,
             }
         )
         if reload_to_apply is not UNSET:
@@ -118,23 +118,9 @@ class EffectiveConfigView:
         from ..models.provider_view import ProviderView  # noqa: PLC0415
 
         d = dict(src_dict)
+        version = d.pop("version")
+
         auth = AuthView.from_dict(d.pop("auth"))
-
-        global_hooks = cast(list[str], d.pop("global_hooks"))
-
-        hooks = []
-        _hooks = d.pop("hooks")
-        for hooks_item_data in _hooks:
-            hooks_item = HookView.from_dict(hooks_item_data)
-
-            hooks.append(hooks_item)
-
-        models = []
-        _models = d.pop("models")
-        for models_item_data in _models:
-            models_item = ModelView.from_dict(models_item_data)
-
-            models.append(models_item)
 
         pools = []
         _pools = d.pop("pools")
@@ -143,6 +129,13 @@ class EffectiveConfigView:
 
             pools.append(pools_item)
 
+        models = []
+        _models = d.pop("models")
+        for models_item_data in _models:
+            models_item = ModelView.from_dict(models_item_data)
+
+            models.append(models_item)
+
         providers = []
         _providers = d.pop("providers")
         for providers_item_data in _providers:
@@ -150,18 +143,25 @@ class EffectiveConfigView:
 
             providers.append(providers_item)
 
-        version = d.pop("version")
+        hooks = []
+        _hooks = d.pop("hooks")
+        for hooks_item_data in _hooks:
+            hooks_item = HookView.from_dict(hooks_item_data)
+
+            hooks.append(hooks_item)
+
+        global_hooks = cast(list[str], d.pop("global_hooks"))
 
         reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
 
         effective_config_view = cls(
-            auth=auth,
-            global_hooks=global_hooks,
-            hooks=hooks,
-            models=models,
-            pools=pools,
-            providers=providers,
             version=version,
+            auth=auth,
+            pools=pools,
+            models=models,
+            providers=providers,
+            hooks=hooks,
+            global_hooks=global_hooks,
             reload_to_apply=reload_to_apply,
         )
 

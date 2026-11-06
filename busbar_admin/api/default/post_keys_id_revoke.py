@@ -4,7 +4,6 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.revoke_view import RevokeView
@@ -25,7 +24,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | RevokeView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | RevokeView:
     if response.status_code == 200:
         response_200 = RevokeView.from_dict(response.json())
 
@@ -56,6 +55,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -71,10 +75,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | RevokeView]:
@@ -95,7 +98,7 @@ def sync_detailed(
 ) -> Response[Error | RevokeView]:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
     shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
-    /keys/{id} is the revoke-AND-forget variant (1.5.0)
+    /keys/{id} tombstones the binding while retaining usage and audit attribution
 
     Args:
         id (str):
@@ -126,7 +129,7 @@ def sync(
 ) -> Error | RevokeView | None:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
     shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
-    /keys/{id} is the revoke-AND-forget variant (1.5.0)
+    /keys/{id} tombstones the binding while retaining usage and audit attribution
 
     Args:
         id (str):
@@ -152,7 +155,7 @@ async def asyncio_detailed(
 ) -> Response[Error | RevokeView]:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
     shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
-    /keys/{id} is the revoke-AND-forget variant (1.5.0)
+    /keys/{id} tombstones the binding while retaining usage and audit attribution
 
     Args:
         id (str):
@@ -181,7 +184,7 @@ async def asyncio(
 ) -> Error | RevokeView | None:
     """REVOKE a signed-token key: denylist it durably WITHOUT deleting the binding (GET /keys/{id} still
     shows the record; verify now fails). Idempotent: revoking an already-revoked key is 200. DELETE
-    /keys/{id} is the revoke-AND-forget variant (1.5.0)
+    /keys/{id} tombstones the binding while retaining usage and audit attribution
 
     Args:
         id (str):

@@ -3,7 +3,6 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.group_view import GroupView
@@ -33,7 +32,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | GroupView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | GroupView:
     if response.status_code == 200:
         response_200 = GroupView.from_dict(response.json())
 
@@ -64,6 +63,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -79,10 +83,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Error | GroupView]:

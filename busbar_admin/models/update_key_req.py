@@ -26,10 +26,9 @@ class UpdateKeyReq:
     cap fields (`rpm_limit`/`tpm_limit`/`max_budget_cents`) are GONE: limits live on the group.
 
         Attributes:
-            enabled (bool | None | Unset):
-            group (None | str | Unset): Rebind or UNBIND the key's group. Absent = unchanged; `null` = unbind. The double
-                `Option`
-                is what distinguishes those two, so the schema describes it as a nullable string.
+            enabled (bool | None | Unset): Omitted or null preserves enabled; a boolean sets it.
+            group (None | str | Unset): Omitted preserves binding; null explicitly unbinds; a string rebinds to an existing
+                group.
     """
 
     enabled: bool | None | Unset = UNSET

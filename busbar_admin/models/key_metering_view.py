@@ -16,62 +16,62 @@ class KeyMeteringView:
     tightest `requests`/`tokens` limit across the group chain remaining (`null` = no such limit).
 
         Attributes:
-            as_of (int):
-            budget_period (str): Always `"total"` (the key attribution window).
-            group (None | str): The bound `groups:` entry (`null` = unlimited key).
             id (str):
-            rate_headroom (float | None):
-            requests (int):
-            spend_cents (int):
-            tokens (int):
+            budget_period (str): Always `"total"` (the key attribution window).
             window_start (int): Always `0` (the all-time window start).
+            as_of (int):
+            group (None | str): The bound `groups:` entry (`null` = unlimited key).
+            spend_cents (int):
+            tokens (float): Exact scale-6 decimal quantity, serialized as a JSON number.
+            requests (int):
+            rate_headroom (float | None):
     """
 
-    as_of: int
-    budget_period: str
-    group: None | str
     id: str
-    rate_headroom: float | None
-    requests: int
-    spend_cents: int
-    tokens: int
+    budget_period: str
     window_start: int
+    as_of: int
+    group: None | str
+    spend_cents: int
+    tokens: float
+    requests: int
+    rate_headroom: float | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        as_of = self.as_of
+        id = self.id
 
         budget_period = self.budget_period
 
+        window_start = self.window_start
+
+        as_of = self.as_of
+
         group: None | str
         group = self.group
-
-        id = self.id
-
-        rate_headroom: float | None
-        rate_headroom = self.rate_headroom
-
-        requests = self.requests
 
         spend_cents = self.spend_cents
 
         tokens = self.tokens
 
-        window_start = self.window_start
+        requests = self.requests
+
+        rate_headroom: float | None
+        rate_headroom = self.rate_headroom
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "as_of": as_of,
-                "budget_period": budget_period,
-                "group": group,
                 "id": id,
-                "rate_headroom": rate_headroom,
-                "requests": requests,
+                "budget_period": budget_period,
+                "window_start": window_start,
+                "as_of": as_of,
+                "group": group,
                 "spend_cents": spend_cents,
                 "tokens": tokens,
-                "window_start": window_start,
+                "requests": requests,
+                "rate_headroom": rate_headroom,
             }
         )
 
@@ -80,9 +80,13 @@ class KeyMeteringView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        as_of = d.pop("as_of")
+        id = d.pop("id")
 
         budget_period = d.pop("budget_period")
+
+        window_start = d.pop("window_start")
+
+        as_of = d.pop("as_of")
 
         def _parse_group(data: object) -> None | str:
             if data is None:
@@ -91,7 +95,11 @@ class KeyMeteringView:
 
         group = _parse_group(d.pop("group"))
 
-        id = d.pop("id")
+        spend_cents = d.pop("spend_cents")
+
+        tokens = d.pop("tokens")
+
+        requests = d.pop("requests")
 
         def _parse_rate_headroom(data: object) -> float | None:
             if data is None:
@@ -100,24 +108,16 @@ class KeyMeteringView:
 
         rate_headroom = _parse_rate_headroom(d.pop("rate_headroom"))
 
-        requests = d.pop("requests")
-
-        spend_cents = d.pop("spend_cents")
-
-        tokens = d.pop("tokens")
-
-        window_start = d.pop("window_start")
-
         key_metering_view = cls(
-            as_of=as_of,
-            budget_period=budget_period,
-            group=group,
             id=id,
-            rate_headroom=rate_headroom,
-            requests=requests,
+            budget_period=budget_period,
+            window_start=window_start,
+            as_of=as_of,
+            group=group,
             spend_cents=spend_cents,
             tokens=tokens,
-            window_start=window_start,
+            requests=requests,
+            rate_headroom=rate_headroom,
         )
 
         key_metering_view.additional_properties = d

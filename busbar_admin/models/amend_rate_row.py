@@ -14,20 +14,20 @@ class AmendRateRow:
     """One corrected rate.
 
     Attributes:
-        class_ (str): The billable class.
         lane (str): The lane the rate is written against.
+        class_ (str): The billable class.
         micro_per_unit (float): The rate, in micro-units per unit. Finite and non-negative.
     """
 
-    class_: str
     lane: str
+    class_: str
     micro_per_unit: float
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        class_ = self.class_
-
         lane = self.lane
+
+        class_ = self.class_
 
         micro_per_unit = self.micro_per_unit
 
@@ -35,8 +35,8 @@ class AmendRateRow:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "class": class_,
                 "lane": lane,
+                "class": class_,
                 "micro_per_unit": micro_per_unit,
             }
         )
@@ -46,15 +46,15 @@ class AmendRateRow:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        class_ = d.pop("class")
-
         lane = d.pop("lane")
+
+        class_ = d.pop("class")
 
         micro_per_unit = d.pop("micro_per_unit")
 
         amend_rate_row = cls(
-            class_=class_,
             lane=lane,
+            class_=class_,
             micro_per_unit=micro_per_unit,
         )
 

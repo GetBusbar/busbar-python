@@ -21,13 +21,13 @@ class AuditChainRecordView:
 
         Attributes:
             hash_ (str):
-            key_id (None | str):
             signature (None | str):
+            key_id (None | str):
     """
 
     hash_: str
-    key_id: None | str
     signature: None | str
+    key_id: None | str
     additional_properties: dict[str, list[AuditRecipeElementType1 | str] | str] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -35,11 +35,11 @@ class AuditChainRecordView:
 
         hash_ = self.hash_
 
-        key_id: None | str
-        key_id = self.key_id
-
         signature: None | str
         signature = self.signature
+
+        key_id: None | str
+        key_id = self.key_id
 
         field_dict: dict[str, Any] = {}
         for prop_name, prop in self.additional_properties.items():
@@ -63,8 +63,8 @@ class AuditChainRecordView:
         field_dict.update(
             {
                 "hash": hash_,
-                "key_id": key_id,
                 "signature": signature,
+                "key_id": key_id,
             }
         )
 
@@ -77,13 +77,6 @@ class AuditChainRecordView:
         d = dict(src_dict)
         hash_ = d.pop("hash")
 
-        def _parse_key_id(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        key_id = _parse_key_id(d.pop("key_id"))
-
         def _parse_signature(data: object) -> None | str:
             if data is None:
                 return data
@@ -91,10 +84,17 @@ class AuditChainRecordView:
 
         signature = _parse_signature(d.pop("signature"))
 
+        def _parse_key_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        key_id = _parse_key_id(d.pop("key_id"))
+
         audit_chain_record_view = cls(
             hash_=hash_,
-            key_id=key_id,
             signature=signature,
+            key_id=key_id,
         )
 
         additional_properties = {}

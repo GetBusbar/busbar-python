@@ -6,6 +6,8 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="PluginRollbackReq")
 
 
@@ -15,13 +17,18 @@ class PluginRollbackReq:
 
     Attributes:
         file (str): The plugin tarball FILENAME (in the plugins directory) carrying the prior version to pin to.
+        expected_archive_sha256 (str | Unset): Optional exact SHA-256 of the complete archive reviewed by the caller.
+            Stale/missing = 409.
     """
 
     file: str
+    expected_archive_sha256: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         file = self.file
+
+        expected_archive_sha256 = self.expected_archive_sha256
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -30,6 +37,8 @@ class PluginRollbackReq:
                 "file": file,
             }
         )
+        if expected_archive_sha256 is not UNSET:
+            field_dict["expected_archive_sha256"] = expected_archive_sha256
 
         return field_dict
 
@@ -38,8 +47,11 @@ class PluginRollbackReq:
         d = dict(src_dict)
         file = d.pop("file")
 
+        expected_archive_sha256 = d.pop("expected_archive_sha256", UNSET)
+
         plugin_rollback_req = cls(
             file=file,
+            expected_archive_sha256=expected_archive_sha256,
         )
 
         plugin_rollback_req.additional_properties = d

@@ -1,39 +1,37 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, Literal, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-if TYPE_CHECKING:
-    from ..models.named_settings_req_settings import NamedSettingsReqSettings
-
-
-T = TypeVar("T", bound="NamedSettingsReq")
+T = TypeVar("T", bound="MutationAppliedErrorError")
 
 
 @_attrs_define(repr=False)
-class NamedSettingsReq:
-    """The `PATCH /api/v1/admin/<section>/{name}/settings` body: the whole replacement settings bag.
-    A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics: `settings:` is
-    REPLACED, not deep-merged, so the stored bag is always exactly what the caller sent).
-
-        Attributes:
-            settings (NamedSettingsReqSettings):
+class MutationAppliedErrorError:
+    """
+    Attributes:
+        code (Literal['mutation_applied']):
+        message (str):
     """
 
-    settings: NamedSettingsReqSettings
+    code: Literal["mutation_applied"]
+    message: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        settings = self.settings.to_dict()
+        code = self.code
+
+        message = self.message
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "settings": settings,
+                "code": code,
+                "message": message,
             }
         )
 
@@ -41,17 +39,20 @@ class NamedSettingsReq:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.named_settings_req_settings import NamedSettingsReqSettings  # noqa: PLC0415
-
         d = dict(src_dict)
-        settings = NamedSettingsReqSettings.from_dict(d.pop("settings"))
+        code = cast(Literal["mutation_applied"], d.pop("code"))
+        if code != "mutation_applied":
+            raise ValueError(f"code must match const 'mutation_applied', got '{code}'")
 
-        named_settings_req = cls(
-            settings=settings,
+        message = d.pop("message")
+
+        mutation_applied_error_error = cls(
+            code=code,
+            message=message,
         )
 
-        named_settings_req.additional_properties = d
-        return named_settings_req
+        mutation_applied_error_error.additional_properties = d
+        return mutation_applied_error_error
 
     @property
     def additional_keys(self) -> list[str]:

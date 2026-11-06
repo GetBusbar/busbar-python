@@ -16,25 +16,29 @@ class ConfigReloadView:
     """`POST /config/reload`: reload-from-disk result.
 
     Attributes:
-        config_version (int):
         reloaded (bool):
-        note (None | str | Unset): A human note naming the plane sections awaiting restart (omitted with them).
+        config_version (int):
         reload_to_apply (list[str] | Unset): The plane sections this configuration writes whose plane the process did
             not open at boot:
             a plane is opened once, at process start, when its section is configured, so each is stored
             and validated but serves nothing until the next RESTART. Omitted when none.
+        note (None | str | Unset): A human note naming the plane sections awaiting restart (omitted with them).
     """
 
-    config_version: int
     reloaded: bool
-    note: None | str | Unset = UNSET
+    config_version: int
     reload_to_apply: list[str] | Unset = UNSET
+    note: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        reloaded = self.reloaded
+
         config_version = self.config_version
 
-        reloaded = self.reloaded
+        reload_to_apply: list[str] | Unset = UNSET
+        if not isinstance(self.reload_to_apply, Unset):
+            reload_to_apply = self.reload_to_apply
 
         note: None | str | Unset
         if isinstance(self.note, Unset):
@@ -42,31 +46,29 @@ class ConfigReloadView:
         else:
             note = self.note
 
-        reload_to_apply: list[str] | Unset = UNSET
-        if not isinstance(self.reload_to_apply, Unset):
-            reload_to_apply = self.reload_to_apply
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "config_version": config_version,
                 "reloaded": reloaded,
+                "config_version": config_version,
             }
         )
-        if note is not UNSET:
-            field_dict["note"] = note
         if reload_to_apply is not UNSET:
             field_dict["reload_to_apply"] = reload_to_apply
+        if note is not UNSET:
+            field_dict["note"] = note
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        reloaded = d.pop("reloaded")
+
         config_version = d.pop("config_version")
 
-        reloaded = d.pop("reloaded")
+        reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
 
         def _parse_note(data: object) -> None | str | Unset:
             if data is None:
@@ -77,13 +79,11 @@ class ConfigReloadView:
 
         note = _parse_note(d.pop("note", UNSET))
 
-        reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
-
         config_reload_view = cls(
-            config_version=config_version,
             reloaded=reloaded,
-            note=note,
+            config_version=config_version,
             reload_to_apply=reload_to_apply,
+            note=note,
         )
 
         config_reload_view.additional_properties = d

@@ -15,25 +15,25 @@ class ProviderView:
     lanes route through it.
 
         Attributes:
-            model_count (int):
             provider (str):
+            model_count (int):
     """
 
-    model_count: int
     provider: str
+    model_count: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        model_count = self.model_count
-
         provider = self.provider
+
+        model_count = self.model_count
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "model_count": model_count,
                 "provider": provider,
+                "model_count": model_count,
             }
         )
 
@@ -42,13 +42,13 @@ class ProviderView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        model_count = d.pop("model_count")
-
         provider = d.pop("provider")
 
+        model_count = d.pop("model_count")
+
         provider_view = cls(
-            model_count=model_count,
             provider=provider,
+            model_count=model_count,
         )
 
         provider_view.additional_properties = d

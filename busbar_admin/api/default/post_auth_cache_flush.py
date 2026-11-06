@@ -3,17 +3,16 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.cache_flush_view import CacheFlushView
 from ...models.error import Error
 from ...models.flush_cache_req import FlushCacheReq
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    body: FlushCacheReq,
+    body: FlushCacheReq | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
 
@@ -22,7 +21,8 @@ def _get_kwargs(
         "url": "/api/v1/admin/auth/cache/flush",
     }
 
-    _kwargs["json"] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs["json"] = body.to_dict()
 
     headers["Content-Type"] = "application/json"
 
@@ -30,7 +30,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> CacheFlushView | Error | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> CacheFlushView | Error:
     if response.status_code == 200:
         response_200 = CacheFlushView.from_dict(response.json())
 
@@ -51,6 +51,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_403
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -66,10 +71,9 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
@@ -88,14 +92,14 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: FlushCacheReq,
+    body: FlushCacheReq | Unset = UNSET,
 ) -> Response[CacheFlushView | Error]:
     """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
-        body (FlushCacheReq): The `POST /api/v1/admin/auth/cache/flush` body. An absent body (or
-            an absent `module`) flushes
+        body (FlushCacheReq | Unset): The `POST /api/v1/admin/auth/cache/flush` body. An absent
+            body (or an absent `module`) flushes
             every partition. Deliberately NOT `deny_unknown_fields`: the endpoint has always ignored
             extra
             members, and tightening that would reject a call that works today.
@@ -122,14 +126,14 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: FlushCacheReq,
+    body: FlushCacheReq | Unset = UNSET,
 ) -> CacheFlushView | Error | None:
     """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
-        body (FlushCacheReq): The `POST /api/v1/admin/auth/cache/flush` body. An absent body (or
-            an absent `module`) flushes
+        body (FlushCacheReq | Unset): The `POST /api/v1/admin/auth/cache/flush` body. An absent
+            body (or an absent `module`) flushes
             every partition. Deliberately NOT `deny_unknown_fields`: the endpoint has always ignored
             extra
             members, and tightening that would reject a call that works today.
@@ -151,14 +155,14 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: FlushCacheReq,
+    body: FlushCacheReq | Unset = UNSET,
 ) -> Response[CacheFlushView | Error]:
     """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
-        body (FlushCacheReq): The `POST /api/v1/admin/auth/cache/flush` body. An absent body (or
-            an absent `module`) flushes
+        body (FlushCacheReq | Unset): The `POST /api/v1/admin/auth/cache/flush` body. An absent
+            body (or an absent `module`) flushes
             every partition. Deliberately NOT `deny_unknown_fields`: the endpoint has always ignored
             extra
             members, and tightening that would reject a call that works today.
@@ -183,14 +187,14 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: FlushCacheReq,
+    body: FlushCacheReq | Unset = UNSET,
 ) -> CacheFlushView | Error | None:
     """Flush the credential cache: one module's partition (`{module}`) or everything (empty body). Instant
     revocation of the cached-allow window
 
     Args:
-        body (FlushCacheReq): The `POST /api/v1/admin/auth/cache/flush` body. An absent body (or
-            an absent `module`) flushes
+        body (FlushCacheReq | Unset): The `POST /api/v1/admin/auth/cache/flush` body. An absent
+            body (or an absent `module`) flushes
             every partition. Deliberately NOT `deny_unknown_fields`: the endpoint has always ignored
             extra
             members, and tightening that would reject a call that works today.

@@ -14,31 +14,31 @@ class PlaneRecordWriteView:
     """`POST /plane-record-write`'s answer: what was written, and when.
 
     Attributes:
-        id (str):
-        kind (str):
-        parent (None | str):
         plane (str):
+        kind (str):
+        id (str):
+        parent (None | str):
         terminal (bool):
         written_at (int): The arrival second the record was written at.
     """
 
-    id: str
-    kind: str
-    parent: None | str
     plane: str
+    kind: str
+    id: str
+    parent: None | str
     terminal: bool
     written_at: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        id = self.id
+        plane = self.plane
 
         kind = self.kind
 
+        id = self.id
+
         parent: None | str
         parent = self.parent
-
-        plane = self.plane
 
         terminal = self.terminal
 
@@ -48,10 +48,10 @@ class PlaneRecordWriteView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "id": id,
-                "kind": kind,
-                "parent": parent,
                 "plane": plane,
+                "kind": kind,
+                "id": id,
+                "parent": parent,
                 "terminal": terminal,
                 "written_at": written_at,
             }
@@ -62,9 +62,11 @@ class PlaneRecordWriteView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        id = d.pop("id")
+        plane = d.pop("plane")
 
         kind = d.pop("kind")
+
+        id = d.pop("id")
 
         def _parse_parent(data: object) -> None | str:
             if data is None:
@@ -73,17 +75,15 @@ class PlaneRecordWriteView:
 
         parent = _parse_parent(d.pop("parent"))
 
-        plane = d.pop("plane")
-
         terminal = d.pop("terminal")
 
         written_at = d.pop("written_at")
 
         plane_record_write_view = cls(
-            id=id,
-            kind=kind,
-            parent=parent,
             plane=plane,
+            kind=kind,
+            id=id,
+            parent=parent,
             terminal=terminal,
             written_at=written_at,
         )

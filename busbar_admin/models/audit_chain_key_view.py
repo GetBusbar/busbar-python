@@ -14,20 +14,20 @@ class AuditChainKeyView:
     """One published verifying key. Public halves only.
 
     Attributes:
-        algorithm (str):
         key_id (str):
+        algorithm (str):
         public_key (str): The verifying key, as hex.
     """
 
-    algorithm: str
     key_id: str
+    algorithm: str
     public_key: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        algorithm = self.algorithm
-
         key_id = self.key_id
+
+        algorithm = self.algorithm
 
         public_key = self.public_key
 
@@ -35,8 +35,8 @@ class AuditChainKeyView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "algorithm": algorithm,
                 "key_id": key_id,
+                "algorithm": algorithm,
                 "public_key": public_key,
             }
         )
@@ -46,15 +46,15 @@ class AuditChainKeyView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        algorithm = d.pop("algorithm")
-
         key_id = d.pop("key_id")
+
+        algorithm = d.pop("algorithm")
 
         public_key = d.pop("public_key")
 
         audit_chain_key_view = cls(
-            algorithm=algorithm,
             key_id=key_id,
+            algorithm=algorithm,
             public_key=public_key,
         )
 

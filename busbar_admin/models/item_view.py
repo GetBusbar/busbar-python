@@ -18,42 +18,42 @@ class ItemView:
     """A safe observation of custody. The raw payload and operator evidence stay in the Store.
 
     Attributes:
-        body_fingerprint (str):
-        can_resolve (bool):
-        first_sent_at_ms (int | None):
-        kind (KindView):
         operation_id (str):
+        body_fingerprint (str):
         recovery_version (int):
+        kind (KindView):
         state (StateView):
+        first_sent_at_ms (int | None):
+        can_resolve (bool):
         owner_node (None | str | Unset): The foreign sender's node as exact lower-case hex; omitted for this node's own
             work.
     """
 
-    body_fingerprint: str
-    can_resolve: bool
-    first_sent_at_ms: int | None
-    kind: KindView
     operation_id: str
+    body_fingerprint: str
     recovery_version: int
+    kind: KindView
     state: StateView
+    first_sent_at_ms: int | None
+    can_resolve: bool
     owner_node: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        operation_id = self.operation_id
+
         body_fingerprint = self.body_fingerprint
 
-        can_resolve = self.can_resolve
+        recovery_version = self.recovery_version
+
+        kind = self.kind.value
+
+        state = self.state.value
 
         first_sent_at_ms: int | None
         first_sent_at_ms = self.first_sent_at_ms
 
-        kind = self.kind.value
-
-        operation_id = self.operation_id
-
-        recovery_version = self.recovery_version
-
-        state = self.state.value
+        can_resolve = self.can_resolve
 
         owner_node: None | str | Unset
         if isinstance(self.owner_node, Unset):
@@ -65,13 +65,13 @@ class ItemView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "body_fingerprint": body_fingerprint,
-                "can_resolve": can_resolve,
-                "first_sent_at_ms": first_sent_at_ms,
-                "kind": kind,
                 "operation_id": operation_id,
+                "body_fingerprint": body_fingerprint,
                 "recovery_version": recovery_version,
+                "kind": kind,
                 "state": state,
+                "first_sent_at_ms": first_sent_at_ms,
+                "can_resolve": can_resolve,
             }
         )
         if owner_node is not UNSET:
@@ -82,9 +82,15 @@ class ItemView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        operation_id = d.pop("operation_id")
+
         body_fingerprint = d.pop("body_fingerprint")
 
-        can_resolve = d.pop("can_resolve")
+        recovery_version = d.pop("recovery_version")
+
+        kind = KindView(d.pop("kind"))
+
+        state = StateView(d.pop("state"))
 
         def _parse_first_sent_at_ms(data: object) -> int | None:
             if data is None:
@@ -93,13 +99,7 @@ class ItemView:
 
         first_sent_at_ms = _parse_first_sent_at_ms(d.pop("first_sent_at_ms"))
 
-        kind = KindView(d.pop("kind"))
-
-        operation_id = d.pop("operation_id")
-
-        recovery_version = d.pop("recovery_version")
-
-        state = StateView(d.pop("state"))
+        can_resolve = d.pop("can_resolve")
 
         def _parse_owner_node(data: object) -> None | str | Unset:
             if data is None:
@@ -111,13 +111,13 @@ class ItemView:
         owner_node = _parse_owner_node(d.pop("owner_node", UNSET))
 
         item_view = cls(
-            body_fingerprint=body_fingerprint,
-            can_resolve=can_resolve,
-            first_sent_at_ms=first_sent_at_ms,
-            kind=kind,
             operation_id=operation_id,
+            body_fingerprint=body_fingerprint,
             recovery_version=recovery_version,
+            kind=kind,
             state=state,
+            first_sent_at_ms=first_sent_at_ms,
+            can_resolve=can_resolve,
             owner_node=owner_node,
         )
 

@@ -6,16 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PutHooksNameBodyConfig")
+T = TypeVar("T", bound="ConfiguredSettingsViewSettingsPublic")
 
 
 @_attrs_define(repr=False)
-class PutHooksNameBodyConfig:
-    """A `hooks:` entry, as JSON. The accepted shape is the config file's own, documented in the configuration reference;
-    it is not restated here because several of its types parse a wire shape that does not match their field layout.
-
-    """
-
+class ConfiguredSettingsViewSettingsPublic:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -28,10 +23,10 @@ class PutHooksNameBodyConfig:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        put_hooks_name_body_config = cls()
+        configured_settings_view_settings_public = cls()
 
-        put_hooks_name_body_config.additional_properties = d
-        return put_hooks_name_body_config
+        configured_settings_view_settings_public.additional_properties = d
+        return configured_settings_view_settings_public
 
     @property
     def additional_keys(self) -> list[str]:

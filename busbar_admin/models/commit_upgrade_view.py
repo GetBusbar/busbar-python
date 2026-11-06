@@ -16,14 +16,14 @@ class CommitUpgradeView:
     Attributes:
         committed (str):
         committed_at (int): The arrival second.
-        hash_ (str): The record's chain hash.
         seq (int): The record's position on the node journal.
+        hash_ (str): The record's chain hash.
     """
 
     committed: str
     committed_at: int
-    hash_: str
     seq: int
+    hash_: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -31,9 +31,9 @@ class CommitUpgradeView:
 
         committed_at = self.committed_at
 
-        hash_ = self.hash_
-
         seq = self.seq
+
+        hash_ = self.hash_
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -41,8 +41,8 @@ class CommitUpgradeView:
             {
                 "committed": committed,
                 "committed_at": committed_at,
-                "hash": hash_,
                 "seq": seq,
+                "hash": hash_,
             }
         )
 
@@ -55,15 +55,15 @@ class CommitUpgradeView:
 
         committed_at = d.pop("committed_at")
 
-        hash_ = d.pop("hash")
-
         seq = d.pop("seq")
+
+        hash_ = d.pop("hash")
 
         commit_upgrade_view = cls(
             committed=committed,
             committed_at=committed_at,
-            hash_=hash_,
             seq=seq,
+            hash_=hash_,
         )
 
         commit_upgrade_view.additional_properties = d

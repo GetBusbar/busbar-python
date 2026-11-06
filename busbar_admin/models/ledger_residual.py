@@ -18,33 +18,33 @@ class LedgerResidual:
             and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
-        amount (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
+        drawn (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
-        drawn (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
+        amount (str): A money figure: a decimal integer carried as TEXT. The ledger keeps money in 128-bit integers and
             JSON's number is a double, exact only to 2^53; a nano-unit total passes that on a busy day, and a
             figure that silently lost its last digits would still look like money.
     """
 
     accounted: str
-    amount: str
     drawn: str
+    amount: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         accounted = self.accounted
 
-        amount = self.amount
-
         drawn = self.drawn
+
+        amount = self.amount
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "accounted": accounted,
-                "amount": amount,
                 "drawn": drawn,
+                "amount": amount,
             }
         )
 
@@ -55,14 +55,14 @@ class LedgerResidual:
         d = dict(src_dict)
         accounted = d.pop("accounted")
 
-        amount = d.pop("amount")
-
         drawn = d.pop("drawn")
+
+        amount = d.pop("amount")
 
         ledger_residual = cls(
             accounted=accounted,
-            amount=amount,
             drawn=drawn,
+            amount=amount,
         )
 
         ledger_residual.additional_properties = d

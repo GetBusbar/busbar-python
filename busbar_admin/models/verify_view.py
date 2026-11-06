@@ -19,42 +19,32 @@ class VerifyView:
     verification is still a `200`; `ok` is the answer.
 
         Attributes:
+            checkpoints (int): How many sealed checkpoints the node holds.
+            since (None | VerifySince): The checkpoint the book was verified against (the last sealed one); null when none
+                is sealed.
             book_verified (bool): Whether the book as it stands was measured against `since` (false with no checkpoint, or a
                 node that binds no book).
-            checkpoints (int): How many sealed checkpoints the node holds.
-            discrepancies (int): How many rows do not reconcile (`GET /ledger/reconciliation` names them).
             findings (list[str]): Each thing verification found, in words: a checkpoint edited after it was sealed, a node
                 sequence that went backwards, a balance out of identity, a sealed balance no longer in the
                 book, a closed window that moved, a balance whose counts the rate card refused to price.
             identity_holds (bool): Whether the ledger's postings reconcile with the previous release's rows.
+            discrepancies (int): How many rows do not reconcile (`GET /ledger/reconciliation` names them).
             ok (bool): True when there is no finding and the identity holds.
-            since (None | VerifySince): The checkpoint the book was verified against (the last sealed one); null when none
-                is sealed.
     """
 
-    book_verified: bool
     checkpoints: int
-    discrepancies: int
+    since: None | VerifySince
+    book_verified: bool
     findings: list[str]
     identity_holds: bool
+    discrepancies: int
     ok: bool
-    since: None | VerifySince
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.verify_since import VerifySince  # noqa: PLC0415
 
-        book_verified = self.book_verified
-
         checkpoints = self.checkpoints
-
-        discrepancies = self.discrepancies
-
-        findings = self.findings
-
-        identity_holds = self.identity_holds
-
-        ok = self.ok
 
         since: dict[str, Any] | None
         if isinstance(self.since, VerifySince):
@@ -62,17 +52,27 @@ class VerifyView:
         else:
             since = self.since
 
+        book_verified = self.book_verified
+
+        findings = self.findings
+
+        identity_holds = self.identity_holds
+
+        discrepancies = self.discrepancies
+
+        ok = self.ok
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "book_verified": book_verified,
                 "checkpoints": checkpoints,
-                "discrepancies": discrepancies,
+                "since": since,
+                "book_verified": book_verified,
                 "findings": findings,
                 "identity_holds": identity_holds,
+                "discrepancies": discrepancies,
                 "ok": ok,
-                "since": since,
             }
         )
 
@@ -83,17 +83,7 @@ class VerifyView:
         from ..models.verify_since import VerifySince  # noqa: PLC0415
 
         d = dict(src_dict)
-        book_verified = d.pop("book_verified")
-
         checkpoints = d.pop("checkpoints")
-
-        discrepancies = d.pop("discrepancies")
-
-        findings = cast(list[str], d.pop("findings"))
-
-        identity_holds = d.pop("identity_holds")
-
-        ok = d.pop("ok")
 
         def _parse_since(data: object) -> None | VerifySince:
             if data is None:
@@ -110,14 +100,24 @@ class VerifyView:
 
         since = _parse_since(d.pop("since"))
 
+        book_verified = d.pop("book_verified")
+
+        findings = cast(list[str], d.pop("findings"))
+
+        identity_holds = d.pop("identity_holds")
+
+        discrepancies = d.pop("discrepancies")
+
+        ok = d.pop("ok")
+
         verify_view = cls(
-            book_verified=book_verified,
             checkpoints=checkpoints,
-            discrepancies=discrepancies,
+            since=since,
+            book_verified=book_verified,
             findings=findings,
             identity_holds=identity_holds,
+            discrepancies=discrepancies,
             ok=ok,
-            since=since,
         )
 
         verify_view.additional_properties = d

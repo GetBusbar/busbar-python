@@ -16,29 +16,29 @@ class ConfigDiffHooks:
 
         Attributes:
             added (list[str]):
-            changed (list[str]):
             removed (list[str]):
+            changed (list[str]):
     """
 
     added: list[str]
-    changed: list[str]
     removed: list[str]
+    changed: list[str]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         added = self.added
 
-        changed = self.changed
-
         removed = self.removed
+
+        changed = self.changed
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "added": added,
-                "changed": changed,
                 "removed": removed,
+                "changed": changed,
             }
         )
 
@@ -49,14 +49,14 @@ class ConfigDiffHooks:
         d = dict(src_dict)
         added = cast(list[str], d.pop("added"))
 
-        changed = cast(list[str], d.pop("changed"))
-
         removed = cast(list[str], d.pop("removed"))
+
+        changed = cast(list[str], d.pop("changed"))
 
         config_diff_hooks = cls(
             added=added,
-            changed=changed,
             removed=removed,
+            changed=changed,
         )
 
         config_diff_hooks.additional_properties = d

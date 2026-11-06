@@ -15,29 +15,29 @@ class AmendRateHistoryView:
     figure — the corrected rates go into the card, never into the answer.
 
         Attributes:
-            amended_at (int): When the correction was appended, in milliseconds.
+            history_seq (int): The history sequence number the correction was appended at.
             effective_from (int):
             effective_until (int | None):
-            history_seq (int): The history sequence number the correction was appended at.
+            amended_at (int): When the correction was appended, in milliseconds.
             reason_sha256 (str): The SHA-256 of the reason, as hex.
     """
 
-    amended_at: int
+    history_seq: int
     effective_from: int
     effective_until: int | None
-    history_seq: int
+    amended_at: int
     reason_sha256: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        amended_at = self.amended_at
+        history_seq = self.history_seq
 
         effective_from = self.effective_from
 
         effective_until: int | None
         effective_until = self.effective_until
 
-        history_seq = self.history_seq
+        amended_at = self.amended_at
 
         reason_sha256 = self.reason_sha256
 
@@ -45,10 +45,10 @@ class AmendRateHistoryView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "amended_at": amended_at,
+                "history_seq": history_seq,
                 "effective_from": effective_from,
                 "effective_until": effective_until,
-                "history_seq": history_seq,
+                "amended_at": amended_at,
                 "reason_sha256": reason_sha256,
             }
         )
@@ -58,7 +58,7 @@ class AmendRateHistoryView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        amended_at = d.pop("amended_at")
+        history_seq = d.pop("history_seq")
 
         effective_from = d.pop("effective_from")
 
@@ -69,15 +69,15 @@ class AmendRateHistoryView:
 
         effective_until = _parse_effective_until(d.pop("effective_until"))
 
-        history_seq = d.pop("history_seq")
+        amended_at = d.pop("amended_at")
 
         reason_sha256 = d.pop("reason_sha256")
 
         amend_rate_history_view = cls(
-            amended_at=amended_at,
+            history_seq=history_seq,
             effective_from=effective_from,
             effective_until=effective_until,
-            history_seq=history_seq,
+            amended_at=amended_at,
             reason_sha256=reason_sha256,
         )
 

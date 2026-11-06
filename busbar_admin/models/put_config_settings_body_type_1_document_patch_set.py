@@ -6,11 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="NamedSettingsReqSettings")
+T = TypeVar("T", bound="PutConfigSettingsBodyType1DocumentPatchSet")
 
 
 @_attrs_define(repr=False)
-class NamedSettingsReqSettings:
+class PutConfigSettingsBodyType1DocumentPatchSet:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -23,10 +23,10 @@ class NamedSettingsReqSettings:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        named_settings_req_settings = cls()
+        put_config_settings_body_type_1_document_patch_set = cls()
 
-        named_settings_req_settings.additional_properties = d
-        return named_settings_req_settings
+        put_config_settings_body_type_1_document_patch_set.additional_properties = d
+        return put_config_settings_body_type_1_document_patch_set
 
     @property
     def additional_keys(self) -> list[str]:

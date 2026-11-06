@@ -3,19 +3,21 @@ from typing import Any
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.plane_record_write_req import PlaneRecordWriteReq
 from ...models.plane_record_write_view import PlaneRecordWriteView
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     body: PlaneRecordWriteReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
+    if not isinstance(idempotency_key, Unset):
+        headers["Idempotency-Key"] = idempotency_key
 
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -30,9 +32,7 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Error | PlaneRecordWriteView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | PlaneRecordWriteView:
     if response.status_code == 200:
         response_200 = PlaneRecordWriteView.from_dict(response.json())
 
@@ -63,15 +63,24 @@ def _parse_response(
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
+    if response.status_code == 429:
+        response_429 = Error.from_dict(response.json())
+
+        return response_429
+
     if response.status_code == 503:
         response_503 = Error.from_dict(response.json())
 
         return response_503
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
@@ -91,6 +100,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient,
     body: PlaneRecordWriteReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Response[Error | PlaneRecordWriteView]:
     """Upsert one record of a plane this node serves
 
@@ -101,6 +111,7 @@ def sync_detailed(
     body answers the first answer.
 
     Args:
+        idempotency_key (str | Unset):
         body (PlaneRecordWriteReq): `POST /plane-record-write`: one plane record, upserted by
             `(kind, id)`.
 
@@ -114,6 +125,7 @@ def sync_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = client._request(
@@ -127,6 +139,7 @@ def sync(
     *,
     client: AuthenticatedClient,
     body: PlaneRecordWriteReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Error | PlaneRecordWriteView | None:
     """Upsert one record of a plane this node serves
 
@@ -137,6 +150,7 @@ def sync(
     body answers the first answer.
 
     Args:
+        idempotency_key (str | Unset):
         body (PlaneRecordWriteReq): `POST /plane-record-write`: one plane record, upserted by
             `(kind, id)`.
 
@@ -151,6 +165,7 @@ def sync(
     return sync_detailed(
         client=client,
         body=body,
+        idempotency_key=idempotency_key,
     ).parsed
 
 
@@ -158,6 +173,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
     body: PlaneRecordWriteReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Response[Error | PlaneRecordWriteView]:
     """Upsert one record of a plane this node serves
 
@@ -168,6 +184,7 @@ async def asyncio_detailed(
     body answers the first answer.
 
     Args:
+        idempotency_key (str | Unset):
         body (PlaneRecordWriteReq): `POST /plane-record-write`: one plane record, upserted by
             `(kind, id)`.
 
@@ -181,6 +198,7 @@ async def asyncio_detailed(
 
     kwargs = _get_kwargs(
         body=body,
+        idempotency_key=idempotency_key,
     )
 
     response = await client._async_request(**kwargs)
@@ -192,6 +210,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient,
     body: PlaneRecordWriteReq,
+    idempotency_key: str | Unset = UNSET,
 ) -> Error | PlaneRecordWriteView | None:
     """Upsert one record of a plane this node serves
 
@@ -202,6 +221,7 @@ async def asyncio(
     body answers the first answer.
 
     Args:
+        idempotency_key (str | Unset):
         body (PlaneRecordWriteReq): `POST /plane-record-write`: one plane record, upserted by
             `(kind, id)`.
 
@@ -217,5 +237,6 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
             body=body,
+            idempotency_key=idempotency_key,
         )
     ).parsed

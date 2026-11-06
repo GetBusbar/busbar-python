@@ -20,10 +20,26 @@ class AuditPageView:
 
         Attributes:
             items (list[AuditEntry]):
+            returned_from (None | str): Actual lowest/highest returned sequence, null for an empty page.
+            returned_to (None | str):
+            retained_from (None | str): Lowest/highest sequence in the unfiltered ring under the same lock as items.
+            retained_to (None | str):
+            retention_limit (str):
+            semantics (str): `live_offset`: concurrent appends/evictions may duplicate or skip rows across pages.
+            complete (bool): Always false: this live filtered inventory does not prove complete audit coverage.
+            truncated (bool): More matching rows existed in this observation.
             next_cursor (None | str):
     """
 
     items: list[AuditEntry]
+    returned_from: None | str
+    returned_to: None | str
+    retained_from: None | str
+    retained_to: None | str
+    retention_limit: str
+    semantics: str
+    complete: bool
+    truncated: bool
     next_cursor: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -33,6 +49,26 @@ class AuditPageView:
             items_item = items_item_data.to_dict()
             items.append(items_item)
 
+        returned_from: None | str
+        returned_from = self.returned_from
+
+        returned_to: None | str
+        returned_to = self.returned_to
+
+        retained_from: None | str
+        retained_from = self.retained_from
+
+        retained_to: None | str
+        retained_to = self.retained_to
+
+        retention_limit = self.retention_limit
+
+        semantics = self.semantics
+
+        complete = self.complete
+
+        truncated = self.truncated
+
         next_cursor: None | str
         next_cursor = self.next_cursor
 
@@ -41,6 +77,14 @@ class AuditPageView:
         field_dict.update(
             {
                 "items": items,
+                "returned_from": returned_from,
+                "returned_to": returned_to,
+                "retained_from": retained_from,
+                "retained_to": retained_to,
+                "retention_limit": retention_limit,
+                "semantics": semantics,
+                "complete": complete,
+                "truncated": truncated,
                 "next_cursor": next_cursor,
             }
         )
@@ -59,6 +103,42 @@ class AuditPageView:
 
             items.append(items_item)
 
+        def _parse_returned_from(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        returned_from = _parse_returned_from(d.pop("returned_from"))
+
+        def _parse_returned_to(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        returned_to = _parse_returned_to(d.pop("returned_to"))
+
+        def _parse_retained_from(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        retained_from = _parse_retained_from(d.pop("retained_from"))
+
+        def _parse_retained_to(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        retained_to = _parse_retained_to(d.pop("retained_to"))
+
+        retention_limit = d.pop("retention_limit")
+
+        semantics = d.pop("semantics")
+
+        complete = d.pop("complete")
+
+        truncated = d.pop("truncated")
+
         def _parse_next_cursor(data: object) -> None | str:
             if data is None:
                 return data
@@ -68,6 +148,14 @@ class AuditPageView:
 
         audit_page_view = cls(
             items=items,
+            returned_from=returned_from,
+            returned_to=returned_to,
+            retained_from=retained_from,
+            retained_to=retained_to,
+            retention_limit=retention_limit,
+            semantics=semantics,
+            complete=complete,
+            truncated=truncated,
             next_cursor=next_cursor,
         )
 

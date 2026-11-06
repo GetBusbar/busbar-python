@@ -6,16 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PostHooksBodyConfig")
+T = TypeVar("T", bound="ConfigInputHookDefinitionSettings")
 
 
 @_attrs_define(repr=False)
-class PostHooksBodyConfig:
-    """A `hooks:` entry, as JSON. The accepted shape is the config file's own, documented in the configuration reference;
-    it is not restated here because several of its types parse a wire shape that does not match their field layout.
-
-    """
-
+class ConfigInputHookDefinitionSettings:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -28,10 +23,10 @@ class PostHooksBodyConfig:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        post_hooks_body_config = cls()
+        config_input_hook_definition_settings = cls()
 
-        post_hooks_body_config.additional_properties = d
-        return post_hooks_body_config
+        config_input_hook_definition_settings.additional_properties = d
+        return config_input_hook_definition_settings
 
     @property
     def additional_keys(self) -> list[str]:

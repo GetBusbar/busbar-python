@@ -24,25 +24,27 @@ class GroupView:
     WRITE verbs accept a `GroupCfg` verbatim (paste a config.yaml group block). Additive-only.
 
         Attributes:
+            name (str):
             enabled (bool): `false` FREEZES the group (every request charging through it is rejected; history kept).
             limits (list[LimitView]): The group's own limits, enforced together (AND). Order preserved from config.
-            name (str):
-            child_default (list[LimitView] | None | Unset): The limit template stamped onto children auto-provisioned under
-                this group (e.g. a
-                `user:<sub>` leaf on first self-mint). Skipped from the body when the group sets none.
             parent (None | str | Unset): The parent group whose limits this one is ANDed under (the enforcement chain).
                 `None` = a
                 root group. Skipped from the body when absent.
+            child_default (list[LimitView] | None | Unset): The limit template stamped onto children auto-provisioned under
+                this group (e.g. a
+                `user:<sub>` leaf on first self-mint). Skipped from the body when the group sets none.
     """
 
+    name: str
     enabled: bool
     limits: list[LimitView]
-    name: str
-    child_default: list[LimitView] | None | Unset = UNSET
     parent: None | str | Unset = UNSET
+    child_default: list[LimitView] | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        name = self.name
+
         enabled = self.enabled
 
         limits = []
@@ -50,7 +52,11 @@ class GroupView:
             limits_item = limits_item_data.to_dict()
             limits.append(limits_item)
 
-        name = self.name
+        parent: None | str | Unset
+        if isinstance(self.parent, Unset):
+            parent = UNSET
+        else:
+            parent = self.parent
 
         child_default: list[dict[str, Any]] | None | Unset
         if isinstance(self.child_default, Unset):
@@ -64,25 +70,19 @@ class GroupView:
         else:
             child_default = self.child_default
 
-        parent: None | str | Unset
-        if isinstance(self.parent, Unset):
-            parent = UNSET
-        else:
-            parent = self.parent
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "name": name,
                 "enabled": enabled,
                 "limits": limits,
-                "name": name,
             }
         )
-        if child_default is not UNSET:
-            field_dict["child_default"] = child_default
         if parent is not UNSET:
             field_dict["parent"] = parent
+        if child_default is not UNSET:
+            field_dict["child_default"] = child_default
 
         return field_dict
 
@@ -91,6 +91,8 @@ class GroupView:
         from ..models.limit_view import LimitView  # noqa: PLC0415
 
         d = dict(src_dict)
+        name = d.pop("name")
+
         enabled = d.pop("enabled")
 
         limits = []
@@ -100,7 +102,14 @@ class GroupView:
 
             limits.append(limits_item)
 
-        name = d.pop("name")
+        def _parse_parent(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        parent = _parse_parent(d.pop("parent", UNSET))
 
         def _parse_child_default(data: object) -> list[LimitView] | None | Unset:
             if data is None:
@@ -124,21 +133,12 @@ class GroupView:
 
         child_default = _parse_child_default(d.pop("child_default", UNSET))
 
-        def _parse_parent(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        parent = _parse_parent(d.pop("parent", UNSET))
-
         group_view = cls(
+            name=name,
             enabled=enabled,
             limits=limits,
-            name=name,
-            child_default=child_default,
             parent=parent,
+            child_default=child_default,
         )
 
         group_view.additional_properties = d

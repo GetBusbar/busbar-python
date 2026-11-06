@@ -21,13 +21,13 @@ class KeyView:
     bound `groups:` entry (`null` = unlimited).
 
         Attributes:
-            allowed_pools (list[str] | None):
-            created_at (int):
-            enabled (bool):
-            group (None | str):
             id (str):
-            labels (KeyViewLabels):
             name (str):
+            allowed_pools (list[str] | None):
+            group (None | str):
+            enabled (bool):
+            created_at (int):
+            labels (KeyViewLabels):
             state (str): `enabled` alone cannot distinguish a reversible pause from either of the two permanent
                 dispositions. `PATCH {enabled:false}`, `POST /keys/{id}/revoke`, and `DELETE /keys/{id}` all
                 used to leave `enabled: false` with nothing else to tell them apart. One of exactly four
@@ -41,17 +41,21 @@ class KeyView:
                   `GET /keys` by default; visible there with `?include=tombstoned`.
     """
 
-    allowed_pools: list[str] | None
-    created_at: int
-    enabled: bool
-    group: None | str
     id: str
-    labels: KeyViewLabels
     name: str
+    allowed_pools: list[str] | None
+    group: None | str
+    enabled: bool
+    created_at: int
+    labels: KeyViewLabels
     state: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        id = self.id
+
+        name = self.name
+
         allowed_pools: list[str] | None
         if isinstance(self.allowed_pools, list):
             allowed_pools = self.allowed_pools
@@ -59,18 +63,14 @@ class KeyView:
         else:
             allowed_pools = self.allowed_pools
 
-        created_at = self.created_at
-
-        enabled = self.enabled
-
         group: None | str
         group = self.group
 
-        id = self.id
+        enabled = self.enabled
+
+        created_at = self.created_at
 
         labels = self.labels.to_dict()
-
-        name = self.name
 
         state = self.state
 
@@ -78,13 +78,13 @@ class KeyView:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "allowed_pools": allowed_pools,
-                "created_at": created_at,
-                "enabled": enabled,
-                "group": group,
                 "id": id,
-                "labels": labels,
                 "name": name,
+                "allowed_pools": allowed_pools,
+                "group": group,
+                "enabled": enabled,
+                "created_at": created_at,
+                "labels": labels,
                 "state": state,
             }
         )
@@ -96,6 +96,9 @@ class KeyView:
         from ..models.key_view_labels import KeyViewLabels  # noqa: PLC0415
 
         d = dict(src_dict)
+        id = d.pop("id")
+
+        name = d.pop("name")
 
         def _parse_allowed_pools(data: object) -> list[str] | None:
             if data is None:
@@ -112,10 +115,6 @@ class KeyView:
 
         allowed_pools = _parse_allowed_pools(d.pop("allowed_pools"))
 
-        created_at = d.pop("created_at")
-
-        enabled = d.pop("enabled")
-
         def _parse_group(data: object) -> None | str:
             if data is None:
                 return data
@@ -123,22 +122,22 @@ class KeyView:
 
         group = _parse_group(d.pop("group"))
 
-        id = d.pop("id")
+        enabled = d.pop("enabled")
+
+        created_at = d.pop("created_at")
 
         labels = KeyViewLabels.from_dict(d.pop("labels"))
-
-        name = d.pop("name")
 
         state = d.pop("state")
 
         key_view = cls(
-            allowed_pools=allowed_pools,
-            created_at=created_at,
-            enabled=enabled,
-            group=group,
             id=id,
-            labels=labels,
             name=name,
+            allowed_pools=allowed_pools,
+            group=group,
+            enabled=enabled,
+            created_at=created_at,
+            labels=labels,
             state=state,
         )
 

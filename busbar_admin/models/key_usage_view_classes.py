@@ -15,9 +15,8 @@ T = TypeVar("T", bound="KeyUsageViewClasses")
 
 @_attrs_define(repr=False)
 class KeyUsageViewClasses:
-    """THE PLANE-DECLARED CLASSES the row's ledger lines counted outside the token split, keyed by
-    the class name the plane declares (new in 1.6.0, [`ClassUsage`]). Absent when the row carries
-    none, so a token-only row reads exactly as 1.5.5's.
+    """Every ledgered class outside the reserved token split, keyed by class name ([`ClassUsage`]).
+    Includes open classes from every provider and plane. Absent when the row carries none.
 
     """
 

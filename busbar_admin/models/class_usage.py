@@ -19,25 +19,25 @@ class ClassUsage:
     part of that row's `spend_micros`, never added to it a second time.
 
         Attributes:
+            count (float): The raw count the plane's ledger lines recorded under the class.
             cost (int): What the card in force priced that count at, in micro-units.
-            count (int): The raw count the plane's ledger lines recorded under the class.
     """
 
+    count: float
     cost: int
-    count: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        cost = self.cost
-
         count = self.count
+
+        cost = self.cost
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "cost": cost,
                 "count": count,
+                "cost": cost,
             }
         )
 
@@ -46,13 +46,13 @@ class ClassUsage:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        cost = d.pop("cost")
-
         count = d.pop("count")
 
+        cost = d.pop("cost")
+
         class_usage = cls(
-            cost=cost,
             count=count,
+            cost=cost,
         )
 
         class_usage.additional_properties = d

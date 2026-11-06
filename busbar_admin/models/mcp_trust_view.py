@@ -29,7 +29,7 @@ class McpTrustView:
                 different act from adopting new content.
             pin_mechanism (str): The operator's word for the authenticity root. Never interpreted by the machine.
             removed (list[str]): Approved, and no longer offered.
-            state (str): `pending`, `approved`, `quarantined`, `suspended` or `error`. DERIVED from the approval and
+            state (str): `pending`, `approved`, `quarantined` or `error`. DERIVED from the approval and
                 the last sighting on every read, so there is no stored state to go stale.
     """
 

@@ -22,40 +22,34 @@ class PluginInstallView:
 
         Attributes:
             file (str): The library FILENAME written into the plugins directory (the handle `DELETE` takes).
-            interface_version (int): The store C-ABI (`interface_version`) the engine validated the library against.
             name (str): The plugin name from its manifest (or the filename when unsigned).
-            note (str): A human note: this install is durable in the folder but takes effect on the next store (re)load.
+            interface_version (int): The store C-ABI (`interface_version`) the engine validated the library against.
             trust (str): The server-side trust verdict from the RE-VERIFY: `"trusted"` | `"unverified"`. (A `"rejected"`
                 verdict is an error, never a success body.)
-            publisher (None | str | Unset): The manifest publisher, when signed.
+            note (str): A human note: this install is durable in the folder but takes effect on the next store (re)load.
             version (None | str | Unset): The manifest version, when the upload carried a signed manifest.
+            publisher (None | str | Unset): The manifest publisher, when signed.
     """
 
     file: str
-    interface_version: int
     name: str
-    note: str
+    interface_version: int
     trust: str
-    publisher: None | str | Unset = UNSET
+    note: str
     version: None | str | Unset = UNSET
+    publisher: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         file = self.file
 
-        interface_version = self.interface_version
-
         name = self.name
 
-        note = self.note
+        interface_version = self.interface_version
 
         trust = self.trust
 
-        publisher: None | str | Unset
-        if isinstance(self.publisher, Unset):
-            publisher = UNSET
-        else:
-            publisher = self.publisher
+        note = self.note
 
         version: None | str | Unset
         if isinstance(self.version, Unset):
@@ -63,21 +57,27 @@ class PluginInstallView:
         else:
             version = self.version
 
+        publisher: None | str | Unset
+        if isinstance(self.publisher, Unset):
+            publisher = UNSET
+        else:
+            publisher = self.publisher
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "file": file,
-                "interface_version": interface_version,
                 "name": name,
-                "note": note,
+                "interface_version": interface_version,
                 "trust": trust,
+                "note": note,
             }
         )
-        if publisher is not UNSET:
-            field_dict["publisher"] = publisher
         if version is not UNSET:
             field_dict["version"] = version
+        if publisher is not UNSET:
+            field_dict["publisher"] = publisher
 
         return field_dict
 
@@ -86,22 +86,13 @@ class PluginInstallView:
         d = dict(src_dict)
         file = d.pop("file")
 
-        interface_version = d.pop("interface_version")
-
         name = d.pop("name")
 
-        note = d.pop("note")
+        interface_version = d.pop("interface_version")
 
         trust = d.pop("trust")
 
-        def _parse_publisher(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        publisher = _parse_publisher(d.pop("publisher", UNSET))
+        note = d.pop("note")
 
         def _parse_version(data: object) -> None | str | Unset:
             if data is None:
@@ -112,14 +103,23 @@ class PluginInstallView:
 
         version = _parse_version(d.pop("version", UNSET))
 
+        def _parse_publisher(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        publisher = _parse_publisher(d.pop("publisher", UNSET))
+
         plugin_install_view = cls(
             file=file,
-            interface_version=interface_version,
             name=name,
-            note=note,
+            interface_version=interface_version,
             trust=trust,
-            publisher=publisher,
+            note=note,
             version=version,
+            publisher=publisher,
         )
 
         plugin_install_view.additional_properties = d

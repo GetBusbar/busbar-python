@@ -15,7 +15,8 @@ T = TypeVar("T", bound="ErrorError")
 class ErrorError:
     """
     Attributes:
-        code (ErrorErrorCode):
+        code (ErrorErrorCode): Known server codes; forward-compatible readers preserve unknown code strings instead of
+            failing the whole response.
         message (str):
     """
 

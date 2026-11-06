@@ -4,18 +4,16 @@ from urllib.parse import quote
 
 import httpx
 
-from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
-from ...models.named_def_view import NamedDefView
-from ...models.named_settings_req import NamedSettingsReq
+from ...models.mutated_def_view import MutatedDefView
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     name: str,
     *,
-    body: NamedSettingsReq,
+    body: Any,
     if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -29,7 +27,7 @@ def _get_kwargs(
         ),
     }
 
-    _kwargs["json"] = body.to_dict()
+    _kwargs["json"] = body
 
     headers["Content-Type"] = "application/json"
 
@@ -37,9 +35,9 @@ def _get_kwargs(
     return _kwargs
 
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | NamedDefView | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Error | MutatedDefView:
     if response.status_code == 200:
-        response_200 = NamedDefView.from_dict(response.json())
+        response_200 = MutatedDefView.from_dict(response.json())
 
         return response_200
 
@@ -68,6 +66,11 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_409
 
+    if response.status_code == 413:
+        response_413 = Error.from_dict(response.json())
+
+        return response_413
+
     if response.status_code == 429:
         response_429 = Error.from_dict(response.json())
 
@@ -78,15 +81,19 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 
         return response_500
 
-    if client.raise_on_unexpected_status:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
-    else:
-        return None
+    if response.status_code == 503:
+        response_503 = Error.from_dict(response.json())
+
+        return response_503
+
+    response_default = Error.from_dict(response.json())
+
+    return response_default
 
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Error | NamedDefView]:
+) -> Response[Error | MutatedDefView]:
     return Response(
         status_code=HTTPStatus(response.status_code)
         if response.status_code in HTTPStatus._value2member_map_
@@ -101,27 +108,28 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: NamedSettingsReq,
+    body: Any,
     if_match: str | Unset = UNSET,
-) -> Response[Error | NamedDefView]:
-    """Replace ONLY the opaque `settings:` bag of one `agents:` definition; every other field is left byte-
-    identical
+) -> Response[Error | MutatedDefView]:
+    """Change ONLY the opaque `settings:` bag of one `agents:` definition. Supply exactly one mode:
+    `settings` replaces the whole bag (legacy); `edit` has `set` complete top-level values and `remove`
+    key names, preserving omitted settings including secrets. A key cannot occur in both set and remove;
+    null is a value. Other definition fields are unchanged
 
     Args:
         name (str):
         if_match (str | Unset):
-        body (NamedSettingsReq): The `PATCH /api/v1/admin/<section>/{name}/settings` body: the
-            whole replacement settings bag.
-            A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics:
-            `settings:` is
-            REPLACED, not deep-merged, so the stored bag is always exactly what the caller sent).
+        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
+            sets/removes top-level keys and preserves all others. Null setting values are values. A
+            setting cannot appear in both set and remove. Never reconstruct a replacement from
+            redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | NamedDefView]
+        Response[Error | MutatedDefView]
     """
 
     kwargs = _get_kwargs(
@@ -141,27 +149,28 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: NamedSettingsReq,
+    body: Any,
     if_match: str | Unset = UNSET,
-) -> Error | NamedDefView | None:
-    """Replace ONLY the opaque `settings:` bag of one `agents:` definition; every other field is left byte-
-    identical
+) -> Error | MutatedDefView | None:
+    """Change ONLY the opaque `settings:` bag of one `agents:` definition. Supply exactly one mode:
+    `settings` replaces the whole bag (legacy); `edit` has `set` complete top-level values and `remove`
+    key names, preserving omitted settings including secrets. A key cannot occur in both set and remove;
+    null is a value. Other definition fields are unchanged
 
     Args:
         name (str):
         if_match (str | Unset):
-        body (NamedSettingsReq): The `PATCH /api/v1/admin/<section>/{name}/settings` body: the
-            whole replacement settings bag.
-            A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics:
-            `settings:` is
-            REPLACED, not deep-merged, so the stored bag is always exactly what the caller sent).
+        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
+            sets/removes top-level keys and preserves all others. Null setting values are values. A
+            setting cannot appear in both set and remove. Never reconstruct a replacement from
+            redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | NamedDefView
+        Error | MutatedDefView
     """
 
     return sync_detailed(
@@ -176,27 +185,28 @@ async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: NamedSettingsReq,
+    body: Any,
     if_match: str | Unset = UNSET,
-) -> Response[Error | NamedDefView]:
-    """Replace ONLY the opaque `settings:` bag of one `agents:` definition; every other field is left byte-
-    identical
+) -> Response[Error | MutatedDefView]:
+    """Change ONLY the opaque `settings:` bag of one `agents:` definition. Supply exactly one mode:
+    `settings` replaces the whole bag (legacy); `edit` has `set` complete top-level values and `remove`
+    key names, preserving omitted settings including secrets. A key cannot occur in both set and remove;
+    null is a value. Other definition fields are unchanged
 
     Args:
         name (str):
         if_match (str | Unset):
-        body (NamedSettingsReq): The `PATCH /api/v1/admin/<section>/{name}/settings` body: the
-            whole replacement settings bag.
-            A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics:
-            `settings:` is
-            REPLACED, not deep-merged, so the stored bag is always exactly what the caller sent).
+        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
+            sets/removes top-level keys and preserves all others. Null setting values are values. A
+            setting cannot appear in both set and remove. Never reconstruct a replacement from
+            redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Error | NamedDefView]
+        Response[Error | MutatedDefView]
     """
 
     kwargs = _get_kwargs(
@@ -214,27 +224,28 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: NamedSettingsReq,
+    body: Any,
     if_match: str | Unset = UNSET,
-) -> Error | NamedDefView | None:
-    """Replace ONLY the opaque `settings:` bag of one `agents:` definition; every other field is left byte-
-    identical
+) -> Error | MutatedDefView | None:
+    """Change ONLY the opaque `settings:` bag of one `agents:` definition. Supply exactly one mode:
+    `settings` replaces the whole bag (legacy); `edit` has `set` complete top-level values and `remove`
+    key names, preserving omitted settings including secrets. A key cannot occur in both set and remove;
+    null is a value. Other definition fields are unchanged
 
     Args:
         name (str):
         if_match (str | Unset):
-        body (NamedSettingsReq): The `PATCH /api/v1/admin/<section>/{name}/settings` body: the
-            whole replacement settings bag.
-            A sibling of the hooks surface's `PatchSettingsReq` (same shape, same semantics:
-            `settings:` is
-            REPLACED, not deep-merged, so the stored bag is always exactly what the caller sent).
+        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
+            sets/removes top-level keys and preserves all others. Null setting values are values. A
+            setting cannot appear in both set and remove. Never reconstruct a replacement from
+            redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Error | NamedDefView
+        Error | MutatedDefView
     """
 
     return (

@@ -23,43 +23,43 @@ class HookHealthView:
     plugin itself is loaded. Never fires the hook. Additive-only.
 
         Attributes:
-            detail (None | str): A short human note on the resolution (why `false`, or the resolved plugin's kind). Never a
-                secret.
             name (str):
-            reachable (bool | None): `Some(true)` = resolves to a loaded `kind: hook` plugin; `Some(false)` = it does not
-                (wrong kind, or not installed/loaded), always `Some`, never `None`, as of 1.5.0's
-                in-process plugin model.
             transport (HookTransportView): The transport half of a `HookView`. As of 1.5.0 a hook is EITHER a compiled-in
                 kind (no
                 transport at all) or a signed `kind: hook` dlopen'd plugin (`target` = the plugin NAME, not a
                 socket path or URL); the retired 1.4.x socket/webhook sidecar transports are gone.
+            reachable (bool | None): `Some(true)` = resolves to a loaded `kind: hook` plugin; `Some(false)` = it does not
+                (wrong kind, or not installed/loaded), always `Some`, never `None`, as of 1.5.0's
+                in-process plugin model.
+            detail (None | str): A short human note on the resolution (why `false`, or the resolved plugin's kind). Never a
+                secret.
     """
 
-    detail: None | str
     name: str
-    reachable: bool | None
     transport: HookTransportView
+    reachable: bool | None
+    detail: None | str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        detail: None | str
-        detail = self.detail
-
         name = self.name
+
+        transport = self.transport.to_dict()
 
         reachable: bool | None
         reachable = self.reachable
 
-        transport = self.transport.to_dict()
+        detail: None | str
+        detail = self.detail
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "detail": detail,
                 "name": name,
-                "reachable": reachable,
                 "transport": transport,
+                "reachable": reachable,
+                "detail": detail,
             }
         )
 
@@ -70,15 +70,9 @@ class HookHealthView:
         from ..models.hook_transport_view import HookTransportView  # noqa: PLC0415
 
         d = dict(src_dict)
-
-        def _parse_detail(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        detail = _parse_detail(d.pop("detail"))
-
         name = d.pop("name")
+
+        transport = HookTransportView.from_dict(d.pop("transport"))
 
         def _parse_reachable(data: object) -> bool | None:
             if data is None:
@@ -87,13 +81,18 @@ class HookHealthView:
 
         reachable = _parse_reachable(d.pop("reachable"))
 
-        transport = HookTransportView.from_dict(d.pop("transport"))
+        def _parse_detail(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        detail = _parse_detail(d.pop("detail"))
 
         hook_health_view = cls(
-            detail=detail,
             name=name,
-            reachable=reachable,
             transport=transport,
+            reachable=reachable,
+            detail=detail,
         )
 
         hook_health_view.additional_properties = d

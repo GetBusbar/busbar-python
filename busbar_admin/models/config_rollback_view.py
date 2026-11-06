@@ -15,25 +15,25 @@ class ConfigRollbackView:
     config version the rollback produced).
 
         Attributes:
-            config_version (int):
             restored_version (int):
+            config_version (int):
     """
 
-    config_version: int
     restored_version: int
+    config_version: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        config_version = self.config_version
-
         restored_version = self.restored_version
+
+        config_version = self.config_version
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "config_version": config_version,
                 "restored_version": restored_version,
+                "config_version": config_version,
             }
         )
 
@@ -42,13 +42,13 @@ class ConfigRollbackView:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        config_version = d.pop("config_version")
-
         restored_version = d.pop("restored_version")
 
+        config_version = d.pop("config_version")
+
         config_rollback_view = cls(
-            config_version=config_version,
             restored_version=restored_version,
+            config_version=config_version,
         )
 
         config_rollback_view.additional_properties = d

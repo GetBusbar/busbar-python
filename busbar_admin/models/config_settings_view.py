@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.config_settings_view_desired_status import ConfigSettingsViewDesiredStatus
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.config_settings_view_configuration import ConfigSettingsViewConfiguration
+
 
 T = TypeVar("T", bound="ConfigSettingsView")
 
@@ -42,17 +47,10 @@ class ConfigSettingsView:
     `observability` section here, and no `metrics` one either: 1.5.3 DELETED both from the config
     grammar, and `RootSettings` (what this endpoint projects) carries neither field: a PUT naming
     `observability` is a loud `400` (`deny_unknown_fields`), never a silent no-op. All telemetry
-    egress is now `export:`, a NAMED MAP of exporter instances that this endpoint does not reach at
-    all: it is edited in `config.yaml` and made live by a plugin reload, not by `PUT /config/settings`.
-    Each `export:` entry is keyed by an operator-chosen instance name and carries a `module:` naming
-    the exporter plus a `settings:` bag that module validates, and MAY carry a `streams:`
-    subscription list. The built-in modules are `prometheus` (carries the `metrics` stream), `otlp`
-    (`traces`), and `request-log-webhook` + `request-log-file` (`logs`); subscribing an instance to a
-    stream its module does not carry is rejected rather than silently delivering nothing. An entry
-    MAY also carry a `fields:` projection, but do NOT plan on it in 1.5.3: it is parsed and enforced
-    yet unreachable with every built-in module, because each stream they carry has a pinned field
-    that has no producer yet, so any `fields:` on them is rejected. Omit it and receive the stream's
-    produced default set.
+    egress uses the named `export:` map. Export definitions and explicit supported field projections
+    are authored through the named exporter routes or source-fenced configuration document edits.
+    Module-carried streams, produced fields and required pinned fields are published in the export
+    form schema; lifecycle and restart requirements remain explicit in mutation responses.
     `advanced` is live EXCEPT `response_headers`: `response_headers.server_timing` is
     baked into router middleware state at boot (same "config apply swaps `Arc<App>`, never the
     router" freezing as `max_inbound_concurrent`) and `response_headers.route_policy` seeds a
@@ -69,20 +67,31 @@ class ConfigSettingsView:
 
                 This field NAME is frozen wire and is the response ENVELOPE member, not a plugin settings
                 bag; the redaction applies to the bags nested INSIDE it.
-            note (None | str | Unset): A human note describing the live-vs-reload split (absent on a GET).
             reload_to_apply (list[str] | Unset): Fields that were stored durably but are RESTART-TO-APPLY: a socket rebind,
                 a TLS acceptor
                 build and a store open all happen once at process start, so a `POST /config/reload` does NOT
                 make them live; `POST /restart` (or a supervisor restart) does. Empty when the PUT touched
                 only live-swappable fields (or on a GET). The field NAME is frozen wire; only this description
                 changed.
+            note (None | str | Unset): A human note describing the live-vs-reload split (absent on a GET).
+            configuration (ConfigSettingsViewConfiguration | Unset): Sanitized values captured from the installed config
+                generation, bound to the response ETag; configured does not mean physically active.
+            settings_source (str | Unset): desired_root_overlay on GET; settings never represents the full applied
+                configuration.
+            desired_revision (None | str | Unset): SHA256 content revision of the exact verified desired Store document;
+                independent of the process-local config_version.
+            desired_status (ConfigSettingsViewDesiredStatus | Unset):
     """
 
     applied: bool
     config_version: int
     settings: Any
-    note: None | str | Unset = UNSET
     reload_to_apply: list[str] | Unset = UNSET
+    note: None | str | Unset = UNSET
+    configuration: ConfigSettingsViewConfiguration | Unset = UNSET
+    settings_source: str | Unset = UNSET
+    desired_revision: None | str | Unset = UNSET
+    desired_status: ConfigSettingsViewDesiredStatus | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -92,15 +101,31 @@ class ConfigSettingsView:
 
         settings = self.settings
 
+        reload_to_apply: list[str] | Unset = UNSET
+        if not isinstance(self.reload_to_apply, Unset):
+            reload_to_apply = self.reload_to_apply
+
         note: None | str | Unset
         if isinstance(self.note, Unset):
             note = UNSET
         else:
             note = self.note
 
-        reload_to_apply: list[str] | Unset = UNSET
-        if not isinstance(self.reload_to_apply, Unset):
-            reload_to_apply = self.reload_to_apply
+        configuration: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.configuration, Unset):
+            configuration = self.configuration.to_dict()
+
+        settings_source = self.settings_source
+
+        desired_revision: None | str | Unset
+        if isinstance(self.desired_revision, Unset):
+            desired_revision = UNSET
+        else:
+            desired_revision = self.desired_revision
+
+        desired_status: str | Unset = UNSET
+        if not isinstance(self.desired_status, Unset):
+            desired_status = self.desired_status.value
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -111,21 +136,33 @@ class ConfigSettingsView:
                 "settings": settings,
             }
         )
-        if note is not UNSET:
-            field_dict["note"] = note
         if reload_to_apply is not UNSET:
             field_dict["reload_to_apply"] = reload_to_apply
+        if note is not UNSET:
+            field_dict["note"] = note
+        if configuration is not UNSET:
+            field_dict["configuration"] = configuration
+        if settings_source is not UNSET:
+            field_dict["settings_source"] = settings_source
+        if desired_revision is not UNSET:
+            field_dict["desired_revision"] = desired_revision
+        if desired_status is not UNSET:
+            field_dict["desired_status"] = desired_status
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.config_settings_view_configuration import ConfigSettingsViewConfiguration  # noqa: PLC0415
+
         d = dict(src_dict)
         applied = d.pop("applied")
 
         config_version = d.pop("config_version")
 
         settings = d.pop("settings")
+
+        reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
 
         def _parse_note(data: object) -> None | str | Unset:
             if data is None:
@@ -136,14 +173,41 @@ class ConfigSettingsView:
 
         note = _parse_note(d.pop("note", UNSET))
 
-        reload_to_apply = cast(list[str], d.pop("reload_to_apply", UNSET))
+        _configuration = d.pop("configuration", UNSET)
+        configuration: ConfigSettingsViewConfiguration | Unset
+        if isinstance(_configuration, Unset):
+            configuration = UNSET
+        else:
+            configuration = ConfigSettingsViewConfiguration.from_dict(_configuration)
+
+        settings_source = d.pop("settings_source", UNSET)
+
+        def _parse_desired_revision(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        desired_revision = _parse_desired_revision(d.pop("desired_revision", UNSET))
+
+        _desired_status = d.pop("desired_status", UNSET)
+        desired_status: ConfigSettingsViewDesiredStatus | Unset
+        if isinstance(_desired_status, Unset):
+            desired_status = UNSET
+        else:
+            desired_status = ConfigSettingsViewDesiredStatus(_desired_status)
 
         config_settings_view = cls(
             applied=applied,
             config_version=config_version,
             settings=settings,
-            note=note,
             reload_to_apply=reload_to_apply,
+            note=note,
+            configuration=configuration,
+            settings_source=settings_source,
+            desired_revision=desired_revision,
+            desired_status=desired_status,
         )
 
         config_settings_view.additional_properties = d

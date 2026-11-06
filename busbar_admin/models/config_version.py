@@ -16,35 +16,35 @@ class ConfigVersion:
     transports, grants, deadlines).
 
         Attributes:
+            version (int): The `App.config_version` this snapshot corresponds to (monotonic per process).
+            ts (int): Unix seconds when the mutation committed.
             principal (str): The acting principal (audit attribution, same handle as the audit log).
             summary (str): Human summary of the mutation that produced this version (e.g. `hook.register hook:x`).
-            ts (int): Unix seconds when the mutation committed.
-            version (int): The `App.config_version` this snapshot corresponds to (monotonic per process).
     """
 
+    version: int
+    ts: int
     principal: str
     summary: str
-    ts: int
-    version: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        principal = self.principal
-
-        summary = self.summary
+        version = self.version
 
         ts = self.ts
 
-        version = self.version
+        principal = self.principal
+
+        summary = self.summary
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "version": version,
+                "ts": ts,
                 "principal": principal,
                 "summary": summary,
-                "ts": ts,
-                "version": version,
             }
         )
 
@@ -53,19 +53,19 @@ class ConfigVersion:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        version = d.pop("version")
+
+        ts = d.pop("ts")
+
         principal = d.pop("principal")
 
         summary = d.pop("summary")
 
-        ts = d.pop("ts")
-
-        version = d.pop("version")
-
         config_version = cls(
+            version=version,
+            ts=ts,
             principal=principal,
             summary=summary,
-            ts=ts,
-            version=version,
         )
 
         config_version.additional_properties = d

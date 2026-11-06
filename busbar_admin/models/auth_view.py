@@ -17,31 +17,31 @@ class AuthView:
 
         Attributes:
             chain (list[str]): Ordered auth-chain module names (`[]` = open front door).
-            open_ (bool): Whether the front door is open (empty chain admits unconditionally).
             upstream_credentials (str): `"own"` (busbar signs egress with its configured key) or `"passthrough"` (forward
                 the caller's
                 credential upstream).
+            open_ (bool): Whether the front door is open (empty chain admits unconditionally).
     """
 
     chain: list[str]
-    open_: bool
     upstream_credentials: str
+    open_: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         chain = self.chain
 
-        open_ = self.open_
-
         upstream_credentials = self.upstream_credentials
+
+        open_ = self.open_
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "chain": chain,
-                "open": open_,
                 "upstream_credentials": upstream_credentials,
+                "open": open_,
             }
         )
 
@@ -52,14 +52,14 @@ class AuthView:
         d = dict(src_dict)
         chain = cast(list[str], d.pop("chain"))
 
-        open_ = d.pop("open")
-
         upstream_credentials = d.pop("upstream_credentials")
+
+        open_ = d.pop("open")
 
         auth_view = cls(
             chain=chain,
-            open_=open_,
             upstream_credentials=upstream_credentials,
+            open_=open_,
         )
 
         auth_view.additional_properties = d

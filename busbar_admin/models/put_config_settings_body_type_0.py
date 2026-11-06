@@ -1,55 +1,32 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-if TYPE_CHECKING:
-    from ..models.patch_settings_req_settings import PatchSettingsReqSettings
-
-
-T = TypeVar("T", bound="PatchSettingsReq")
+T = TypeVar("T", bound="PutConfigSettingsBodyType0")
 
 
 @_attrs_define(repr=False)
-class PatchSettingsReq:
-    """The `PATCH /api/v1/admin/hooks/{name}/settings` body. Optimistic concurrency rides `If-Match`.
-
-    Attributes:
-        settings (PatchSettingsReqSettings):
-    """
-
-    settings: PatchSettingsReqSettings
+class PutConfigSettingsBodyType0:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        settings = self.settings.to_dict()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update(
-            {
-                "settings": settings,
-            }
-        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.patch_settings_req_settings import PatchSettingsReqSettings  # noqa: PLC0415
-
         d = dict(src_dict)
-        settings = PatchSettingsReqSettings.from_dict(d.pop("settings"))
+        put_config_settings_body_type_0 = cls()
 
-        patch_settings_req = cls(
-            settings=settings,
-        )
-
-        patch_settings_req.additional_properties = d
-        return patch_settings_req
+        put_config_settings_body_type_0.additional_properties = d
+        return put_config_settings_body_type_0
 
     @property
     def additional_keys(self) -> list[str]:
