@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Literal, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
+
+from ..models.phase import Phase
 
 T = TypeVar("T", bound="Identity")
 
@@ -14,7 +16,8 @@ class Identity:
     """
     Attributes:
         plane (str):
-        phase (Literal['LlmProducerDrive'] | Literal['MountedResponseReady']):
+        phase (Phase): LlmProducerDrive: producer drive returned; buffered response bytes may still be draining.
+            MountedResponseReady: mounted handler returned its response; its body may still be streaming.
         pool (str):
         ingress_protocol (str):
         count (str): Unsigned 64-bit integer as an exact decimal string.
@@ -25,7 +28,7 @@ class Identity:
     """
 
     plane: str
-    phase: Literal["LlmProducerDrive"] | Literal["MountedResponseReady"]
+    phase: Phase
     pool: str
     ingress_protocol: str
     count: str
@@ -38,8 +41,7 @@ class Identity:
     def to_dict(self) -> dict[str, Any]:
         plane = self.plane
 
-        phase: Literal["LlmProducerDrive"] | Literal["MountedResponseReady"]
-        phase = self.phase
+        phase = self.phase.value
 
         pool = self.pool
 
@@ -78,22 +80,7 @@ class Identity:
         d = dict(src_dict)
         plane = d.pop("plane")
 
-        def _parse_phase(data: object) -> Literal["LlmProducerDrive"] | Literal["MountedResponseReady"]:
-            componentsschemas_phase_type_0 = cast(Literal["LlmProducerDrive"], data)
-            if componentsschemas_phase_type_0 != "LlmProducerDrive":
-                raise ValueError(
-                    f"/components/schemas/Phase_type_0 must match const 'LlmProducerDrive', got '{componentsschemas_phase_type_0}'"
-                )
-            return componentsschemas_phase_type_0
-            componentsschemas_phase_type_1 = cast(Literal["MountedResponseReady"], data)
-            if componentsschemas_phase_type_1 != "MountedResponseReady":
-                raise ValueError(
-                    f"/components/schemas/Phase_type_1 must match const 'MountedResponseReady', got '{componentsschemas_phase_type_1}'"
-                )
-            return componentsschemas_phase_type_1
-            raise ValueError("Invalid value for phase")
-
-        phase = _parse_phase(d.pop("phase"))
+        phase = Phase(d.pop("phase"))
 
         pool = d.pop("pool")
 

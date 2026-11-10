@@ -38,6 +38,30 @@ def hook_status():
 
 
 class SchemaContract(unittest.TestCase):
+    def test_settings_union_branches_keep_typed_members_and_exact_values(self):
+        for prefix, classes in [
+            ("settings", ("SettingsReplacement", "SettingsModification")),
+            (
+                "patch_hooks_name_settings_body_type",
+                ("PatchHooksNameSettingsBodyType0", "PatchHooksNameSettingsBodyType1"),
+            ),
+            (
+                "patch_export_name_settings_body_type",
+                ("PatchExportNameSettingsBodyType0", "PatchExportNameSettingsBodyType1"),
+            ),
+        ]:
+            for index, class_name in enumerate(classes):
+                with self.subTest(model=class_name):
+                    suffix = ("replacement", "modification")[index] if prefix == "settings" else str(index)
+                    module = importlib.import_module(f"busbar_admin.models.{prefix}_{suffix}")
+                    model = getattr(module, class_name)
+                    values = {"counter": 18446744073709551615, "optional": None}
+                    payload = {"settings": values} if index == 0 else {"edit": {"set": values, "remove": ["retired"]}}
+                    body = model.from_dict(payload)
+                    member = body.settings if index == 0 else body.edit.set_
+                    self.assertEqual(member.to_dict(), values)
+                    self.assertEqual(body.to_dict(), payload)
+
     def test_key_creation_transmits_body_and_parses_current_signed_token(self):
         seen = []
         payload = {**key_metadata(), "token": "once-secret", "expires_at": 99, "group_provisioned": False}

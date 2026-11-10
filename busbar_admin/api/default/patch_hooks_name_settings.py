@@ -8,13 +8,15 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.hook_view import HookView
+from ...models.patch_hooks_name_settings_body_type_0 import PatchHooksNameSettingsBodyType0
+from ...models.patch_hooks_name_settings_body_type_1 import PatchHooksNameSettingsBodyType1
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     name: str,
     *,
-    body: Any,
+    body: PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -28,7 +30,10 @@ def _get_kwargs(
         ),
     }
 
-    _kwargs["json"] = body
+    if isinstance(body, PatchHooksNameSettingsBodyType0):
+        _kwargs["json"] = body.to_dict()
+    else:
+        _kwargs["json"] = body.to_dict()
 
     headers["Content-Type"] = "application/json"
 
@@ -115,7 +120,7 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
     """Push an opaque settings map to the running hook; COMMIT ON ACK
@@ -123,10 +128,10 @@ def sync_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -153,7 +158,7 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
     """Push an opaque settings map to the running hook; COMMIT ON ACK
@@ -161,10 +166,10 @@ def sync(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -186,7 +191,7 @@ async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | HookView]:
     """Push an opaque settings map to the running hook; COMMIT ON ACK
@@ -194,10 +199,10 @@ async def asyncio_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -222,7 +227,7 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Error | HookView | None:
     """Push an opaque settings map to the running hook; COMMIT ON ACK
@@ -230,10 +235,10 @@ async def asyncio(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchHooksNameSettingsBodyType0 | PatchHooksNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

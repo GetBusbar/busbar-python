@@ -6,11 +6,11 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="PutConfigSettingsBodyType0")
+T = TypeVar("T", bound="PutConfigSettingsConfigSettingsReplacementSecurityType0")
 
 
 @_attrs_define(repr=False)
-class PutConfigSettingsBodyType0:
+class PutConfigSettingsConfigSettingsReplacementSecurityType0:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -23,10 +23,10 @@ class PutConfigSettingsBodyType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        put_config_settings_body_type_0 = cls()
+        put_config_settings_config_settings_replacement_security_type_0 = cls()
 
-        put_config_settings_body_type_0.additional_properties = d
-        return put_config_settings_body_type_0
+        put_config_settings_config_settings_replacement_security_type_0.additional_properties = d
+        return put_config_settings_config_settings_replacement_security_type_0
 
     @property
     def additional_keys(self) -> list[str]:

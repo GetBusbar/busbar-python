@@ -8,13 +8,15 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.error import Error
 from ...models.mutated_def_view import MutatedDefView
+from ...models.patch_export_name_settings_body_type_0 import PatchExportNameSettingsBodyType0
+from ...models.patch_export_name_settings_body_type_1 import PatchExportNameSettingsBodyType1
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     name: str,
     *,
-    body: Any,
+    body: PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -28,7 +30,10 @@ def _get_kwargs(
         ),
     }
 
-    _kwargs["json"] = body
+    if isinstance(body, PatchExportNameSettingsBodyType0):
+        _kwargs["json"] = body.to_dict()
+    else:
+        _kwargs["json"] = body.to_dict()
 
     headers["Content-Type"] = "application/json"
 
@@ -117,7 +122,7 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | MutatedDefView]:
     """Change ONLY the opaque `settings:` bag of one `export:` definition. Supply exactly one mode:
@@ -128,10 +133,10 @@ def sync_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -158,7 +163,7 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Error | MutatedDefView | None:
     """Change ONLY the opaque `settings:` bag of one `export:` definition. Supply exactly one mode:
@@ -169,10 +174,10 @@ def sync(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -194,7 +199,7 @@ async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Response[Error | MutatedDefView]:
     """Change ONLY the opaque `settings:` bag of one `export:` definition. Supply exactly one mode:
@@ -205,10 +210,10 @@ async def asyncio_detailed(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -233,7 +238,7 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient,
-    body: Any,
+    body: PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1,
     if_match: str | Unset = UNSET,
 ) -> Error | MutatedDefView | None:
     """Change ONLY the opaque `settings:` bag of one `export:` definition. Supply exactly one mode:
@@ -244,10 +249,10 @@ async def asyncio(
     Args:
         name (str):
         if_match (str | Unset):
-        body (Any): settings replaces the entire bag, dropping omitted keys; edit explicitly
-            sets/removes top-level keys and preserves all others. Null setting values are values. A
-            setting cannot appear in both set and remove. Never reconstruct a replacement from
-            redacted readback.
+        body (PatchExportNameSettingsBodyType0 | PatchExportNameSettingsBodyType1): settings
+            replaces the entire bag, dropping omitted keys; edit explicitly sets/removes top-level
+            keys and preserves all others. Null setting values are values. A setting cannot appear in
+            both set and remove. Never reconstruct a replacement from redacted readback.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

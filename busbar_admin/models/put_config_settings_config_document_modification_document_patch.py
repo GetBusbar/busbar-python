@@ -8,14 +8,16 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.put_config_settings_body_type_1_document_patch_set import PutConfigSettingsBodyType1DocumentPatchSet
+    from ..models.put_config_settings_config_document_modification_document_patch_set import (
+        PutConfigSettingsConfigDocumentModificationDocumentPatchSet,
+    )
 
 
-T = TypeVar("T", bound="PutConfigSettingsBodyType1DocumentPatch")
+T = TypeVar("T", bound="PutConfigSettingsConfigDocumentModificationDocumentPatch")
 
 
 @_attrs_define(repr=False)
-class PutConfigSettingsBodyType1DocumentPatch:
+class PutConfigSettingsConfigDocumentModificationDocumentPatch:
     """Lowest-priority Store overlay over config.yaml, parsed with boot's schema. RFC6901 paths; strict sequence indices
     replace existing entries, terminal - appends. Within one request, indices name the input snapshot; sets precede
     descending removals. Each subsequent request addresses the current authored document. Null is a value, removal is
@@ -24,11 +26,11 @@ class PutConfigSettingsBodyType1DocumentPatch:
     depth is at most 128. Limit violations reject the transaction.
 
         Attributes:
-            set_ (PutConfigSettingsBodyType1DocumentPatchSet | Unset):
+            set_ (PutConfigSettingsConfigDocumentModificationDocumentPatchSet | Unset):
             remove (list[str] | Unset):
     """
 
-    set_: PutConfigSettingsBodyType1DocumentPatchSet | Unset = UNSET
+    set_: PutConfigSettingsConfigDocumentModificationDocumentPatchSet | Unset = UNSET
     remove: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -52,25 +54,25 @@ class PutConfigSettingsBodyType1DocumentPatch:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.put_config_settings_body_type_1_document_patch_set import (
-            PutConfigSettingsBodyType1DocumentPatchSet,  # noqa: PLC0415
+        from ..models.put_config_settings_config_document_modification_document_patch_set import (
+            PutConfigSettingsConfigDocumentModificationDocumentPatchSet,  # noqa: PLC0415
         )
 
         d = dict(src_dict)
         _set_ = d.pop("set", UNSET)
-        set_: PutConfigSettingsBodyType1DocumentPatchSet | Unset
+        set_: PutConfigSettingsConfigDocumentModificationDocumentPatchSet | Unset
         if isinstance(_set_, Unset):
             set_ = UNSET
         else:
-            set_ = PutConfigSettingsBodyType1DocumentPatchSet.from_dict(_set_)
+            set_ = PutConfigSettingsConfigDocumentModificationDocumentPatchSet.from_dict(_set_)
 
         remove = cast(list[str], d.pop("remove", UNSET))
 
         if d:
-            raise ValueError("Unexpected fields for PutConfigSettingsBodyType1DocumentPatch")
-        put_config_settings_body_type_1_document_patch = cls(
+            raise ValueError("Unexpected fields for PutConfigSettingsConfigDocumentModificationDocumentPatch")
+        put_config_settings_config_document_modification_document_patch = cls(
             set_=set_,
             remove=remove,
         )
 
-        return put_config_settings_body_type_1_document_patch
+        return put_config_settings_config_document_modification_document_patch

@@ -164,9 +164,58 @@ from .page_plugin_view import PagePluginView
 from .page_pool_detail_view import PagePoolDetailView
 from .page_pool_view import PagePoolView
 from .page_provider_view import PageProviderView
+from .patch_agents_name_settings_body_type_0 import PatchAgentsNameSettingsBodyType0
+from .patch_agents_name_settings_body_type_0_edit import PatchAgentsNameSettingsBodyType0Edit
+from .patch_agents_name_settings_body_type_0_edit_set import PatchAgentsNameSettingsBodyType0EditSet
+from .patch_agents_name_settings_body_type_0_settings import PatchAgentsNameSettingsBodyType0Settings
+from .patch_agents_name_settings_body_type_1 import PatchAgentsNameSettingsBodyType1
+from .patch_agents_name_settings_body_type_1_edit import PatchAgentsNameSettingsBodyType1Edit
+from .patch_agents_name_settings_body_type_1_edit_set import PatchAgentsNameSettingsBodyType1EditSet
+from .patch_agents_name_settings_body_type_1_settings import PatchAgentsNameSettingsBodyType1Settings
+from .patch_export_name_settings_body_type_0 import PatchExportNameSettingsBodyType0
+from .patch_export_name_settings_body_type_0_edit import PatchExportNameSettingsBodyType0Edit
+from .patch_export_name_settings_body_type_0_edit_set import PatchExportNameSettingsBodyType0EditSet
+from .patch_export_name_settings_body_type_0_settings import PatchExportNameSettingsBodyType0Settings
+from .patch_export_name_settings_body_type_1 import PatchExportNameSettingsBodyType1
+from .patch_export_name_settings_body_type_1_edit import PatchExportNameSettingsBodyType1Edit
+from .patch_export_name_settings_body_type_1_edit_set import PatchExportNameSettingsBodyType1EditSet
+from .patch_export_name_settings_body_type_1_settings import PatchExportNameSettingsBodyType1Settings
 from .patch_groups_name_body import PatchGroupsNameBody
 from .patch_groups_name_body_clear_item import PatchGroupsNameBodyClearItem
+from .patch_hooks_name_settings_body_type_0 import PatchHooksNameSettingsBodyType0
+from .patch_hooks_name_settings_body_type_0_edit import PatchHooksNameSettingsBodyType0Edit
+from .patch_hooks_name_settings_body_type_0_edit_set import PatchHooksNameSettingsBodyType0EditSet
+from .patch_hooks_name_settings_body_type_0_settings import PatchHooksNameSettingsBodyType0Settings
+from .patch_hooks_name_settings_body_type_1 import PatchHooksNameSettingsBodyType1
+from .patch_hooks_name_settings_body_type_1_edit import PatchHooksNameSettingsBodyType1Edit
+from .patch_hooks_name_settings_body_type_1_edit_set import PatchHooksNameSettingsBodyType1EditSet
+from .patch_hooks_name_settings_body_type_1_settings import PatchHooksNameSettingsBodyType1Settings
+from .patch_identity_providers_name_settings_body_type_0 import PatchIdentityProvidersNameSettingsBodyType0
+from .patch_identity_providers_name_settings_body_type_0_edit import PatchIdentityProvidersNameSettingsBodyType0Edit
+from .patch_identity_providers_name_settings_body_type_0_edit_set import (
+    PatchIdentityProvidersNameSettingsBodyType0EditSet,
+)
+from .patch_identity_providers_name_settings_body_type_0_settings import (
+    PatchIdentityProvidersNameSettingsBodyType0Settings,
+)
+from .patch_identity_providers_name_settings_body_type_1 import PatchIdentityProvidersNameSettingsBodyType1
+from .patch_identity_providers_name_settings_body_type_1_edit import PatchIdentityProvidersNameSettingsBodyType1Edit
+from .patch_identity_providers_name_settings_body_type_1_edit_set import (
+    PatchIdentityProvidersNameSettingsBodyType1EditSet,
+)
+from .patch_identity_providers_name_settings_body_type_1_settings import (
+    PatchIdentityProvidersNameSettingsBodyType1Settings,
+)
+from .patch_tools_name_settings_body_type_0 import PatchToolsNameSettingsBodyType0
+from .patch_tools_name_settings_body_type_0_edit import PatchToolsNameSettingsBodyType0Edit
+from .patch_tools_name_settings_body_type_0_edit_set import PatchToolsNameSettingsBodyType0EditSet
+from .patch_tools_name_settings_body_type_0_settings import PatchToolsNameSettingsBodyType0Settings
+from .patch_tools_name_settings_body_type_1 import PatchToolsNameSettingsBodyType1
+from .patch_tools_name_settings_body_type_1_edit import PatchToolsNameSettingsBodyType1Edit
+from .patch_tools_name_settings_body_type_1_edit_set import PatchToolsNameSettingsBodyType1EditSet
+from .patch_tools_name_settings_body_type_1_settings import PatchToolsNameSettingsBodyType1Settings
 from .pending_restart_removal_view import PendingRestartRemovalView
+from .phase import Phase
 from .plane_facts_class import PlaneFactsClass
 from .plane_facts_metric import PlaneFactsMetric
 from .plane_facts_served import PlaneFactsServed
@@ -196,12 +245,50 @@ from .post_hooks_body import PostHooksBody
 from .provider_view import ProviderView
 from .put_agents_name_body import PutAgentsNameBody
 from .put_auth_body import PutAuthBody
-from .put_config_settings_body_type_0 import PutConfigSettingsBodyType0
-from .put_config_settings_body_type_1 import PutConfigSettingsBodyType1
-from .put_config_settings_body_type_1_document_patch import PutConfigSettingsBodyType1DocumentPatch
-from .put_config_settings_body_type_1_document_patch_set import PutConfigSettingsBodyType1DocumentPatchSet
-from .put_config_settings_body_type_1_providers_patch import PutConfigSettingsBodyType1ProvidersPatch
-from .put_config_settings_body_type_1_providers_patch_set import PutConfigSettingsBodyType1ProvidersPatchSet
+from .put_config_settings_config_document_modification import PutConfigSettingsConfigDocumentModification
+from .put_config_settings_config_document_modification_document_patch import (
+    PutConfigSettingsConfigDocumentModificationDocumentPatch,
+)
+from .put_config_settings_config_document_modification_document_patch_set import (
+    PutConfigSettingsConfigDocumentModificationDocumentPatchSet,
+)
+from .put_config_settings_config_document_modification_providers_patch import (
+    PutConfigSettingsConfigDocumentModificationProvidersPatch,
+)
+from .put_config_settings_config_document_modification_providers_patch_set import (
+    PutConfigSettingsConfigDocumentModificationProvidersPatchSet,
+)
+from .put_config_settings_config_settings_replacement import PutConfigSettingsConfigSettingsReplacement
+from .put_config_settings_config_settings_replacement_admin_tls_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementAdminTlsType0,
+)
+from .put_config_settings_config_settings_replacement_advanced_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementAdvancedType0,
+)
+from .put_config_settings_config_settings_replacement_health_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementHealthType0,
+)
+from .put_config_settings_config_settings_replacement_limits_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementLimitsType0,
+)
+from .put_config_settings_config_settings_replacement_rate_card_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementRateCardType0,
+)
+from .put_config_settings_config_settings_replacement_rate_card_type_0_additional_property_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementRateCardType0AdditionalPropertyType0,
+)
+from .put_config_settings_config_settings_replacement_routing_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementRoutingType0,
+)
+from .put_config_settings_config_settings_replacement_security_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementSecurityType0,
+)
+from .put_config_settings_config_settings_replacement_store_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementStoreType0,
+)
+from .put_config_settings_config_settings_replacement_tls_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementTlsType0,
+)
 from .put_export_name_body import PutExportNameBody
 from .put_groups_name_body import PutGroupsNameBody
 from .put_hooks_name_body import PutHooksNameBody
@@ -214,6 +301,14 @@ from .revoke_view import RevokeView
 from .rollback_req import RollbackReq
 from .rotated_key_view import RotatedKeyView
 from .rotated_key_view_labels import RotatedKeyViewLabels
+from .settings_modification import SettingsModification
+from .settings_modification_edit import SettingsModificationEdit
+from .settings_modification_edit_set import SettingsModificationEditSet
+from .settings_modification_settings import SettingsModificationSettings
+from .settings_replacement import SettingsReplacement
+from .settings_replacement_edit import SettingsReplacementEdit
+from .settings_replacement_edit_set import SettingsReplacementEditSet
+from .settings_replacement_settings import SettingsReplacementSettings
 from .signing_key_rotate_view import SigningKeyRotateView
 from .state_view import StateView
 from .store_restore_req import StoreRestoreReq
@@ -396,9 +491,50 @@ __all__ = (
     "PagePoolDetailView",
     "PagePoolView",
     "PageProviderView",
+    "PatchAgentsNameSettingsBodyType0",
+    "PatchAgentsNameSettingsBodyType0Edit",
+    "PatchAgentsNameSettingsBodyType0EditSet",
+    "PatchAgentsNameSettingsBodyType0Settings",
+    "PatchAgentsNameSettingsBodyType1",
+    "PatchAgentsNameSettingsBodyType1Edit",
+    "PatchAgentsNameSettingsBodyType1EditSet",
+    "PatchAgentsNameSettingsBodyType1Settings",
+    "PatchExportNameSettingsBodyType0",
+    "PatchExportNameSettingsBodyType0Edit",
+    "PatchExportNameSettingsBodyType0EditSet",
+    "PatchExportNameSettingsBodyType0Settings",
+    "PatchExportNameSettingsBodyType1",
+    "PatchExportNameSettingsBodyType1Edit",
+    "PatchExportNameSettingsBodyType1EditSet",
+    "PatchExportNameSettingsBodyType1Settings",
     "PatchGroupsNameBody",
     "PatchGroupsNameBodyClearItem",
+    "PatchHooksNameSettingsBodyType0",
+    "PatchHooksNameSettingsBodyType0Edit",
+    "PatchHooksNameSettingsBodyType0EditSet",
+    "PatchHooksNameSettingsBodyType0Settings",
+    "PatchHooksNameSettingsBodyType1",
+    "PatchHooksNameSettingsBodyType1Edit",
+    "PatchHooksNameSettingsBodyType1EditSet",
+    "PatchHooksNameSettingsBodyType1Settings",
+    "PatchIdentityProvidersNameSettingsBodyType0",
+    "PatchIdentityProvidersNameSettingsBodyType0Edit",
+    "PatchIdentityProvidersNameSettingsBodyType0EditSet",
+    "PatchIdentityProvidersNameSettingsBodyType0Settings",
+    "PatchIdentityProvidersNameSettingsBodyType1",
+    "PatchIdentityProvidersNameSettingsBodyType1Edit",
+    "PatchIdentityProvidersNameSettingsBodyType1EditSet",
+    "PatchIdentityProvidersNameSettingsBodyType1Settings",
+    "PatchToolsNameSettingsBodyType0",
+    "PatchToolsNameSettingsBodyType0Edit",
+    "PatchToolsNameSettingsBodyType0EditSet",
+    "PatchToolsNameSettingsBodyType0Settings",
+    "PatchToolsNameSettingsBodyType1",
+    "PatchToolsNameSettingsBodyType1Edit",
+    "PatchToolsNameSettingsBodyType1EditSet",
+    "PatchToolsNameSettingsBodyType1Settings",
     "PendingRestartRemovalView",
+    "Phase",
     "PlaneFactsClass",
     "PlaneFactsMetric",
     "PlaneFactsServed",
@@ -428,12 +564,22 @@ __all__ = (
     "ProviderView",
     "PutAgentsNameBody",
     "PutAuthBody",
-    "PutConfigSettingsBodyType0",
-    "PutConfigSettingsBodyType1",
-    "PutConfigSettingsBodyType1DocumentPatch",
-    "PutConfigSettingsBodyType1DocumentPatchSet",
-    "PutConfigSettingsBodyType1ProvidersPatch",
-    "PutConfigSettingsBodyType1ProvidersPatchSet",
+    "PutConfigSettingsConfigDocumentModification",
+    "PutConfigSettingsConfigDocumentModificationDocumentPatch",
+    "PutConfigSettingsConfigDocumentModificationDocumentPatchSet",
+    "PutConfigSettingsConfigDocumentModificationProvidersPatch",
+    "PutConfigSettingsConfigDocumentModificationProvidersPatchSet",
+    "PutConfigSettingsConfigSettingsReplacement",
+    "PutConfigSettingsConfigSettingsReplacementAdminTlsType0",
+    "PutConfigSettingsConfigSettingsReplacementAdvancedType0",
+    "PutConfigSettingsConfigSettingsReplacementHealthType0",
+    "PutConfigSettingsConfigSettingsReplacementLimitsType0",
+    "PutConfigSettingsConfigSettingsReplacementRateCardType0",
+    "PutConfigSettingsConfigSettingsReplacementRateCardType0AdditionalPropertyType0",
+    "PutConfigSettingsConfigSettingsReplacementRoutingType0",
+    "PutConfigSettingsConfigSettingsReplacementSecurityType0",
+    "PutConfigSettingsConfigSettingsReplacementStoreType0",
+    "PutConfigSettingsConfigSettingsReplacementTlsType0",
     "PutExportNameBody",
     "PutGroupsNameBody",
     "PutHooksNameBody",
@@ -446,6 +592,14 @@ __all__ = (
     "RollbackReq",
     "RotatedKeyView",
     "RotatedKeyViewLabels",
+    "SettingsModification",
+    "SettingsModificationEdit",
+    "SettingsModificationEditSet",
+    "SettingsModificationSettings",
+    "SettingsReplacement",
+    "SettingsReplacementEdit",
+    "SettingsReplacementEditSet",
+    "SettingsReplacementSettings",
     "SigningKeyRotateView",
     "StateView",
     "StoreRestoreReq",

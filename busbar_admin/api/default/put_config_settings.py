@@ -8,14 +8,14 @@ from ...client import AuthenticatedClient, Client
 from ...models.config_document_mutation_view import ConfigDocumentMutationView
 from ...models.config_settings_view import ConfigSettingsView
 from ...models.error import Error
-from ...models.put_config_settings_body_type_0 import PutConfigSettingsBodyType0
-from ...models.put_config_settings_body_type_1 import PutConfigSettingsBodyType1
+from ...models.put_config_settings_config_document_modification import PutConfigSettingsConfigDocumentModification
+from ...models.put_config_settings_config_settings_replacement import PutConfigSettingsConfigSettingsReplacement
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
-    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
+    body: PutConfigSettingsConfigDocumentModification | PutConfigSettingsConfigSettingsReplacement,
     if_match: str | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -27,7 +27,7 @@ def _get_kwargs(
         "url": "/api/v1/admin/config/settings",
     }
 
-    if isinstance(body, PutConfigSettingsBodyType0):
+    if isinstance(body, PutConfigSettingsConfigSettingsReplacement):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -132,7 +132,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
+    body: PutConfigSettingsConfigDocumentModification | PutConfigSettingsConfigSettingsReplacement,
     if_match: str | Unset = UNSET,
 ) -> Response[ConfigDocumentMutationView | ConfigSettingsView | Error]:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
@@ -143,7 +143,8 @@ def sync_detailed(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
+        body (PutConfigSettingsConfigDocumentModification |
+            PutConfigSettingsConfigSettingsReplacement):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -168,7 +169,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
+    body: PutConfigSettingsConfigDocumentModification | PutConfigSettingsConfigSettingsReplacement,
     if_match: str | Unset = UNSET,
 ) -> ConfigDocumentMutationView | ConfigSettingsView | Error | None:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
@@ -179,7 +180,8 @@ def sync(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
+        body (PutConfigSettingsConfigDocumentModification |
+            PutConfigSettingsConfigSettingsReplacement):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -199,7 +201,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
+    body: PutConfigSettingsConfigDocumentModification | PutConfigSettingsConfigSettingsReplacement,
     if_match: str | Unset = UNSET,
 ) -> Response[ConfigDocumentMutationView | ConfigSettingsView | Error]:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
@@ -210,7 +212,8 @@ async def asyncio_detailed(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
+        body (PutConfigSettingsConfigDocumentModification |
+            PutConfigSettingsConfigSettingsReplacement):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -233,7 +236,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient,
-    body: PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1,
+    body: PutConfigSettingsConfigDocumentModification | PutConfigSettingsConfigSettingsReplacement,
     if_match: str | Unset = UNSET,
 ) -> ConfigDocumentMutationView | ConfigSettingsView | Error | None:
     """SET any single-value config section durably (1.5.0 full-config coverage): partial RootSettings
@@ -244,7 +247,8 @@ async def asyncio(
 
     Args:
         if_match (str | Unset):
-        body (PutConfigSettingsBodyType0 | PutConfigSettingsBodyType1):
+        body (PutConfigSettingsConfigDocumentModification |
+            PutConfigSettingsConfigSettingsReplacement):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -8,23 +8,21 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.put_config_settings_body_type_1_providers_patch_set import PutConfigSettingsBodyType1ProvidersPatchSet
+    from ..models.patch_export_name_settings_body_type_0_edit_set import PatchExportNameSettingsBodyType0EditSet
 
 
-T = TypeVar("T", bound="PutConfigSettingsBodyType1ProvidersPatch")
+T = TypeVar("T", bound="PatchExportNameSettingsBodyType0Edit")
 
 
 @_attrs_define(repr=False)
-class PutConfigSettingsBodyType1ProvidersPatch:
-    """Edits providers.yaml through its boot grammar in the same Store transaction. Paths start with catalog entry names.
-    Deployment overrides that shadow an edit are refused.
-
-        Attributes:
-            set_ (PutConfigSettingsBodyType1ProvidersPatchSet | Unset):
-            remove (list[str] | Unset):
+class PatchExportNameSettingsBodyType0Edit:
+    """
+    Attributes:
+        set_ (PatchExportNameSettingsBodyType0EditSet | Unset):
+        remove (list[str] | Unset):
     """
 
-    set_: PutConfigSettingsBodyType1ProvidersPatchSet | Unset = UNSET
+    set_: PatchExportNameSettingsBodyType0EditSet | Unset = UNSET
     remove: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -48,25 +46,23 @@ class PutConfigSettingsBodyType1ProvidersPatch:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.put_config_settings_body_type_1_providers_patch_set import (
-            PutConfigSettingsBodyType1ProvidersPatchSet,  # noqa: PLC0415
-        )
+        from ..models.patch_export_name_settings_body_type_0_edit_set import PatchExportNameSettingsBodyType0EditSet  # noqa: PLC0415
 
         d = dict(src_dict)
         _set_ = d.pop("set", UNSET)
-        set_: PutConfigSettingsBodyType1ProvidersPatchSet | Unset
+        set_: PatchExportNameSettingsBodyType0EditSet | Unset
         if isinstance(_set_, Unset):
             set_ = UNSET
         else:
-            set_ = PutConfigSettingsBodyType1ProvidersPatchSet.from_dict(_set_)
+            set_ = PatchExportNameSettingsBodyType0EditSet.from_dict(_set_)
 
         remove = cast(list[str], d.pop("remove", UNSET))
 
         if d:
-            raise ValueError("Unexpected fields for PutConfigSettingsBodyType1ProvidersPatch")
-        put_config_settings_body_type_1_providers_patch = cls(
+            raise ValueError("Unexpected fields for PatchExportNameSettingsBodyType0Edit")
+        patch_export_name_settings_body_type_0_edit = cls(
             set_=set_,
             remove=remove,
         )
 
-        return put_config_settings_body_type_1_providers_patch
+        return patch_export_name_settings_body_type_0_edit
