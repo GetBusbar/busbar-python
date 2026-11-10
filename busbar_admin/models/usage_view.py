@@ -11,6 +11,7 @@ from ..types import UNSET, Unset
 if TYPE_CHECKING:
     from ..models.key_usage_view import KeyUsageView
     from ..models.model_usage_view import ModelUsageView
+    from ..models.observation_usage_view import ObservationUsageView
     from ..models.usage_breakdown import UsageBreakdown
     from ..models.usage_window import UsageWindow
 
@@ -44,6 +45,10 @@ class UsageView:
             `by_key_truncated`, so
             every unit of consumption is attributable at least to "others" (FinOps completeness:
             `total == sum(by_key) + others`).
+        observations (list[ObservationUsageView] | Unset): Immutable observation accounting, already included in the
+            totals above. Omitted when
+            empty. These rows preserve the original serving subject separately from the priced one;
+            a rate-card snapshot query never reprices their committed charges.
     """
 
     window: UsageWindow
@@ -55,6 +60,7 @@ class UsageView:
     by_key: list[KeyUsageView]
     by_key_truncated: bool
     others: None | Unset | UsageBreakdown = UNSET
+    observations: list[ObservationUsageView] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -91,6 +97,13 @@ class UsageView:
         else:
             others = self.others
 
+        observations: list[dict[str, Any]] | Unset = UNSET
+        if not isinstance(self.observations, Unset):
+            observations = []
+            for observations_item_data in self.observations:
+                observations_item = observations_item_data.to_dict()
+                observations.append(observations_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -107,6 +120,8 @@ class UsageView:
         )
         if others is not UNSET:
             field_dict["others"] = others
+        if observations is not UNSET:
+            field_dict["observations"] = observations
 
         return field_dict
 
@@ -114,6 +129,7 @@ class UsageView:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.key_usage_view import KeyUsageView  # noqa: PLC0415
         from ..models.model_usage_view import ModelUsageView  # noqa: PLC0415
+        from ..models.observation_usage_view import ObservationUsageView  # noqa: PLC0415
         from ..models.usage_breakdown import UsageBreakdown  # noqa: PLC0415
         from ..models.usage_window import UsageWindow  # noqa: PLC0415
 
@@ -166,6 +182,15 @@ class UsageView:
 
         others = _parse_others(d.pop("others", UNSET))
 
+        _observations = d.pop("observations", UNSET)
+        observations: list[ObservationUsageView] | Unset = UNSET
+        if _observations is not UNSET:
+            observations = []
+            for observations_item_data in _observations:
+                observations_item = ObservationUsageView.from_dict(observations_item_data)
+
+                observations.append(observations_item)
+
         usage_view = cls(
             window=window,
             as_of=as_of,
@@ -176,6 +201,7 @@ class UsageView:
             by_key=by_key,
             by_key_truncated=by_key_truncated,
             others=others,
+            observations=observations,
         )
 
         usage_view.additional_properties = d

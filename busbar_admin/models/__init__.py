@@ -155,6 +155,8 @@ from .mutation_applied_error_error import MutationAppliedErrorError
 from .mutation_applied_error_operation import MutationAppliedErrorOperation
 from .mutation_applied_error_recovery import MutationAppliedErrorRecovery
 from .named_def_view import NamedDefView
+from .observation_usage_view import ObservationUsageView
+from .observation_usage_view_counts import ObservationUsageViewCounts
 from .overlay_reset_view import OverlayResetView
 from .page_group_view import PageGroupView
 from .page_hook_view import PageHookView
@@ -482,6 +484,8 @@ __all__ = (
     "MutationAppliedErrorOperation",
     "MutationAppliedErrorRecovery",
     "NamedDefView",
+    "ObservationUsageView",
+    "ObservationUsageViewCounts",
     "OverlayResetView",
     "PageGroupView",
     "PageHookView",

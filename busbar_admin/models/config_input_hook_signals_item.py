@@ -9,6 +9,7 @@ class ConfigInputHookSignalsItem(StrEnum):
     REQUESTED_MODEL = "requested_model"
     REQUEST_MESSAGE_COUNT = "request_message_count"
     REQUEST_SYSTEM_CHARS = "request_system_chars"
+    REQUEST_TEXT_COMPLETE = "request_text_complete"
     REQUEST_TOOL_COUNT = "request_tool_count"
     REQUEST_TOTAL_CHARS = "request_total_chars"
     RESPONSE_TOKENS_OUT = "response_tokens_out"
