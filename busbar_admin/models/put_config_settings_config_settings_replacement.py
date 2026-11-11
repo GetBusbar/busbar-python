@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from ..models.put_config_settings_config_settings_replacement_limits_type_0 import (
         PutConfigSettingsConfigSettingsReplacementLimitsType0,
     )
+    from ..models.put_config_settings_config_settings_replacement_plugin_rate_cards_type_0 import (
+        PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0,
+    )
     from ..models.put_config_settings_config_settings_replacement_rate_card_type_0 import (
         PutConfigSettingsConfigSettingsReplacementRateCardType0,
     )
@@ -56,6 +59,10 @@ class PutConfigSettingsConfigSettingsReplacement:
                 TLS: cert and key SecretRefs, plus optional client_ca.
             admin_require_mtls (bool | None | Unset):
             rate_card (None | PutConfigSettingsConfigSettingsReplacementRateCardType0 | Unset):
+            plugin_rate_cards (None | PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0 | Unset): Exact common
+                measurement rates by plugin kind, actual configured namespace, and declared class. Integer or decimal-string
+                micro-units per quantity; missing rates remain unpriced. The whole map is replaced when supplied, including an
+                empty map to clear it.
             per_request_fee (int | None | Unset):
             store (list[Any] | None | PutConfigSettingsConfigSettingsReplacementStoreType0 | Unset): Store selection: module
                 and module-owned settings; requires restart.
@@ -78,6 +85,7 @@ class PutConfigSettingsConfigSettingsReplacement:
     admin_tls: list[Any] | None | PutConfigSettingsConfigSettingsReplacementAdminTlsType0 | Unset = UNSET
     admin_require_mtls: bool | None | Unset = UNSET
     rate_card: None | PutConfigSettingsConfigSettingsReplacementRateCardType0 | Unset = UNSET
+    plugin_rate_cards: None | PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0 | Unset = UNSET
     per_request_fee: int | None | Unset = UNSET
     store: list[Any] | None | PutConfigSettingsConfigSettingsReplacementStoreType0 | Unset = UNSET
     security: list[Any] | None | PutConfigSettingsConfigSettingsReplacementSecurityType0 | Unset = UNSET
@@ -98,6 +106,9 @@ class PutConfigSettingsConfigSettingsReplacement:
         )
         from ..models.put_config_settings_config_settings_replacement_limits_type_0 import (
             PutConfigSettingsConfigSettingsReplacementLimitsType0,  # noqa: PLC0415
+        )
+        from ..models.put_config_settings_config_settings_replacement_plugin_rate_cards_type_0 import (
+            PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0,  # noqa: PLC0415
         )
         from ..models.put_config_settings_config_settings_replacement_rate_card_type_0 import (
             PutConfigSettingsConfigSettingsReplacementRateCardType0,  # noqa: PLC0415
@@ -162,6 +173,14 @@ class PutConfigSettingsConfigSettingsReplacement:
             rate_card = self.rate_card.to_dict()
         else:
             rate_card = self.rate_card
+
+        plugin_rate_cards: dict[str, Any] | None | Unset
+        if isinstance(self.plugin_rate_cards, Unset):
+            plugin_rate_cards = UNSET
+        elif isinstance(self.plugin_rate_cards, PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0):
+            plugin_rate_cards = self.plugin_rate_cards.to_dict()
+        else:
+            plugin_rate_cards = self.plugin_rate_cards
 
         per_request_fee: int | None | Unset
         if isinstance(self.per_request_fee, Unset):
@@ -250,6 +269,8 @@ class PutConfigSettingsConfigSettingsReplacement:
             field_dict["admin_require_mtls"] = admin_require_mtls
         if rate_card is not UNSET:
             field_dict["rate_card"] = rate_card
+        if plugin_rate_cards is not UNSET:
+            field_dict["plugin_rate_cards"] = plugin_rate_cards
         if per_request_fee is not UNSET:
             field_dict["per_request_fee"] = per_request_fee
         if store is not UNSET:
@@ -280,6 +301,9 @@ class PutConfigSettingsConfigSettingsReplacement:
         )
         from ..models.put_config_settings_config_settings_replacement_limits_type_0 import (
             PutConfigSettingsConfigSettingsReplacementLimitsType0,  # noqa: PLC0415
+        )
+        from ..models.put_config_settings_config_settings_replacement_plugin_rate_cards_type_0 import (
+            PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0,  # noqa: PLC0415
         )
         from ..models.put_config_settings_config_settings_replacement_rate_card_type_0 import (
             PutConfigSettingsConfigSettingsReplacementRateCardType0,  # noqa: PLC0415
@@ -394,6 +418,27 @@ class PutConfigSettingsConfigSettingsReplacement:
             raise ValueError("Invalid value for rate_card")
 
         rate_card = _parse_rate_card(d.pop("rate_card", UNSET))
+
+        def _parse_plugin_rate_cards(
+            data: object,
+        ) -> None | PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0 | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                plugin_rate_cards_type_0 = PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0.from_dict(
+                    data
+                )
+
+                return plugin_rate_cards_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            raise ValueError("Invalid value for plugin_rate_cards")
+
+        plugin_rate_cards = _parse_plugin_rate_cards(d.pop("plugin_rate_cards", UNSET))
 
         def _parse_per_request_fee(data: object) -> int | None | Unset:
             if data is None:
@@ -575,6 +620,7 @@ class PutConfigSettingsConfigSettingsReplacement:
             admin_tls=admin_tls,
             admin_require_mtls=admin_require_mtls,
             rate_card=rate_card,
+            plugin_rate_cards=plugin_rate_cards,
             per_request_fee=per_request_fee,
             store=store,
             security=security,

@@ -273,6 +273,15 @@ from .put_config_settings_config_settings_replacement_health_type_0 import (
 from .put_config_settings_config_settings_replacement_limits_type_0 import (
     PutConfigSettingsConfigSettingsReplacementLimitsType0,
 )
+from .put_config_settings_config_settings_replacement_plugin_rate_cards_type_0 import (
+    PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0,
+)
+from .put_config_settings_config_settings_replacement_plugin_rate_cards_type_0_additional_property import (
+    PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0AdditionalProperty,
+)
+from .put_config_settings_config_settings_replacement_plugin_rate_cards_type_0_additional_property_additional_property import (
+    PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0AdditionalPropertyAdditionalProperty,
+)
 from .put_config_settings_config_settings_replacement_rate_card_type_0 import (
     PutConfigSettingsConfigSettingsReplacementRateCardType0,
 )
@@ -578,6 +587,9 @@ __all__ = (
     "PutConfigSettingsConfigSettingsReplacementAdvancedType0",
     "PutConfigSettingsConfigSettingsReplacementHealthType0",
     "PutConfigSettingsConfigSettingsReplacementLimitsType0",
+    "PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0",
+    "PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0AdditionalProperty",
+    "PutConfigSettingsConfigSettingsReplacementPluginRateCardsType0AdditionalPropertyAdditionalProperty",
     "PutConfigSettingsConfigSettingsReplacementRateCardType0",
     "PutConfigSettingsConfigSettingsReplacementRateCardType0AdditionalPropertyType0",
     "PutConfigSettingsConfigSettingsReplacementRoutingType0",
